@@ -6,10 +6,12 @@
 
 #include <stdio.h>
 
+#define RHC_TEST_MESSAGE_MAX_LEN 1024
+
 int rhc_test_run = 0;
 int rhc_test_fail = 0;
 int rhc_test_status = 0;
-char rhc_test_last_message[1024];
+char rhc_test_last_message[RHC_TEST_MESSAGE_MAX_LEN];
 
 #define RHC_TEST(test_name) static char *test_name()
 #define RHC_TEST_SUITE(suite_name) static char *suite_name()
