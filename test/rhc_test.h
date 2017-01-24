@@ -27,6 +27,14 @@ int rhc_test_fail = 0;
     if( message ) return message;\
 } while( 0 )
 
-#define RHC_TEST_REPORT() printf( "\n%d tests, %d failures\n", rhc_test_run, rhc_test_fail )
+#define RHC_TEST_REPORT() do{\
+  printf( "\n----------------------------------------------------------------------");\
+  printf( "\nRan %d tests\n", rhc_test_run );\
+  if( rhc_test_fail == 0 ){\
+    printf( "\nOK\n" );\
+  } else {\
+    printf( "\nFAILED (failures=%d)\n", rhc_test_fail );\
+  }\
+} while( 0 )
 
 #endif /* __RHC_TEST_H__ */
