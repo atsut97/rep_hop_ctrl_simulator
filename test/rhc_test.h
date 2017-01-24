@@ -8,23 +8,29 @@
 
 int rhc_test_run = 0;
 int rhc_test_fail = 0;
+int rhc_test_status = 0;
+char rhc_test_last_message[1024];
 
 #define RHC_TEST(test_name) static char *test_name()
 #define RHC_TEST_SUITE(suite_name) static char *suite_name()
 
 #define RHC_ASSERT(test, message) do{\
-    if( !(test) ){\
-      rhc_test_fail++;\
-      printf( "F" );\
-      return "ERROR: " message;\
-    } else\
-      printf( "." );\
+  rhc_test_status = 0;\
+  if( !(test) ){\
+    rhc_test_fail++;\
+    printf( "F" );\
+    rhc_test_status = 1;\
+    sprintf( rhc_test_last_message, "%s", message );\
+  } else\
+    printf( "." );\
 } while( 0 )
 
 #define RHC_RUN_TEST(test) do{\
-    char *message = test();\
-    rhc_test_run++;\
-    if( message ) return message;\
+  rhc_test_run++;\
+  test();\
+  if( rhc_test_status ){\
+    printf( "\nFAIL: %s (%s:%d)\n%s\n", #test, __FILE__, __LINE__, rhc_test_last_message );\
+  }\
 } while( 0 )
 
 #define RHC_TEST_REPORT() do{\

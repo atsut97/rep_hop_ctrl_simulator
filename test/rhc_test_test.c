@@ -20,7 +20,9 @@ RHC_TEST_SUITE(all_tests)
   RHC_RUN_TEST( test_foo );
   RHC_RUN_TEST( test_foo );
   RHC_RUN_TEST( test_bar );
+  RHC_RUN_TEST( test_foo );
   RHC_RUN_TEST( test_bar );
+  RHC_RUN_TEST( test_foo );
   return 0;
 }
 
