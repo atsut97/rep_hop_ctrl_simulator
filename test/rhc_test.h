@@ -49,4 +49,6 @@ char rhc_test_last_message[RHC_TEST_MESSAGE_MAX_LEN];
   }\
 } while( 0 )
 
+#define RHC_TEST_EXIT() return rhc_test_fail != 0
+
 #endif /* __RHC_TEST_H__ */

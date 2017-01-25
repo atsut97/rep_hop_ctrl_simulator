@@ -27,6 +27,5 @@ int main(int argc, char *argv[])
 {
   RHC_RUN_SUITE( all_tests );
   RHC_TEST_REPORT();
-
-  return 0;
+  RHC_TEST_EXIT();
 }
