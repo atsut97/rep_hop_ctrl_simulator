@@ -15,6 +15,9 @@ int rhc_test_status = 0;
 char rhc_test_last_message[RHC_TEST_FAILED_MESSAGE_LEN];
 char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN];
 
+#define RHC_TEST_SEPARATOR1 "======================================================================\n"
+#define RHC_TEST_SEPARATOR2 "----------------------------------------------------------------------\n"
+
 #define RHC_TEST(test_name) static void test_name()
 #define RHC_TEST_SUITE(suite_name) static void suite_name()
 
@@ -22,7 +25,7 @@ char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN]
   if( !(test) ){\
     rhc_test_status = 1;\
     if( rhc_test_fail < RHC_TEST_FAILED_MESSAGE_NUM - 1 )\
-      snprintf( rhc_test_messages[rhc_test_fail], RHC_TEST_FAILED_MESSAGE_LEN, "FAIL: %s (%s:%d)\n%s\n", __FUNCTION__, __FILE__, __LINE__, message );\
+      snprintf( rhc_test_messages[rhc_test_fail], RHC_TEST_FAILED_MESSAGE_LEN, "FAIL: %s (%s:%d)\n%s%s\n", __FUNCTION__, __FILE__, __LINE__, RHC_TEST_SEPARATOR2, message );\
     else\
       snprintf( rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM-1], RHC_TEST_FAILED_MESSAGE_LEN, "Too many failures! (subsequent messages are skipped)\n" );\
     rhc_test_fail++;\
@@ -40,9 +43,6 @@ char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN]
 #define RHC_RUN_SUITE(suite_name) do{\
   suite_name();\
 } while( 0 )
-
-#define RHC_TEST_SEPARATOR1 "======================================================================\n"
-#define RHC_TEST_SEPARATOR2 "----------------------------------------------------------------------\n"
 
 #define RHC_TEST_REPORT() do{\
   int __rhc_test_iter;\
