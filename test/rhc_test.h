@@ -6,7 +6,6 @@
 
 /* TODO: */
 /*   - Add assertion function to compare two floats */
-/*   - Add assertion function to compare two integers */
 /*   - Add setup/teardown functions */
 /*   - Add a timer to measure test execution time */
 /*   - Remove limit of failure message number */
@@ -28,15 +27,28 @@ char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN]
 #define RHC_TEST(test_name) static void test_name()
 #define RHC_TEST_SUITE(suite_name) static void suite_name()
 
+#define RHC_STACK_FAILURE_MESSAGE(message) do{\
+  if( rhc_test_fail < RHC_TEST_FAILED_MESSAGE_NUM - 1 )\
+    snprintf( rhc_test_messages[rhc_test_fail], RHC_TEST_FAILED_MESSAGE_LEN, "FAIL: %s (%s:%d)\n%s%s\n", __FUNCTION__, __FILE__, __LINE__, RHC_TEST_SEPARATOR2, message );\
+  else\
+    snprintf( rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM-1], RHC_TEST_FAILED_MESSAGE_LEN, "Too many failures! (subsequent messages are skipped)\n" );\
+} while( 0 )
+
 #define RHC_ASSERT(test, message) do{\
   if( !(test) ){\
     rhc_test_status = 1;\
-    if( rhc_test_fail < RHC_TEST_FAILED_MESSAGE_NUM - 1 )\
-      snprintf( rhc_test_messages[rhc_test_fail], RHC_TEST_FAILED_MESSAGE_LEN, "FAIL: %s (%s:%d)\n%s%s\n", __FUNCTION__, __FILE__, __LINE__, RHC_TEST_SEPARATOR2, message );\
-    else\
-      snprintf( rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM-1], RHC_TEST_FAILED_MESSAGE_LEN, "Too many failures! (subsequent messages are skipped)\n" );\
+    RHC_STACK_FAILURE_MESSAGE(message);\
     rhc_test_fail++;\
   }\
+} while( 0 )
+
+#define RHC_ASSERT_EQ(expected, actual) do{\
+  if( expected != actual ){\
+    rhc_test_status = 1;\
+    snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Value of: %s\nExpected: %d\n But was: %d", #actual, expected, actual);\
+    RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
+    rhc_test_fail++;\
+   }\
 } while( 0 )
 
 #define RHC_RUN_TEST(test_name) do{\
