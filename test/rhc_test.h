@@ -6,9 +6,11 @@
 
 /* TODO: */
 /*   - Add setup/teardown functions */
-/*   - Add a timer to measure test execution time */
+/*   - Make timer function be compatible with otherwise Linux */
 /*   - Remove limit of failure message number */
 
+#include <unistd.h>
+#include <time.h>	/* clock_gettime() */
 #include <stdio.h>
 #include <math.h>
 
@@ -16,14 +18,20 @@
 #define RHC_TEST_FAILED_MESSAGE_LEN 1024
 #define RHC_TEST_TOL ( 1.0e-12 )
 
-int rhc_test_run = 0;
-int rhc_test_fail = 0;
-int rhc_test_status = 0;
-char rhc_test_last_message[RHC_TEST_FAILED_MESSAGE_LEN];
-char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN];
-
 #define RHC_TEST_SEPARATOR1 "======================================================================\n"
 #define RHC_TEST_SEPARATOR2 "----------------------------------------------------------------------\n"
+
+/* Counters */
+static int rhc_test_run = 0;
+static int rhc_test_fail = 0;
+static int rhc_test_status = 0;
+
+/* Timer */
+static double rhc_timer = 0;
+
+/* Message */
+static char rhc_test_last_message[RHC_TEST_FAILED_MESSAGE_LEN];
+static char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN];
 
 #define RHC_TEST(test_name) static void test_name()
 #define RHC_TEST_SUITE(suite_name) static void suite_name()
@@ -62,9 +70,10 @@ char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN]
 } while( 0 )
 
 #define RHC_RUN_TEST(test_name) do{\
-  rhc_test_run++;\
+  if( rhc_timer == 0 ) rhc_timer = rhcTimer();\
   rhc_test_status = 0;\
   test_name();\
+  rhc_test_run++;\
   if( rhc_test_status ) printf( "F" );\
   else printf( "." );\
 } while( 0 )
@@ -74,13 +83,15 @@ char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN]
 } while( 0 )
 
 #define RHC_TEST_REPORT() do{\
+  double __rhc_timer_end;\
   int __rhc_test_iter;\
+  __rhc_timer_end = rhcTimer();\
   for( __rhc_test_iter=0; __rhc_test_iter<rhc_test_fail && __rhc_test_iter<RHC_TEST_FAILED_MESSAGE_NUM; __rhc_test_iter++){\
     printf( "\n" RHC_TEST_SEPARATOR1 );\
     printf( "%s", rhc_test_messages[__rhc_test_iter] );\
   }\
   printf( "\n" RHC_TEST_SEPARATOR2 );\
-  printf( "Ran %d tests\n\n", rhc_test_run );\
+  printf( "Ran %d tests in %.8fs\n\n", rhc_test_run, __rhc_timer_end - rhc_timer );\
   if( rhc_test_fail == 0 ){\
     printf( "OK\n" );\
   } else {\
@@ -89,5 +100,17 @@ char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN]
 } while( 0 )
 
 #define RHC_TEST_EXIT() return rhc_test_fail != 0
+
+static double rhcTimer()
+/* NOTE: Only works on Linux */
+{
+  struct timespec ts;
+  const clockid_t id = CLOCK_MONOTONIC_RAW;
+
+  if( clock_gettime( id, &ts ) != -1 )
+    return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
+  else
+    return -1.0;
+}
 
 #endif /* __RHC_TEST_H__ */
