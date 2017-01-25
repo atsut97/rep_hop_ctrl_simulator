@@ -4,9 +4,16 @@
 /* Note: This code is based on                         */
 /*       http://www.jera.com/techinfo/jtns/jtn002.html */
 
+/* TODO: */
+/*   - Add assertion function to compare two floats */
+/*   - Add assertion function to compare two integers */
+/*   - Add setup/teardown functions */
+/*   - Add a timer to measure test execution time */
+/*   - Remove limit of failure message number */
+
 #include <stdio.h>
 
-#define RHC_TEST_FAILED_MESSAGE_NUM 64 /* TODO: Remove limit of message number */
+#define RHC_TEST_FAILED_MESSAGE_NUM 64
 #define RHC_TEST_FAILED_MESSAGE_LEN 1024
 
 int rhc_test_run = 0;
