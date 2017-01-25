@@ -5,15 +5,16 @@
 /*       http://www.jera.com/techinfo/jtns/jtn002.html */
 
 /* TODO: */
-/*   - Add assertion function to compare two floats */
 /*   - Add setup/teardown functions */
 /*   - Add a timer to measure test execution time */
 /*   - Remove limit of failure message number */
 
 #include <stdio.h>
+#include <math.h>
 
 #define RHC_TEST_FAILED_MESSAGE_NUM 64
 #define RHC_TEST_FAILED_MESSAGE_LEN 1024
+#define RHC_TEST_TOL ( 1.0e-12 )
 
 int rhc_test_run = 0;
 int rhc_test_fail = 0;
@@ -49,6 +50,15 @@ char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSAGE_LEN]
     RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
     rhc_test_fail++;\
    }\
+} while( 0 )
+
+#define RHC_ASSERT_DOUBLE_EQ(expected, actual) do{\
+  if( fabs( expected - actual ) > RHC_TEST_TOL ){\
+    rhc_test_status = 1;\
+    snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Value of: %s\nExpected: %g\n But was: %g", #actual, expected, actual);\
+    RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
+    rhc_test_fail++;\
+  } \
 } while( 0 )
 
 #define RHC_RUN_TEST(test_name) do{\
