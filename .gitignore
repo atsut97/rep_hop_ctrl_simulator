@@ -1,0 +1,5 @@
+# Object files
+*.o
+
+# Test executables
+/test/*_test
