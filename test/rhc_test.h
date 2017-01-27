@@ -76,6 +76,54 @@ static char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSA
   } \
 } while( 0 )
 
+#define RHC_ASSERT_GT(val1, val2) do{ \
+  double __rhc_val1 = (val1);\
+  double __rhc_val2 = (val2);\
+  if( !( __rhc_val1 > __rhc_val2 ) ){\
+  rhc_test_status = 1;\
+  snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Expected: (%s) > (%s)\n But was: %g vs %g", #val1, #val2, __rhc_val1, __rhc_val2 );\
+  RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
+  rhc_test_fail++;\
+  return;\
+  }\
+} while( 0 )
+
+#define RHC_ASSERT_GE(val1, val2) do{ \
+  double __rhc_val1 = (val1);\
+  double __rhc_val2 = (val2);\
+  if( !( __rhc_val1 >= __rhc_val2 ) ){\
+  rhc_test_status = 1;\
+  snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Expected: (%s) >= (%s)\n But was: %g vs %g", #val1, #val2, __rhc_val1, __rhc_val2 );\
+  RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
+  rhc_test_fail++;\
+  return;\
+  }\
+} while( 0 )
+
+#define RHC_ASSERT_LT(val1, val2) do{ \
+  double __rhc_val1 = (val1);\
+  double __rhc_val2 = (val2);\
+  if( !( __rhc_val1 < __rhc_val2 ) ){\
+  rhc_test_status = 1;\
+  snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Expected: (%s) < (%s)\n But was: %g vs %g", #val1, #val2, __rhc_val1, __rhc_val2 );\
+  RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
+  rhc_test_fail++;\
+  return;\
+  }\
+} while( 0 )
+
+#define RHC_ASSERT_LE(val1, val2) do{ \
+  double __rhc_val1 = (val1);\
+  double __rhc_val2 = (val2);\
+  if( !( __rhc_val1 <= __rhc_val2 ) ){\
+  rhc_test_status = 1;\
+  snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Expected: (%s) <= (%s)\n But was: %g vs %g", #val1, #val2, __rhc_val1, __rhc_val2 );\
+  RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
+  rhc_test_fail++;\
+  return;\
+  }\
+} while( 0 )
+
 #define RHC_RUN_TEST(test_name) do{\
   if( rhc_timer == 0 ) rhc_timer = rhcTimer();\
   rhc_test_status = 0;\
