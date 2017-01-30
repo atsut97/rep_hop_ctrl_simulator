@@ -53,11 +53,9 @@ static char rhc_test_messages[RHC_TEST_FAILED_MESSAGE_NUM][RHC_TEST_FAILED_MESSA
 } while( 0 )
 
 #define RHC_ASSERT_EQ(expected, actual) do{\
-  long int __rhc_expected_int = (expected);\
-  long int __rhc_actual_int   = (actual);\
-  if( (__rhc_expected_int) != (__rhc_actual_int) ){\
+  if( (expected) != (actual) ){\
     rhc_test_status = 1;\
-    snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Value of: %s\nExpected: %ld\n But was: %ld", #actual, __rhc_expected_int, __rhc_actual_int );\
+    snprintf( rhc_test_last_message, RHC_TEST_FAILED_MESSAGE_LEN, "Value of: %s\nExpected: %g\n But was: %g", #actual, (double)expected, (double)actual );\
     RHC_STACK_FAILURE_MESSAGE( rhc_test_last_message );\
     rhc_test_fail++;\
     return;\
