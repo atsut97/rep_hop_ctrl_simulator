@@ -2,7 +2,7 @@
 #include "rhc_test.h"
 #include <malloc.h>
 
-void check_if_vec_create(uint size)
+void check_if_vec_create(size_t size)
 {
   vec_t v;
 
@@ -18,11 +18,11 @@ TEST(test_vec_create)
   check_if_vec_create( 5 );
 }
 
-void check_if_vec_set_elem(vec_t v, uint size, ... )
+void check_if_vec_set_elem(vec_t v, size_t size, ... )
 {
   va_list args;
   double val;
-  register uint i;
+  register size_t i;
 
   va_start( args, size );
   for( i=0; i<size; i++ ){

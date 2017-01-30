@@ -3,7 +3,7 @@
 static vec_t _vec_set_elem_vlist(vec_t v, va_list args);
 vec_t _vec_set_elem_vlist(vec_t v, va_list args)
 {
-  register uint i;
+  register size_t i;
 
   for( i=0; i<vec_size(v); i++ )
     vec_set_elem( v, i, (double)va_arg( args, double ) );
@@ -20,7 +20,7 @@ vec_t vec_set_elem_list(vec_t v, ... )
   return v;
 }
 
-vec_t vec_create(uint size)
+vec_t vec_create(size_t size)
 {
   vec_t v;
 
@@ -36,7 +36,7 @@ vec_t vec_create(uint size)
   return v;
 }
 
-vec_t vec_create_list(uint size, ... )
+vec_t vec_create_list(size_t size, ... )
 {
   vec_t v;
   va_list args;

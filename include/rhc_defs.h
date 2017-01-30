@@ -20,6 +20,10 @@ typedef unsigned char      ubyte;
 typedef signed short int   word;
 typedef unsigned short int uword;
 
+#if !(defined (__GNUG__) && defined (size_t))
+typedef ulong size_t;
+#endif
+
 typedef ubyte bool;
 enum{
   false = 0, true = 1
