@@ -16,8 +16,6 @@ rhcVec rhcVecSetElemList(rhcVec v, ... )
   va_list args;
 
   va_start( args, v );
-  /* for( i=0; i<rhcVecSize(v); i++ ) */
-  /*   rhcVecSetElem( v, i, (double)va_arg( args, double ) ); */
   _rhcVecSetElemVList( v, args );
   va_end( args );
   return v;
