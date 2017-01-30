@@ -15,3 +15,10 @@ rhcVec rhcVecCreate(unsigned int size)
   v->size = size;
   return v;
 }
+
+void rhcVecDestroy(rhcVec v)
+{
+  if( v->e )
+    free( v->e );
+  free( v );
+}

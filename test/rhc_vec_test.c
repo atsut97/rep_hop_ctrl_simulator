@@ -9,7 +9,7 @@ void _test_vec_create(unsigned int size)
   v = rhcVecCreate( size );
   RHC_ASSERT_EQ( size, rhcVecSize( v ) );
   RHC_ASSERT_LE( sizeof(double) * size, malloc_usable_size(v->e) );
-  free( v );
+  rhcVecDestroy( v );
 }
 
 RHC_TEST(test_vec_create)

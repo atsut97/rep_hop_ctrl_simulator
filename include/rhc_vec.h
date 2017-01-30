@@ -14,5 +14,6 @@ typedef _rhcVec* rhcVec;
 #define rhcVecSize(v) ( v->size )
 
 rhcVec rhcVecCreate(unsigned int size);
+void rhcVecDestroy(rhcVec v);
 
 #endif /* __RHC_VEC_H__ */
