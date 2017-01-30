@@ -1,15 +1,15 @@
 #include "rhc_vec.h"
 
-rhcVec rhcVecCreate(unsigned int size)
+rhcVec rhcVecCreate(uint size)
 {
   rhcVec v;
 
-  if( ( v = (_rhcVec *)malloc( sizeof(_rhcVec) ) ) == NULL ){
-    fprintf( stderr, "cannot allocate memory\n" );
+  if( ( v = rhcAlloc( _rhcVec, 1 ) ) == NULL ){
+    eprintf( "cannot allocate memory\n" );
     return NULL;
   }
-  if( ( v->e = (double *)malloc( sizeof(double) * size ) ) == NULL ){
-    fprintf( stderr, "cannot allocate memory\n" );
+  if( ( v->e = rhcAlloc( double, size ) ) == NULL ){
+    eprintf( "cannot allocate memory\n" );
     return NULL;
   }
   v->size = size;
@@ -19,6 +19,6 @@ rhcVec rhcVecCreate(unsigned int size)
 void rhcVecDestroy(rhcVec v)
 {
   if( v->e )
-    free( v->e );
-  free( v );
+    rhcFree( v->e );
+  rhcFree( v );
 }

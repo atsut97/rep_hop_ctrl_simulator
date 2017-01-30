@@ -1,11 +1,10 @@
 #ifndef __RHC_VEC_H__
 #define __RHC_VEC_H__
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "rhc_misc.h"
 
 typedef struct{
-  unsigned int size;
+  uint size;
   double *e;
 } _rhcVec;
 
@@ -13,7 +12,7 @@ typedef _rhcVec* rhcVec;
 
 #define rhcVecSize(v) ( v->size )
 
-rhcVec rhcVecCreate(unsigned int size);
+rhcVec rhcVecCreate(uint size);
 void rhcVecDestroy(rhcVec v);
 
 #endif /* __RHC_VEC_H__ */
