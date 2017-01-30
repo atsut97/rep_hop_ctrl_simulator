@@ -25,4 +25,7 @@ vec_t vec_create(size_t size);
 vec_t vec_create_list(size_t size, ... );
 void vec_destroy(vec_t v);
 
+/* arithmatic operations */
+vec_t vec_add(vec_t v1, vec_t v2, vec_t v);
+
 #endif /* __RHC_VEC_H__ */

@@ -93,12 +93,40 @@ TEST(test_vec_create_list)
   vec_destroy( v );
 }
 
+TEST(test_vec_add)
+{
+  vec_t v1, v2, v;
+
+  v1 = vec_create_list( 2, 1.0, 1.0 );
+  v2 = vec_create_list( 2, 3.0, 4.0 );
+  v  = vec_create( 2 );
+  vec_add( v1, v2, v );
+  ASSERT_EQ( 4.0, vec_elem( v, 0 ) );
+  ASSERT_EQ( 5.0, vec_elem( v, 1 ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+  vec_destroy( v );
+
+  v1 = vec_create_list( 4, -2.0, 3.0, -4.0,  5.0 );
+  v2 = vec_create_list( 4, -3.0, 4.0,  5.0, -6.0 );
+  v  = vec_create( 4 );
+  vec_add( v1, v2, v );
+  ASSERT_EQ( -5.0, vec_elem( v, 0 ) );
+  ASSERT_EQ(  7.0, vec_elem( v, 1 ) );
+  ASSERT_EQ(  1.0, vec_elem( v, 2 ) );
+  ASSERT_EQ( -1.0, vec_elem( v, 3 ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+  vec_destroy( v );
+}
+
 TEST_SUITE(test_vec)
 {
   RUN_TEST(test_vec_create);
   RUN_TEST(test_vec_set_elem);
   RUN_TEST(test_vec_set_elem_list);
   RUN_TEST(test_vec_create_list);
+  RUN_TEST(test_vec_add);
 }
 
 int main(int argc, char *argv[])

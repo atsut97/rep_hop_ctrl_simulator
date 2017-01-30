@@ -55,3 +55,12 @@ void vec_destroy(vec_t v)
     sfree( vec_buf(v) );
   sfree( v );
 }
+
+vec_t vec_add(vec_t v1, vec_t v2, vec_t v)
+{
+  size_t i;
+
+  for( i=0; i<vec_size(v1); i++ )
+    vec_set_elem( v, i, vec_elem(v1,i) + vec_elem(v2,i) );
+  return v;
+}
