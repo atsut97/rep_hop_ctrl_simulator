@@ -1,35 +1,34 @@
 #include "rhc_vec.h"
 
-static rhcVec _rhcVecSetElemVList(rhcVec v, va_list args);
-
-rhcVec _rhcVecSetElemVList(rhcVec v, va_list args)
+static vec_t _vec_set_elem_vlist(vec_t v, va_list args);
+vec_t _vec_set_elem_vlist(vec_t v, va_list args)
 {
   register uint i;
 
-  for( i=0; i<rhcVecSize(v); i++ )
-    rhcVecSetElem( v, i, (double)va_arg( args, double ) );
+  for( i=0; i<vec_size(v); i++ )
+    vec_set_elem( v, i, (double)va_arg( args, double ) );
   return v;
 }
 
-rhcVec rhcVecSetElemList(rhcVec v, ... )
+vec_t vec_set_elem_list(vec_t v, ... )
 {
   va_list args;
 
   va_start( args, v );
-  _rhcVecSetElemVList( v, args );
+  _vec_set_elem_vlist( v, args );
   va_end( args );
   return v;
 }
 
-rhcVec rhcVecCreate(uint size)
+vec_t vec_create(uint size)
 {
-  rhcVec v;
+  vec_t v;
 
-  if( ( v = rhcAlloc( _rhcVec, 1 ) ) == NULL ){
+  if( ( v = nalloc( _vec_t, 1 ) ) == NULL ){
     eprintf( "cannot allocate memory\n" );
     return NULL;
   }
-  if( ( v->elem = rhcAlloc( double, size ) ) == NULL ){
+  if( ( v->elem = nalloc( double, size ) ) == NULL ){
     eprintf( "cannot allocate memory\n" );
     return NULL;
   }
@@ -37,22 +36,22 @@ rhcVec rhcVecCreate(uint size)
   return v;
 }
 
-rhcVec rhcVecCreateList(uint size, ... )
+vec_t vec_create_list(uint size, ... )
 {
-  rhcVec v;
+  vec_t v;
   va_list args;
 
-  if( ( v = rhcVecCreate( size ) ) == NULL )
+  if( ( v = vec_create( size ) ) == NULL )
     return NULL;
   va_start( args, size );
-  _rhcVecSetElemVList( v, args );
+  _vec_set_elem_vlist( v, args );
   va_end( args );
   return v;
 }
 
-void rhcVecDestroy(rhcVec v)
+void vec_destroy(vec_t v)
 {
-  if( rhcVecBuf(v) )
-    rhcFree( rhcVecBuf(v) );
-  rhcFree( v );
+  if( vec_buf(v) )
+    sfree( vec_buf(v) );
+  sfree( v );
 }
