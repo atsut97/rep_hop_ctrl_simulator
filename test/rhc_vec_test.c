@@ -71,11 +71,34 @@ RHC_TEST(test_vec_set_elem_list)
   rhcVecDestroy( v );
 }
 
+RHC_TEST(test_vec_create_list)
+{
+  rhcVec v;
+
+  v = rhcVecCreateList( 3, 1.0, 2.0, 3.0 );
+  RHC_ASSERT_EQ( 3, rhcVecSize( v ) );
+  RHC_ASSERT_EQ( 1.0, rhcVecElem( v, 0 ) );
+  RHC_ASSERT_EQ( 2.0, rhcVecElem( v, 1 ) );
+  RHC_ASSERT_EQ( 3.0, rhcVecElem( v, 2 ) );
+  rhcVecDestroy( v );
+
+  v = rhcVecCreateList( 6, 1.0, 2.0, 3.0, -3.0, -2.0, -1.0 );
+  RHC_ASSERT_EQ( 6, rhcVecSize( v ) );
+  RHC_ASSERT_EQ(  1.0, rhcVecElem( v, 0 ) );
+  RHC_ASSERT_EQ(  2.0, rhcVecElem( v, 1 ) );
+  RHC_ASSERT_EQ(  3.0, rhcVecElem( v, 2 ) );
+  RHC_ASSERT_EQ( -3.0, rhcVecElem( v, 3 ) );
+  RHC_ASSERT_EQ( -2.0, rhcVecElem( v, 4 ) );
+  RHC_ASSERT_EQ( -1.0, rhcVecElem( v, 5 ) );
+  rhcVecDestroy( v );
+}
+
 RHC_TEST_SUITE(test_vec)
 {
   RHC_RUN_TEST(test_vec_create);
   RHC_RUN_TEST(test_vec_set_elem);
   RHC_RUN_TEST(test_vec_set_elem_list);
+  RHC_RUN_TEST(test_vec_create_list);
 }
 
 int main(int argc, char *argv[])

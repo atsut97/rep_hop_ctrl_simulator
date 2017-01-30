@@ -22,6 +22,7 @@ rhcVec rhcVecSetElemList(rhcVec v, ... );
 
 /* create, destroy a vector */
 rhcVec rhcVecCreate(uint size);
+rhcVec rhcVecCreateList(uint size, ... );
 void rhcVecDestroy(rhcVec v);
 
 #endif /* __RHC_VEC_H__ */
