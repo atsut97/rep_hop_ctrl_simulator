@@ -8,7 +8,7 @@ rhcVec rhcVecCreate(uint size)
     eprintf( "cannot allocate memory\n" );
     return NULL;
   }
-  if( ( v->e = rhcAlloc( double, size ) ) == NULL ){
+  if( ( v->elem = rhcAlloc( double, size ) ) == NULL ){
     eprintf( "cannot allocate memory\n" );
     return NULL;
   }
@@ -18,7 +18,7 @@ rhcVec rhcVecCreate(uint size)
 
 void rhcVecDestroy(rhcVec v)
 {
-  if( v->e )
-    rhcFree( v->e );
+  if( rhcVecBuf(v) )
+    rhcFree( rhcVecBuf(v) );
   rhcFree( v );
 }

@@ -5,13 +5,21 @@
 
 typedef struct{
   uint size;
-  double *e;
+  double *elem;
 } _rhcVec;
 
-typedef _rhcVec* rhcVec;
+typedef _rhcVec * rhcVec;
 
-#define rhcVecSize(v) ( v->size )
+/* vector size */
+#define rhcVecSize(v)      ( (v)->size )
+#define rhcVecSetSize(v,s) (rhcVecSize(v) = (s) )
 
+/* get/set a vector element */
+#define rhcVecBuf(v)         (v)->elem
+#define rhcVecElem(v,n)      rhcVecBuf(v)[n]
+#define rhcVecSetElem(v,n,e) ( rhcVecElem(v,n) = (e) )
+
+/* create, destroy a vector */
 rhcVec rhcVecCreate(uint size);
 void rhcVecDestroy(rhcVec v);
 

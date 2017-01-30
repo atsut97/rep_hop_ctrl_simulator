@@ -2,13 +2,13 @@
 #include "rhc_vec.h"
 #include <malloc.h>
 
-void _test_vec_create(unsigned int size)
+void _test_vec_create(uint size)
 {
   rhcVec v;
 
   v = rhcVecCreate( size );
   RHC_ASSERT_EQ( size, rhcVecSize( v ) );
-  RHC_ASSERT_LE( sizeof(double) * size, malloc_usable_size(v->e) );
+  RHC_ASSERT_LE( sizeof(double) * size, malloc_usable_size(v->elem) );
   rhcVecDestroy( v );
 }
 
