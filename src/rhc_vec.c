@@ -1,5 +1,16 @@
 #include "rhc_vec.h"
 
+rhcVec rhcVecSetElemList(rhcVec v, ... )
+{
+  va_list args;
+  register uint i;
+
+  va_start( args, v );
+  for( i=0; i<rhcVecSize(v); i++ )
+    rhcVecSetElem( v, i, (double)va_arg( args, double ) );
+  return v;
+}
+
 rhcVec rhcVecCreate(uint size)
 {
   rhcVec v;

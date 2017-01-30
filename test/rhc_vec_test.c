@@ -49,10 +49,33 @@ RHC_TEST(test_vec_set_elem)
   rhcVecDestroy( v );
 }
 
+RHC_TEST(test_vec_set_elem_list)
+{
+  rhcVec v;
+
+  v = rhcVecCreate( 3 );
+  rhcVecSetElemList( v, 1.0, 2.0, 3.0 );
+  RHC_ASSERT_EQ( 1.0, rhcVecElem( v, 0 ) );
+  RHC_ASSERT_EQ( 2.0, rhcVecElem( v, 1 ) );
+  RHC_ASSERT_EQ( 3.0, rhcVecElem( v, 2 ) );
+  rhcVecDestroy( v );
+
+  v = rhcVecCreate( 6 );
+  rhcVecSetElemList( v, -3.0, -2.0, -1.0, 1.0, 2.0, 3.0 );
+  RHC_ASSERT_EQ( -3.0, rhcVecElem( v, 0 ) );
+  RHC_ASSERT_EQ( -2.0, rhcVecElem( v, 1 ) );
+  RHC_ASSERT_EQ( -1.0, rhcVecElem( v, 2 ) );
+  RHC_ASSERT_EQ(  1.0, rhcVecElem( v, 3 ) );
+  RHC_ASSERT_EQ(  2.0, rhcVecElem( v, 4 ) );
+  RHC_ASSERT_EQ(  3.0, rhcVecElem( v, 5 ) );
+  rhcVecDestroy( v );
+}
+
 RHC_TEST_SUITE(test_vec)
 {
   RHC_RUN_TEST(test_vec_create);
   RHC_RUN_TEST(test_vec_set_elem);
+  RHC_RUN_TEST(test_vec_set_elem_list);
 }
 
 int main(int argc, char *argv[])

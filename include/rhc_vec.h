@@ -18,6 +18,7 @@ typedef _rhcVec * rhcVec;
 #define rhcVecBuf(v)         (v)->elem
 #define rhcVecElem(v,n)      rhcVecBuf(v)[n]
 #define rhcVecSetElem(v,n,e) ( rhcVecElem(v,n) = (e) )
+rhcVec rhcVecSetElemList(rhcVec v, ... );
 
 /* create, destroy a vector */
 rhcVec rhcVecCreate(uint size);
