@@ -25,6 +25,10 @@ debug:
 	@echo "TARGET =" $(TARGET)
 	@echo "DEPS   =" $(DEPS)
 
+.PHONY: test
+test: all
+	./test_runner.sh
+
 %_test: %_test.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LINK)
 
