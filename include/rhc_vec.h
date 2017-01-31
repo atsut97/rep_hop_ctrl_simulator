@@ -19,6 +19,7 @@ typedef _vec_t * vec_t;
 #define vec_elem(v,n)      vec_buf(v)[n]
 #define vec_set_elem(v,n,e) ( vec_elem(v,n) = (e) )
 vec_t vec_set_elem_list(vec_t v, ... );
+vec_t vec_clear(vec_t v);
 
 /* create, destroy a vector */
 vec_t vec_create(size_t size);

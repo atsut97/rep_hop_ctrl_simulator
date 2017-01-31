@@ -2,6 +2,15 @@
 #include "rhc_test.h"
 #include <malloc.h>
 
+/* set random values to a vector */
+void set_vec_rand(vec_t v)
+{
+  register size_t i;
+
+  for( i=0; i<vec_size(v); i++ )
+    vec_set_elem( v, i, rand() );
+}
+
 /* check if a vector created by 'vec_create' has correct size */
 void check_vec_create(size_t n, size_t expected)
 {
@@ -90,6 +99,27 @@ TEST(test_vec_set_elem_list)
   vec_set_elem_list( v, -3.0, -2.0, -1.0, 1.0, 2.0, 3.0 );
   check_vec_elem( v, 6, -3.0, -2.0, -1.0, 1.0, 2.0, 3.0 );
   vec_destroy( v );
+}
+
+void check_vec_clear(size_t n)
+{
+  vec_t v;
+  register size_t i;
+
+  v = vec_create( n );
+  set_vec_rand( v );
+  vec_clear( v );
+  for( i=0; i<vec_size(v); i++ )
+    ASSERT_EQ( 0.0, vec_elem(v,i) );
+  vec_destroy( v );
+}
+
+TEST(test_vec_clear)
+{
+  int cases[] = { 3, 5, 0 };
+
+  for( int *c=cases; (*c) > 0; c++ )
+    check_vec_clear( *c );
 }
 
 TEST(test_vec_create_list)
@@ -184,6 +214,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_set_elem_list);
   RUN_TEST(test_vec_create_list);
   RUN_TEST(test_vec_create_array);
+  RUN_TEST(test_vec_clear);
   RUN_TEST(test_vec_add);
 }
 
