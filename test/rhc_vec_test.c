@@ -18,7 +18,7 @@ TEST(test_vec_create)
   check_if_vec_create( 5 );
 }
 
-void check_if_vec_set_elem(vec_t v, size_t size, ... )
+void check_vec_elem(vec_t v, size_t size, ... )
 {
   va_list args;
   double val;
@@ -38,14 +38,14 @@ TEST(test_vec_set_elem)
 
   v = vec_create( 1 );
   vec_set_elem( v, 0, 1.0 );
-  check_if_vec_set_elem( v, 1, 1.0 );
+  check_vec_elem( v, 1, 1.0 );
   vec_destroy( v );
 
   v = vec_create( 3 );
   vec_set_elem( v, 0, 2 );
   vec_set_elem( v, 1, 3.0 );
   vec_set_elem( v, 2, 5.5 );
-  check_if_vec_set_elem( v, 3, 2.0, 3.0, 5.5 );
+  check_vec_elem( v, 3, 2.0, 3.0, 5.5 );
   vec_destroy( v );
 }
 
@@ -55,19 +55,12 @@ TEST(test_vec_set_elem_list)
 
   v = vec_create( 3 );
   vec_set_elem_list( v, 1.0, 2.0, 3.0 );
-  ASSERT_EQ( 1.0, vec_elem( v, 0 ) );
-  ASSERT_EQ( 2.0, vec_elem( v, 1 ) );
-  ASSERT_EQ( 3.0, vec_elem( v, 2 ) );
+  check_vec_elem( v, 3, 1.0, 2.0, 3.0 );
   vec_destroy( v );
 
   v = vec_create( 6 );
   vec_set_elem_list( v, -3.0, -2.0, -1.0, 1.0, 2.0, 3.0 );
-  ASSERT_EQ( -3.0, vec_elem( v, 0 ) );
-  ASSERT_EQ( -2.0, vec_elem( v, 1 ) );
-  ASSERT_EQ( -1.0, vec_elem( v, 2 ) );
-  ASSERT_EQ(  1.0, vec_elem( v, 3 ) );
-  ASSERT_EQ(  2.0, vec_elem( v, 4 ) );
-  ASSERT_EQ(  3.0, vec_elem( v, 5 ) );
+  check_vec_elem( v, 6, -3.0, -2.0, -1.0, 1.0, 2.0, 3.0 );
   vec_destroy( v );
 }
 
@@ -77,19 +70,12 @@ TEST(test_vec_create_list)
 
   v = vec_create_list( 3, 1.0, 2.0, 3.0 );
   ASSERT_EQ( 3, vec_size( v ) );
-  ASSERT_EQ( 1.0, vec_elem( v, 0 ) );
-  ASSERT_EQ( 2.0, vec_elem( v, 1 ) );
-  ASSERT_EQ( 3.0, vec_elem( v, 2 ) );
+  check_vec_elem( v, 3, 1.0, 2.0, 3.0 );
   vec_destroy( v );
 
   v = vec_create_list( 6, 1.0, 2.0, 3.0, -3.0, -2.0, -1.0 );
   ASSERT_EQ( 6, vec_size( v ) );
-  ASSERT_EQ(  1.0, vec_elem( v, 0 ) );
-  ASSERT_EQ(  2.0, vec_elem( v, 1 ) );
-  ASSERT_EQ(  3.0, vec_elem( v, 2 ) );
-  ASSERT_EQ( -3.0, vec_elem( v, 3 ) );
-  ASSERT_EQ( -2.0, vec_elem( v, 4 ) );
-  ASSERT_EQ( -1.0, vec_elem( v, 5 ) );
+  check_vec_elem( v, 6, 1.0, 2.0, 3.0, -3.0, -2.0, -1.0 );
   vec_destroy( v );
 }
 
@@ -101,8 +87,7 @@ TEST(test_vec_add)
   v2 = vec_create_list( 2, 3.0, 4.0 );
   v  = vec_create( 2 );
   vec_add( v1, v2, v );
-  ASSERT_EQ( 4.0, vec_elem( v, 0 ) );
-  ASSERT_EQ( 5.0, vec_elem( v, 1 ) );
+  check_vec_elem( v, 2, 4.0, 5.0 );
   vec_destroy( v1 );
   vec_destroy( v2 );
   vec_destroy( v );
@@ -111,10 +96,7 @@ TEST(test_vec_add)
   v2 = vec_create_list( 4, -3.0, 4.0,  5.0, -6.0 );
   v  = vec_create( 4 );
   vec_add( v1, v2, v );
-  ASSERT_EQ( -5.0, vec_elem( v, 0 ) );
-  ASSERT_EQ(  7.0, vec_elem( v, 1 ) );
-  ASSERT_EQ(  1.0, vec_elem( v, 2 ) );
-  ASSERT_EQ( -1.0, vec_elem( v, 3 ) );
+  check_vec_elem( v, 4, -5.0, 7.0, 1.0, -1.0 );
   vec_destroy( v1 );
   vec_destroy( v2 );
   vec_destroy( v );
