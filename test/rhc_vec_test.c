@@ -2,20 +2,26 @@
 #include "rhc_test.h"
 #include <malloc.h>
 
-void check_if_vec_create(size_t size)
+/* check if a vector created by 'vec_create' has correct size */
+void check_vec_create(size_t n, size_t expected)
 {
   vec_t v;
 
-  v = vec_create( size );
-  ASSERT_EQ( size, vec_size( v ) );
-  ASSERT_LE( sizeof(double) * size, malloc_usable_size(v->elem) );
+  v = vec_create( n );
+  ASSERT_EQ( expected, vec_size( v ) );
+  ASSERT_LE( sizeof(double) * expected, malloc_usable_size(v->elem) );
   vec_destroy( v );
 }
 
 TEST(test_vec_create)
 {
-  check_if_vec_create( 2 );
-  check_if_vec_create( 5 );
+  struct case_t {
+    size_t n, expected;
+  } cases[] = { {2, 2}, {5, 5}, {0, 0} };
+  struct case_t *c;
+
+  for( c=cases; (*c).n != 0; c++ )
+    check_vec_create( (*c).n, (*c).expected );
 }
 
 void check_vec_elem(vec_t v, size_t size, ... )
