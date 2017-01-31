@@ -107,6 +107,34 @@ TEST(test_vec_create_list)
   vec_destroy( v );
 }
 
+void check_vec_create_array(size_t n, double *elem)
+{
+  vec_t v;
+  register size_t i;
+
+  v = vec_create_array( n, elem );
+  ASSERT_EQ( n, vec_size( v ) );
+  for( i=0; i<n; i++ )
+    ASSERT_EQ( elem[i], vec_elem( v, i ) );
+  vec_destroy( v );
+}
+
+TEST(test_vec_create_array)
+{
+  struct case_t {
+    size_t n;
+    double elem[10];
+  } cases[] = {
+    { 3, { 1.0, 2.0, 3.0 } },
+    { 6, { 1.0, 2.0, 3.0, -3.0, -2.0, -1.0 } },
+    { 0, {} }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n > 0; c++ )
+    check_vec_create_array( (*c).n, (*c).elem );
+}
+
 TEST(test_vec_add)
 {
   vec_t v1, v2, v;
@@ -137,6 +165,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_set_elem);
   RUN_TEST(test_vec_set_elem_list);
   RUN_TEST(test_vec_create_list);
+  RUN_TEST(test_vec_create_array);
   RUN_TEST(test_vec_add);
 }
 

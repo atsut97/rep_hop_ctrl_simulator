@@ -23,6 +23,7 @@ vec_t vec_set_elem_list(vec_t v, ... );
 /* create, destroy a vector */
 vec_t vec_create(size_t size);
 vec_t vec_create_list(size_t size, ... );
+vec_t vec_create_array(size_t size, double array[]);
 void vec_destroy(vec_t v);
 
 /* arithmatic operations */

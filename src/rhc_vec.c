@@ -52,6 +52,16 @@ vec_t vec_create_list(size_t size, ... )
   return v;
 }
 
+vec_t vec_create_array(size_t size, double array[])
+{
+  vec_t v;
+
+  if( ( v = vec_create( size ) ) == NULL )
+    return NULL;
+  memcpy( vec_buf( v ), array, sizeof(double)*size );
+  return v;
+}
+
 void vec_destroy(vec_t v)
 {
   if( vec_buf(v) )
