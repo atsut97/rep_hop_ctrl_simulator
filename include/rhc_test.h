@@ -52,6 +52,16 @@ static char __test_messages[TEST_FAILED_MESSAGE_NUM][TEST_FAILED_MESSAGE_LEN];
   }\
 } while( 0 )
 
+#define ASSERT_TRUE(cond) do{\
+  snprintf( __test_last_message, TEST_FAILED_MESSAGE_LEN, "Value of %s\nExpected: true\n But was: false", #cond );\
+  ASSERT( (cond), __test_last_message );\
+} while( 0 )
+
+#define ASSERT_FALSE(cond) do{\
+  snprintf( __test_last_message, TEST_FAILED_MESSAGE_LEN, "Value of %s\nExpected: false\n But was: true", #cond );\
+  ASSERT( !(cond), __test_last_message );\
+} while( 0 )
+
 #define ASSERT_EQ(expected, actual) do{\
   if( (expected) != (actual) ){\
     __test_status = 1;\

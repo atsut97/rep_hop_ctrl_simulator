@@ -14,6 +14,27 @@ TEST(test_assert_fail)
   ASSERT( bar == 5, "bar should be 5" );
 }
 
+TEST(test_true)
+{
+  ASSERT_TRUE( foo == 7 );
+}
+
+TEST(test_true_fail)
+{
+  ASSERT_TRUE( bar == 5 );
+}
+
+TEST(test_false)
+{
+  ASSERT_FALSE( bar == 5 );
+  ASSERT_FALSE( NULL );
+}
+
+TEST(test_false_fail)
+{
+  ASSERT_FALSE( foo == 7 );
+}
+
 TEST(test_assert_eq)
 {
   ASSERT_EQ( 7, foo );
@@ -79,6 +100,8 @@ TEST(test_assert_le_fail)
 TEST_SUITE(all_tests)
 {
   RUN_TEST( test_assert );
+  RUN_TEST( test_true );
+  RUN_TEST( test_false );
   RUN_TEST( test_assert_eq );
   RUN_TEST( test_assert_double_eq );
   RUN_TEST( test_assert_gt );
@@ -87,6 +110,8 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_le );
 
   RUN_TEST( test_assert_fail );
+  RUN_TEST( test_true_fail );
+  RUN_TEST( test_false_fail );
   RUN_TEST( test_assert_eq_fail );
   RUN_TEST( test_assert_double_eq_fail );
   RUN_TEST( test_assert_gt_fail );
