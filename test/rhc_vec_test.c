@@ -24,6 +24,16 @@ TEST(test_vec_create)
     check_vec_create( (*c).n, (*c).expected );
 }
 
+TEST(test_vec_create_zero_size)
+{
+  vec_t v;
+
+  v = vec_create( 0 );
+  ASSERT_EQ( 0, vec_size( v ) );
+  ASSERT_FALSE( vec_buf( v ) );
+  vec_destroy( v );
+}
+
 void check_vec_elem(vec_t v, size_t size, ... )
 {
   va_list args;
@@ -111,6 +121,7 @@ TEST(test_vec_add)
 TEST_SUITE(test_vec)
 {
   RUN_TEST(test_vec_create);
+  RUN_TEST(test_vec_create_zero_size);
   RUN_TEST(test_vec_set_elem);
   RUN_TEST(test_vec_set_elem_list);
   RUN_TEST(test_vec_create_list);
