@@ -48,21 +48,33 @@ void check_vec_elem(vec_t v, size_t size, ... )
   va_end( args );
 }
 
-TEST(test_vec_set_elem)
+void check_vec_set_elem(size_t size, double *elem)
 {
   vec_t v;
+  register size_t i;
 
-  v = vec_create( 1 );
-  vec_set_elem( v, 0, 1.0 );
-  check_vec_elem( v, 1, 1.0 );
+  v = vec_create( size );
+  for( i=0; i<size; i++ )
+    vec_set_elem( v, i, elem[i] );
+  for( i=0; i<size; i++ )
+    ASSERT_EQ( elem[i], vec_elem( v, i ) );
   vec_destroy( v );
+}
 
-  v = vec_create( 3 );
-  vec_set_elem( v, 0, 2 );
-  vec_set_elem( v, 1, 3.0 );
-  vec_set_elem( v, 2, 5.5 );
-  check_vec_elem( v, 3, 2.0, 3.0, 5.5 );
-  vec_destroy( v );
+TEST(test_vec_set_elem)
+{
+  struct case_t {
+    size_t n;
+    double elem[10];
+  } cases[] = {
+    { 1, { 1.0 } },
+    { 3, { 2.0, 3.0, 5.5 } },
+    { 0, {} }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n>0; c++ )
+    check_vec_set_elem( (*c).n, (*c).elem );
 }
 
 TEST(test_vec_set_elem_list)
