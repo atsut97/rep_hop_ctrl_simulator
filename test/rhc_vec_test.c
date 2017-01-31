@@ -107,15 +107,21 @@ TEST(test_vec_create_list)
   vec_destroy( v );
 }
 
+void check_vec_elem_with_array(double *expected, vec_t v)
+{
+  register size_t i;
+
+  for( i=0; i<vec_size(v); i++ )
+    ASSERT_EQ( expected[i], vec_elem( v, i ) );
+}
+
 void check_vec_create_array(size_t n, double *elem)
 {
   vec_t v;
-  register size_t i;
 
   v = vec_create_array( n, elem );
   ASSERT_EQ( n, vec_size( v ) );
-  for( i=0; i<n; i++ )
-    ASSERT_EQ( elem[i], vec_elem( v, i ) );
+  check_vec_elem_with_array( elem, v );
   vec_destroy( v );
 }
 
@@ -135,28 +141,40 @@ TEST(test_vec_create_array)
     check_vec_create_array( (*c).n, (*c).elem );
 }
 
-TEST(test_vec_add)
+void check_vec_add(size_t n, double *val1, double *val2, double *expected)
 {
   vec_t v1, v2, v;
 
-  v1 = vec_create_list( 2, 1.0, 1.0 );
-  v2 = vec_create_list( 2, 3.0, 4.0 );
-  v  = vec_create( 2 );
-  vec_add( v1, v2, v );
-  check_vec_elem( v, 2, 4.0, 5.0 );
-  vec_destroy( v1 );
-  vec_destroy( v2 );
-  vec_destroy( v );
+  v1 = vec_create_array( n, val1 );
+  v2 = vec_create_array( n, val2 );
+  v  = vec_create( n );
 
-  v1 = vec_create_list( 4, -2.0, 3.0, -4.0,  5.0 );
-  v2 = vec_create_list( 4, -3.0, 4.0,  5.0, -6.0 );
-  v  = vec_create( 4 );
   vec_add( v1, v2, v );
-  check_vec_elem( v, 4, -5.0, 7.0, 1.0, -1.0 );
+
+  check_vec_elem_with_array( expected, v );
   vec_destroy( v1 );
   vec_destroy( v2 );
   vec_destroy( v );
 }
+
+TEST(test_vec_add)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double val2[10];
+    double expected[10];
+  } cases[] = {
+    { 2, { 1.0, 1.0 }, { 3.0, 4.0 }, { 4.0, 5.0 } },
+    { 4, { -2.0, 3.0, -4.0, 5.0 }, { -3.0, 4.0, 5.0, -6.0 }, { -5.0, 7.0, 1.0, -1.0 } },
+    { 0, {}, {}, {} },
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n > 0; c++ )
+    check_vec_add( (*c).n, (*c).val1, (*c).val2, (*c).expected );
+}
+
 
 TEST_SUITE(test_vec)
 {
