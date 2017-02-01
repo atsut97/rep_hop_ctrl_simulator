@@ -108,6 +108,30 @@ TEST(test_assert_streq_fail)
   ASSERT_STREQ( "fuga", hoge );
 }
 
+TEST(test_assert_ptreq)
+{
+  int *foop = &foo;
+
+  ASSERT_PTREQ( &foo, foop );
+  foop = NULL;
+  ASSERT_PTREQ( NULL, foop );
+  ASSERT_PTREQ( NULL, NULL );
+}
+
+TEST(test_assert_ptreq_fail)
+{
+  int *foop = &foo;
+
+  ASSERT_PTREQ( &bar, foop );
+}
+
+TEST(test_assert_ptreq_fail2)
+{
+  int *foop = &foo;
+
+  ASSERT_PTREQ( NULL, foop );
+}
+
 TEST_SUITE(all_tests)
 {
   RUN_TEST( test_assert );
@@ -120,6 +144,7 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_lt );
   RUN_TEST( test_assert_le );
   RUN_TEST( test_assert_streq );
+  RUN_TEST( test_assert_ptreq );
 
   RUN_TEST( test_assert_fail );
   RUN_TEST( test_true_fail );
@@ -131,6 +156,8 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_lt_fail );
   RUN_TEST( test_assert_le_fail );
   RUN_TEST( test_assert_streq_fail );
+  RUN_TEST( test_assert_ptreq_fail );
+  RUN_TEST( test_assert_ptreq_fail2 );
 }
 
 int main(int argc, char *argv[])

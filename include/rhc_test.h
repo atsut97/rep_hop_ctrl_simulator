@@ -143,6 +143,16 @@ static char __test_messages[TEST_FAILED_MESSAGE_NUM][TEST_FAILED_MESSAGE_LEN];
   }\
 } while( 0 )
 
+#define ASSERT_PTREQ(expected, actual) do{\
+  if( (expected) != (actual) ){\
+    __test_status = 1;\
+    snprintf( __test_last_message, TEST_FAILED_MESSAGE_LEN, "Value of: %s\nExpected: %p\n But was: %p", #actual, expected, actual );\
+    STACK_FAILURE_MESSAGE( __test_last_message );\
+    __test_fail++;\
+    return;\
+   }\
+} while( 0 )
+
 #define RUN_TEST(test_name) do{\
   if( __test_timer_time == 0 ) __test_timer_time = test_timer();\
   __test_status = 0;\
