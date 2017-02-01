@@ -271,6 +271,25 @@ TEST(test_vec_sub)
     check_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_sub );
 }
 
+TEST(test_vec_sub_size_mismatch)
+{
+  struct case_t {
+    size_t v1_s, v2_s, v3_s;
+    bool expected;
+  } cases[] = {
+    { 2, 2, 2, true },
+    { 2, 3, 3, false },
+    { 3, 3, 1, false },
+    { 2, 3, 1, false },
+    { 0, 0, 0, false }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).v1_s>0; c++ )
+    check_vec_size_3( (*c).v1_s, (*c).v2_s, (*c).v3_s,
+                      (*c).expected, vec_sub );
+}
+
 TEST_SUITE(test_vec)
 {
   CONFIGURE_SUITE(&setup, &teardown);
@@ -284,6 +303,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_add);
   RUN_TEST(test_vec_add_size_mismatch);
   RUN_TEST(test_vec_sub);
+  RUN_TEST(test_vec_sub_size_mismatch);
 }
 
 int main(int argc, char *argv[])
