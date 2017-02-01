@@ -205,60 +205,32 @@ TEST(test_vec_add)
     check_vec_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_add );
 }
 
-void check_vec_size_2(size_t v1_s, size_t v2_s, bool expected, vec_t (*method)(vec_t,double,vec_t))
+void check_vec_size_2(size_t s1, size_t s2, vec_t (*method)(vec_t,double,vec_t))
 {
   vec_t v1, v2, ret;
-  double k;
-  char msg[BUFSIZ];
-  bool cond;
 
   RESET_ERR_MSG();
   ECHO_OFF();
-  v1 = vec_create( v1_s ); vec_clear( v1 );
-  v2 = vec_create( v2_s ); vec_clear( v2 );
-  k = 1.0;
-  ret = method( v1, k, v2 );
-  cond = vec_size(v1) == vec_size(v2);
-  if( expected ){
-    sprintf( msg, "Expected all sizes are equal, but was %lu vs %lu",
-             vec_size(v1), vec_size(v2) );
-    ASSERT( cond, msg );
-    ASSERT_PTREQ( vec_buf(v2), vec_buf(ret) );
-  } else {
-    sprintf( msg, "Expected some sizes are not equal, but was %lu vs %lu",
-             vec_size(v1), vec_size(v2) );
-    ASSERT( !cond, msg );
-    ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
-    ASSERT_PTREQ( NULL, ret );
-  }
+  v1 = vec_create( s1 );
+  v2 = vec_create( s2 );
+  ret = method( v1, 1.0, v2 );
+  ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+  ASSERT_PTREQ( NULL, ret );
   ECHO_ON();
 }
 
-void check_vec_size_3(size_t v1_s, size_t v2_s, size_t v3_s, bool expected, vec_t (*method)(vec_t,vec_t,vec_t))
+void check_vec_size_3(size_t s1, size_t s2, size_t s3, vec_t (*method)(vec_t,vec_t,vec_t))
 {
   vec_t v1, v2, v3, ret;
-  char msg[BUFSIZ];
-  bool cond;
 
   RESET_ERR_MSG();
   ECHO_OFF();
-  v1 = vec_create( v1_s ); vec_clear( v1 );
-  v2 = vec_create( v2_s ); vec_clear( v2 );
-  v3 = vec_create( v3_s ); vec_clear( v3 );
+  v1 = vec_create( s1 );
+  v2 = vec_create( s2 );
+  v3 = vec_create( s3 );
   ret = method( v1, v2, v3 );
-  cond = ( vec_size(v1) == vec_size(v2) ) && ( vec_size(v2) == vec_size(v3) );
-  if( expected ){
-    sprintf( msg, "Expected all sizes are equal, but was %lu vs %lu vs %lu",
-             vec_size(v1), vec_size(v2), vec_size(v3) );
-    ASSERT( cond, msg );
-    ASSERT_PTREQ( vec_buf(v3), vec_buf(ret) );
-  } else {
-    sprintf( msg, "Expected some sizes are not equal, but was %lu vs %lu vs %lu",
-             vec_size(v1), vec_size(v2), vec_size(v3) );
-    ASSERT( !cond, msg );
-    ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
-    ASSERT_PTREQ( NULL, ret );
-  }
+  ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+  ASSERT_PTREQ( NULL, ret );
   ECHO_ON();
 }
 
@@ -266,19 +238,16 @@ TEST(test_vec_add_size_mismatch)
 {
   struct case_t {
     size_t v1_s, v2_s, v3_s;
-    bool expected;
   } cases[] = {
-    { 2, 2, 2, true },
-    { 2, 3, 3, false },
-    { 3, 3, 1, false },
-    { 2, 3, 1, false },
-    { 0, 0, 0, false }
+    { 2, 3, 3 },
+    { 3, 3, 1 },
+    { 2, 3, 1 },
+    { 0, 0, 0 }
   };
   struct case_t *c;
 
   for( c=cases; (*c).v1_s>0; c++ )
-    check_vec_size_3( (*c).v1_s, (*c).v2_s, (*c).v3_s,
-                      (*c).expected, vec_add );
+    check_vec_size_3( (*c).v1_s, (*c).v2_s, (*c).v3_s, vec_add );
 }
 
 TEST(test_vec_sub)
@@ -303,19 +272,16 @@ TEST(test_vec_sub_size_mismatch)
 {
   struct case_t {
     size_t v1_s, v2_s, v3_s;
-    bool expected;
   } cases[] = {
-    { 2, 2, 2, true },
-    { 2, 3, 3, false },
-    { 3, 3, 1, false },
-    { 2, 3, 1, false },
-    { 0, 0, 0, false }
+    { 2, 3, 3 },
+    { 3, 3, 1 },
+    { 2, 3, 1 },
+    { 0, 0, 0 }
   };
   struct case_t *c;
 
   for( c=cases; (*c).v1_s>0; c++ )
-    check_vec_size_3( (*c).v1_s, (*c).v2_s, (*c).v3_s,
-                      (*c).expected, vec_sub );
+    check_vec_size_3( (*c).v1_s, (*c).v2_s, (*c).v3_s, vec_sub );
 }
 
 void check_vec_scalar_op(size_t n, double *val1, double k, double *expected, vec_t (*method)(vec_t,double,vec_t))
@@ -354,16 +320,14 @@ TEST(test_vec_mul_size_mismatch)
 {
   struct case_t {
     size_t v1_s, v2_s;
-    bool expected;
   } cases[] = {
-    { 2, 2, true },
-    { 2, 3, false },
-    { 0, 0, false }
+    { 2, 3 },
+    { 0, 0 }
   };
   struct case_t *c;
 
   for( c=cases; (*c).v1_s>0; c++ )
-    check_vec_size_2( (*c).v1_s, (*c).v2_s, (*c).expected, vec_mul );
+    check_vec_size_2( (*c).v1_s, (*c).v2_s, vec_mul );
 }
 
 TEST(test_vec_div)
@@ -388,16 +352,14 @@ TEST(test_vec_div_size_mismatch)
 {
   struct case_t {
     size_t v1_s, v2_s;
-    bool expected;
   } cases[] = {
-    { 2, 2, true },
-    { 2, 3, false },
-    { 0, 0, false }
+    { 2, 3 },
+    { 0, 0 }
   };
   struct case_t *c;
 
   for( c=cases; (*c).v1_s>0; c++ )
-    check_vec_size_2( (*c).v1_s, (*c).v2_s, (*c).expected, vec_div );
+    check_vec_size_2( (*c).v1_s, (*c).v2_s, vec_div );
 }
 
 TEST(test_vec_div_by_zero)
@@ -454,9 +416,9 @@ void check_vec_cat_size_mismatch(size_t s1, size_t s2, size_t s3)
 
   RESET_ERR_MSG();
   ECHO_OFF();
-  v1 = vec_create( s1 ); vec_clear( v1 );
-  v2 = vec_create( s2 ); vec_clear( v2 );
-  v3 = vec_create( s3 ); vec_clear( v3 );
+  v1 = vec_create( s1 );
+  v2 = vec_create( s2 );
+  v3 = vec_create( s3 );
   ret = vec_cat( v1, 1.0, v2, v3 );
   ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
   ASSERT_PTREQ( NULL, ret );
