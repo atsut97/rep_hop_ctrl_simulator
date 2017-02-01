@@ -340,7 +340,7 @@ TEST(test_vec_mul)
     double expected[10];
   } cases[] = {
     { 2, { 2.0, 3.0 }, 2.0, { 4.0, 6.0 } },
-    { 4, { -3.0, 5.0 }, 4.0, { -12.0, 20.0 } },
+    { 4, { -3.0, 5.0, -1.0, 10.0 }, 4.0, { -12.0, 20.0, -4.0, 40.0 } },
     { 0, {}, 0, {} }
   };
   struct case_t *c;
@@ -365,6 +365,50 @@ TEST(test_vec_mul_size_mismatch)
     check_vec_size_2( (*c).v1_s, (*c).v2_s, (*c).expected, vec_mul );
 }
 
+TEST(test_vec_div)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double k;
+    double expected[10];
+  } cases[] = {
+    { 2, { 2.0, 3.0 }, 2.0, { 1.0, 1.5 } },
+    { 4, { -8.0, 16.0, -20.0, 100.0 }, 4.0, { -2.0, 4.0, -5.0, 25.0 } },
+    { 0, {}, 0, {} }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n>0; c++ )
+    check_vec_scalar_op( (*c).n, (*c).val1, (*c).k, (*c).expected, vec_div );
+}
+
+TEST(test_vec_div_size_mismatch)
+{
+  struct case_t {
+    size_t v1_s, v2_s;
+    bool expected;
+  } cases[] = {
+    { 2, 2, true },
+    { 2, 3, false },
+    { 0, 0, false }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).v1_s>0; c++ )
+    check_vec_size_2( (*c).v1_s, (*c).v2_s, (*c).expected, vec_div );
+}
+
+TEST(test_vec_div_by_zero)
+{
+  vec_t v1, ret;
+
+  v1 = vec_create_list( 2, 1.0, 1.0 );
+  ret = vec_div( v1, 0.0, v1 );
+  ASSERT_STREQ( VEC_ERR_ZERODIV, __err_last_msg );
+  ASSERT_PTREQ( NULL, ret );
+}
+
 TEST_SUITE(test_vec)
 {
   CONFIGURE_SUITE(&setup, &teardown);
@@ -381,6 +425,9 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_sub_size_mismatch);
   RUN_TEST(test_vec_mul);
   RUN_TEST(test_vec_mul_size_mismatch);
+  RUN_TEST(test_vec_div);
+  RUN_TEST(test_vec_div_size_mismatch);
+  RUN_TEST(test_vec_div_by_zero);
 }
 
 int main(int argc, char *argv[])
