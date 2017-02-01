@@ -413,6 +413,70 @@ TEST(test_vec_div_by_zero)
   ECHO_ON();
 }
 
+void check_vec_cat(size_t n, double *val1, double k, double *val2, double *expected)
+{
+  vec_t v1, v2, v;
+
+  v1 = vec_create_array( n, val1 );
+  v2 = vec_create_array( n, val2 );
+  v  = vec_create( n );
+
+  vec_cat( v1, k, v2, v );
+
+  check_vec_elem_with_array( expected, v );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+  vec_destroy( v );
+}
+
+TEST(test_vec_cat)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double k;
+    double val2[10];
+    double expected[10];
+  } cases[] = {
+    { 2, { 1.0, -1.0 }, 3, { -3.0, 2.0}, { -8.0, 5.0 } },
+    { 3, { 1.0, -1.0, 1.0 }, 2, { -2.0, 2.0, 3.0}, { -3.0, 3.0, 7.0 } },
+    { 0, {}, 0, {}, {} }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n; c++ )
+    check_vec_cat( (*c).n, (*c).val1, (*c).k, (*c).val2, (*c).expected );
+}
+
+void check_vec_cat_size_mismatch(size_t s1, size_t s2, size_t s3)
+{
+  vec_t v1, v2, v3, ret;
+
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  v1 = vec_create( s1 ); vec_clear( v1 );
+  v2 = vec_create( s2 ); vec_clear( v2 );
+  v3 = vec_create( s3 ); vec_clear( v3 );
+  ret = vec_cat( v1, 1.0, v2, v3 );
+  ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+  ASSERT_PTREQ( NULL, ret );
+  ECHO_ON();
+}
+
+TEST(test_vec_cat_size_mismatch)
+{
+  struct case_t {
+    size_t s1, s2, s3;
+  } cases[] = {
+    { 2, 3, 3 },
+    { 3, 3, 1 },
+    { 2, 3, 1 },
+    { 0, 0, 0 }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).s1>0; c++ )
+    check_vec_cat_size_mismatch( (*c).s1, (*c).s2, (*c).s3 );
 }
 
 TEST_SUITE(test_vec)
@@ -433,6 +497,8 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_div);
   RUN_TEST(test_vec_div_size_mismatch);
   RUN_TEST(test_vec_div_by_zero);
+  RUN_TEST(test_vec_cat);
+  RUN_TEST(test_vec_cat_size_mismatch);
 }
 
 int main(int argc, char *argv[])

@@ -36,5 +36,6 @@ vec_t vec_add(vec_t v1, vec_t v2, vec_t v);
 vec_t vec_sub(vec_t v1, vec_t v2, vec_t v);
 vec_t vec_mul(vec_t v1, double k, vec_t v);
 vec_t vec_div(vec_t v1, double k, vec_t v);
+vec_t vec_cat(vec_t v1, double k, vec_t v2, vec_t v);
 
 #endif /* __RHC_VEC_H__ */
