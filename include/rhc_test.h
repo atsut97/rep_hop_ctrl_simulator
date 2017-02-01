@@ -13,6 +13,7 @@
 #include <time.h>	/* clock_gettime() */
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 #define TEST_FAILED_MESSAGE_NUM 64
 #define TEST_FAILED_MESSAGE_LEN 1024
@@ -126,6 +127,16 @@ static char __test_messages[TEST_FAILED_MESSAGE_NUM][TEST_FAILED_MESSAGE_LEN];
   if( !( __tmp_val1 <= __tmp_val2 ) ){\
   __test_status = 1;\
   snprintf( __test_last_message, TEST_FAILED_MESSAGE_LEN, "Expected: (%s) <= (%s)\n But was: %g vs %g", #val1, #val2, __tmp_val1, __tmp_val2 );\
+  STACK_FAILURE_MESSAGE( __test_last_message );\
+  __test_fail++;\
+  return;\
+  }\
+} while( 0 )
+
+#define ASSERT_STREQ(expected, actual) do{\
+  if( strcmp( (expected), (actual) ) ){\
+  __test_status = 1;\
+  snprintf( __test_last_message, TEST_FAILED_MESSAGE_LEN, "Value of: %s\nExpected: %s\n But was: %s", #actual, expected, actual );\
   STACK_FAILURE_MESSAGE( __test_last_message );\
   __test_fail++;\
   return;\

@@ -3,6 +3,7 @@
 int foo = 7;
 int bar = 4;
 double baz = 0.1;
+char hoge[] = "hoge";
 
 TEST(test_assert)
 {
@@ -97,6 +98,16 @@ TEST(test_assert_le_fail)
   ASSERT_LE( 13, foo );
 }
 
+TEST(test_assert_streq)
+{
+  ASSERT_STREQ( "hoge", hoge );
+}
+
+TEST(test_assert_streq_fail)
+{
+  ASSERT_STREQ( "fuga", hoge );
+}
+
 TEST_SUITE(all_tests)
 {
   RUN_TEST( test_assert );
@@ -108,6 +119,7 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_ge );
   RUN_TEST( test_assert_lt );
   RUN_TEST( test_assert_le );
+  RUN_TEST( test_assert_streq );
 
   RUN_TEST( test_assert_fail );
   RUN_TEST( test_true_fail );
@@ -117,7 +129,9 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_gt_fail );
   RUN_TEST( test_assert_ge_fail );
   RUN_TEST( test_assert_lt_fail );
-  RUN_TEST( test_assert_le_fail );}
+  RUN_TEST( test_assert_le_fail );
+  RUN_TEST( test_assert_streq_fail );
+}
 
 int main(int argc, char *argv[])
 {
