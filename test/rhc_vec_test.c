@@ -2,9 +2,6 @@
 #include "rhc_test.h"
 #include <malloc.h>
 
-void setup(){ ECHO_OFF(); }
-void teardown(){ ECHO_ON(); }
-
 /* set random values to a vector */
 void set_vec_rand(vec_t v)
 {
@@ -215,6 +212,8 @@ void check_vec_size_2(size_t v1_s, size_t v2_s, bool expected, vec_t (*method)(v
   char msg[BUFSIZ];
   bool cond;
 
+  RESET_ERR_MSG();
+  ECHO_OFF();
   v1 = vec_create( v1_s ); vec_clear( v1 );
   v2 = vec_create( v2_s ); vec_clear( v2 );
   k = 1.0;
@@ -231,8 +230,8 @@ void check_vec_size_2(size_t v1_s, size_t v2_s, bool expected, vec_t (*method)(v
     ASSERT( !cond, msg );
     ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
     ASSERT_PTREQ( NULL, ret );
-    RESET_ERR_MSG();
   }
+  ECHO_ON();
 }
 
 void check_vec_size_3(size_t v1_s, size_t v2_s, size_t v3_s, bool expected, vec_t (*method)(vec_t,vec_t,vec_t))
@@ -241,6 +240,8 @@ void check_vec_size_3(size_t v1_s, size_t v2_s, size_t v3_s, bool expected, vec_
   char msg[BUFSIZ];
   bool cond;
 
+  RESET_ERR_MSG();
+  ECHO_OFF();
   v1 = vec_create( v1_s ); vec_clear( v1 );
   v2 = vec_create( v2_s ); vec_clear( v2 );
   v3 = vec_create( v3_s ); vec_clear( v3 );
@@ -257,8 +258,8 @@ void check_vec_size_3(size_t v1_s, size_t v2_s, size_t v3_s, bool expected, vec_
     ASSERT( !cond, msg );
     ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
     ASSERT_PTREQ( NULL, ret );
-    RESET_ERR_MSG();
   }
+  ECHO_ON();
 }
 
 TEST(test_vec_add_size_mismatch)
@@ -403,15 +404,19 @@ TEST(test_vec_div_by_zero)
 {
   vec_t v1, ret;
 
+  RESET_ERR_MSG();
+  ECHO_OFF();
   v1 = vec_create_list( 2, 1.0, 1.0 );
   ret = vec_div( v1, 0.0, v1 );
   ASSERT_STREQ( VEC_ERR_ZERODIV, __err_last_msg );
   ASSERT_PTREQ( NULL, ret );
+  ECHO_ON();
+}
+
 }
 
 TEST_SUITE(test_vec)
 {
-  CONFIGURE_SUITE(&setup, &teardown);
   RUN_TEST(test_vec_create);
   RUN_TEST(test_vec_create_zero_size);
   RUN_TEST(test_vec_set_elem);
