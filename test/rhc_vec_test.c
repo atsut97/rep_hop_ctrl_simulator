@@ -205,6 +205,52 @@ TEST(test_vec_add)
     check_vec_add( (*c).n, (*c).val1, (*c).val2, (*c).expected );
 }
 
+void check_vec_size_3(size_t v1_s, size_t v2_s, size_t v3_s, bool expected, vec_t (*method)(vec_t,vec_t,vec_t))
+{
+  vec_t v1, v2, v3, ret;
+  char msg[BUFSIZ];
+  bool cond;
+
+  v1 = vec_create( v1_s ); vec_clear( v1 );
+  v2 = vec_create( v2_s ); vec_clear( v2 );
+  v3 = vec_create( v3_s ); vec_clear( v3 );
+  ret = method( v1, v2, v3 );
+  cond = ( vec_size(v1) == vec_size(v2) ) && ( vec_size(v2) == vec_size(v3) );
+  if( expected ){
+    sprintf( msg, "Expected all sizes are equal, but was %lu vs %lu vs %lu",
+             vec_size(v1), vec_size(v2), vec_size(v3) );
+    ASSERT( cond, msg );
+    ASSERT_PTREQ( vec_buf(v3), vec_buf(ret) );
+  } else {
+    sprintf( msg, "Expected some sizes are not equal, but was %lu vs %lu vs %lu",
+             vec_size(v1), vec_size(v2), vec_size(v3) );
+    ASSERT( !cond, msg );
+    ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+    ASSERT_PTREQ( NULL, ret );
+    RESET_ERR_MSG();
+  }
+}
+
+TEST(test_vec_add_size_mismatch)
+{
+  struct case_t {
+    size_t v1_s, v2_s, v3_s;
+    bool expected;
+  } cases[] = {
+    { 2, 2, 2, true },
+    { 2, 3, 3, false },
+    { 3, 3, 1, false },
+    { 2, 3, 1, false },
+    { 0, 0, 0, false }
+  };
+  struct case_t *c;
+
+  ECHO_OFF();
+  for( c=cases; (*c).v1_s>0; c++ )
+    check_vec_size_3( (*c).v1_s, (*c).v2_s, (*c).v3_s,
+                      (*c).expected, vec_add );
+  ECHO_ON();
+}
 
 TEST_SUITE(test_vec)
 {
@@ -216,6 +262,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_create_array);
   RUN_TEST(test_vec_clear);
   RUN_TEST(test_vec_add);
+  RUN_TEST(test_vec_add_size_mismatch);
 }
 
 int main(int argc, char *argv[])
