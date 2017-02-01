@@ -100,3 +100,16 @@ vec_t vec_sub(vec_t v1, vec_t v2, vec_t v)
     vec_set_elem( v, i, vec_elem(v1,i) - vec_elem(v2,i) );
   return v;
 }
+
+vec_t vec_mul(vec_t v1, double k, vec_t v)
+{
+  size_t i;
+
+  if( vec_size(v1) != vec_size(v) ){
+    RUNTIME_ERR( VEC_ERR_SIZMIS );
+    return NULL;
+  }
+  for( i=0; i<vec_size(v1); i++ )
+    vec_set_elem( v, i, vec_elem(v1,i) * k );
+  return v;
+}

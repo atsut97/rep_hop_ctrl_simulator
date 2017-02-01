@@ -174,7 +174,7 @@ TEST(test_vec_create_array)
     check_vec_create_array( (*c).n, (*c).elem );
 }
 
-void check_vec_op(size_t n, double *val1, double *val2, double *expected, vec_t (*method)(vec_t,vec_t,vec_t))
+void check_vec_vec_op(size_t n, double *val1, double *val2, double *expected, vec_t (*method)(vec_t,vec_t,vec_t))
 {
   vec_t v1, v2, v;
 
@@ -205,7 +205,34 @@ TEST(test_vec_add)
   struct case_t *c;
 
   for( c=cases; (*c).n > 0; c++ )
-    check_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_add );
+    check_vec_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_add );
+}
+
+void check_vec_size_2(size_t v1_s, size_t v2_s, bool expected, vec_t (*method)(vec_t,double,vec_t))
+{
+  vec_t v1, v2, ret;
+  double k;
+  char msg[BUFSIZ];
+  bool cond;
+
+  v1 = vec_create( v1_s ); vec_clear( v1 );
+  v2 = vec_create( v2_s ); vec_clear( v2 );
+  k = 1.0;
+  ret = method( v1, k, v2 );
+  cond = vec_size(v1) == vec_size(v2);
+  if( expected ){
+    sprintf( msg, "Expected all sizes are equal, but was %lu vs %lu",
+             vec_size(v1), vec_size(v2) );
+    ASSERT( cond, msg );
+    ASSERT_PTREQ( vec_buf(v2), vec_buf(ret) );
+  } else {
+    sprintf( msg, "Expected some sizes are not equal, but was %lu vs %lu",
+             vec_size(v1), vec_size(v2) );
+    ASSERT( !cond, msg );
+    ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+    ASSERT_PTREQ( NULL, ret );
+    RESET_ERR_MSG();
+  }
 }
 
 void check_vec_size_3(size_t v1_s, size_t v2_s, size_t v3_s, bool expected, vec_t (*method)(vec_t,vec_t,vec_t))
@@ -268,7 +295,7 @@ TEST(test_vec_sub)
   struct case_t *c;
 
   for( c=cases; (*c).n > 0; c++ )
-    check_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_sub );
+    check_vec_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_sub );
 }
 
 TEST(test_vec_sub_size_mismatch)
@@ -290,6 +317,54 @@ TEST(test_vec_sub_size_mismatch)
                       (*c).expected, vec_sub );
 }
 
+void check_vec_scalar_op(size_t n, double *val1, double k, double *expected, vec_t (*method)(vec_t,double,vec_t))
+{
+  vec_t v1, v;
+
+  v1 = vec_create_array( n, val1 );
+  v  = vec_create( n );
+
+  method( v1, k, v );
+
+  check_vec_elem_with_array( expected, v );
+  vec_destroy( v1 );
+  vec_destroy( v );
+}
+
+TEST(test_vec_mul)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double k;
+    double expected[10];
+  } cases[] = {
+    { 2, { 2.0, 3.0 }, 2.0, { 4.0, 6.0 } },
+    { 4, { -3.0, 5.0 }, 4.0, { -12.0, 20.0 } },
+    { 0, {}, 0, {} }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n>0; c++ )
+    check_vec_scalar_op( (*c).n, (*c).val1, (*c).k, (*c).expected, vec_mul );
+}
+
+TEST(test_vec_mul_size_mismatch)
+{
+  struct case_t {
+    size_t v1_s, v2_s;
+    bool expected;
+  } cases[] = {
+    { 2, 2, true },
+    { 2, 3, false },
+    { 0, 0, false }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).v1_s>0; c++ )
+    check_vec_size_2( (*c).v1_s, (*c).v2_s, (*c).expected, vec_mul );
+}
+
 TEST_SUITE(test_vec)
 {
   CONFIGURE_SUITE(&setup, &teardown);
@@ -304,6 +379,8 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_add_size_mismatch);
   RUN_TEST(test_vec_sub);
   RUN_TEST(test_vec_sub_size_mismatch);
+  RUN_TEST(test_vec_mul);
+  RUN_TEST(test_vec_mul_size_mismatch);
 }
 
 int main(int argc, char *argv[])
