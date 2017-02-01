@@ -2,6 +2,9 @@
 #include "rhc_test.h"
 #include <malloc.h>
 
+void setup(){ ECHO_OFF(); }
+void teardown(){ ECHO_ON(); }
+
 /* set random values to a vector */
 void set_vec_rand(vec_t v)
 {
@@ -245,11 +248,9 @@ TEST(test_vec_add_size_mismatch)
   };
   struct case_t *c;
 
-  ECHO_OFF();
   for( c=cases; (*c).v1_s>0; c++ )
     check_vec_size_3( (*c).v1_s, (*c).v2_s, (*c).v3_s,
                       (*c).expected, vec_add );
-  ECHO_ON();
 }
 
 TEST(test_vec_sub)
@@ -272,6 +273,7 @@ TEST(test_vec_sub)
 
 TEST_SUITE(test_vec)
 {
+  CONFIGURE_SUITE(&setup, &teardown);
   RUN_TEST(test_vec_create);
   RUN_TEST(test_vec_create_zero_size);
   RUN_TEST(test_vec_set_elem);
