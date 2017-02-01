@@ -31,12 +31,12 @@ vec_t vec_create(size_t size)
   vec_t v;
 
   if( ( v = nalloc( _vec_t, 1 ) ) == NULL ){
-    eprintf( "cannot allocate memory\n" );
+    ALLOC_ERR();
     return NULL;
   }
   if( size > 0 ){
     if( ( v->elem = nalloc( double, size ) ) == NULL ){
-      eprintf( "cannot allocate memory\n" );
+      ALLOC_ERR();
       return NULL;
     }
   } else
