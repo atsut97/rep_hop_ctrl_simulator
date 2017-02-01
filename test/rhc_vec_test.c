@@ -171,7 +171,7 @@ TEST(test_vec_create_array)
     check_vec_create_array( (*c).n, (*c).elem );
 }
 
-void check_vec_add(size_t n, double *val1, double *val2, double *expected)
+void check_vec_op(size_t n, double *val1, double *val2, double *expected, vec_t (*method)(vec_t,vec_t,vec_t))
 {
   vec_t v1, v2, v;
 
@@ -179,7 +179,7 @@ void check_vec_add(size_t n, double *val1, double *val2, double *expected)
   v2 = vec_create_array( n, val2 );
   v  = vec_create( n );
 
-  vec_add( v1, v2, v );
+  method( v1, v2, v );
 
   check_vec_elem_with_array( expected, v );
   vec_destroy( v1 );
@@ -202,7 +202,7 @@ TEST(test_vec_add)
   struct case_t *c;
 
   for( c=cases; (*c).n > 0; c++ )
-    check_vec_add( (*c).n, (*c).val1, (*c).val2, (*c).expected );
+    check_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_add );
 }
 
 void check_vec_size_3(size_t v1_s, size_t v2_s, size_t v3_s, bool expected, vec_t (*method)(vec_t,vec_t,vec_t))
@@ -252,6 +252,24 @@ TEST(test_vec_add_size_mismatch)
   ECHO_ON();
 }
 
+TEST(test_vec_sub)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double val2[10];
+    double expected[10];
+  } cases[] = {
+    { 2, { 1.0, 1.0 }, { 3.0, 4.0 }, { -2.0, -3.0 } },
+    { 4, { -2.0, 3.0, -4.0, 5.0 }, { -3.0, 4.0, 5.0, -6.0 }, { 1.0, -1.0, -9.0, 11.0 } },
+    { 0, {}, {}, {} },
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n > 0; c++ )
+    check_vec_op( (*c).n, (*c).val1, (*c).val2, (*c).expected, vec_sub );
+}
+
 TEST_SUITE(test_vec)
 {
   RUN_TEST(test_vec_create);
@@ -263,6 +281,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_clear);
   RUN_TEST(test_vec_add);
   RUN_TEST(test_vec_add_size_mismatch);
+  RUN_TEST(test_vec_sub);
 }
 
 int main(int argc, char *argv[])
