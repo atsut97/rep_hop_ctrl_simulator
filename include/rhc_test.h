@@ -5,7 +5,6 @@
 /*       http://www.jera.com/techinfo/jtns/jtn002.html */
 
 /* TODO: */
-/*   - Add setup/teardown functions */
 /*   - Make timer function be compatible with otherwise Linux */
 /*   - Remove limit of failure message number */
 
@@ -33,6 +32,10 @@ static double __test_timer_time = 0;
 /* Message */
 static char __test_last_message[TEST_FAILED_MESSAGE_LEN];
 static char __test_messages[TEST_FAILED_MESSAGE_NUM][TEST_FAILED_MESSAGE_LEN];
+
+/* Setup and teardown function */
+static void (*__test_setup)() = NULL;
+static void (*__test_teardown)() = NULL;
 
 #define TEST(test_name) static void test_name()
 #define TEST_SUITE(suite_name) static void suite_name()
@@ -155,15 +158,24 @@ static char __test_messages[TEST_FAILED_MESSAGE_NUM][TEST_FAILED_MESSAGE_LEN];
 
 #define RUN_TEST(test_name) do{\
   if( __test_timer_time == 0 ) __test_timer_time = test_timer();\
+  if( __test_setup ) (*__test_setup)();\
   __test_status = 0;\
   test_name();\
   __test_run++;\
   if( __test_status ) printf( "F" );\
   else printf( "." );\
+  if( __test_teardown ) (*__test_teardown)();\
 } while( 0 )
 
 #define RUN_SUITE(suite_name) do{\
   suite_name();\
+  __test_setup = NULL;\
+  __test_teardown = NULL;\
+} while( 0 )
+
+#define CONFIGURE_SUITE(setup_fp, teardown_fp) do{\
+  __test_setup = (setup_fp);\
+  __test_teardown = (teardown_fp);\
 } while( 0 )
 
 #define TEST_REPORT() do{\

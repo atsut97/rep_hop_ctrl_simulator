@@ -1,9 +1,22 @@
 #include "rhc_test.h"
 
-int foo = 7;
-int bar = 4;
-double baz = 0.1;
-char hoge[] = "hoge";
+static int foo = 0;
+static int bar = 0;
+static double baz = 0.0;
+char hoge[BUFSIZ];
+
+void setup()
+{
+  foo = 7;
+  bar = 4;
+  baz = 0.1;
+  sprintf( hoge, "hoge" );
+}
+
+void teardown()
+{
+  /* do nothing */
+}
 
 TEST(test_assert)
 {
@@ -134,6 +147,8 @@ TEST(test_assert_ptreq_fail2)
 
 TEST_SUITE(all_tests)
 {
+  CONFIGURE_SUITE( &setup, &teardown );
+
   RUN_TEST( test_assert );
   RUN_TEST( test_true );
   RUN_TEST( test_false );
