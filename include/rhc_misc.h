@@ -3,6 +3,11 @@
 
 #include <rhc_defs.h>
 
+/* tolerance on computation */
+#define TOL          ( 1.0e-12 )
+#define istol(x,tol) ( fabs(x) <= (tol) )
+#define istiny(x)    istol( x, TOL )
+
 /* for dynamic memory allocation */
 #define nalloc(t,n) ( (n) == 0 ? NULL : (t *)calloc( (n), sizeof(t) ) )
 #define sfree(m)    do{ if((m)){ free(m); (m)=NULL; } } while(0)
