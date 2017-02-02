@@ -29,7 +29,7 @@ contain () {
 # output: return value of the test
 run_test () {
     test_name=`echo $i | sed -e "s/^..//g"`
-    echo "Running $test_name..."
+    echo "\nRunning $test_name..."
     $1
     return $?
 }
