@@ -59,6 +59,16 @@ TEST(test_assert_eq_fail)
   ASSERT_EQ( 5, bar );
 }
 
+TEST(test_assert_ne)
+{
+  ASSERT_NE( 5, bar );
+}
+
+TEST(test_assert_ne_fail)
+{
+  ASSERT_NE( 7, foo );
+}
+
 TEST(test_assert_double_eq)
 {
   ASSERT_DOUBLE_EQ( 0.1, baz );
@@ -145,6 +155,25 @@ TEST(test_assert_ptreq_fail2)
   ASSERT_PTREQ( NULL, foop );
 }
 
+TEST(test_assert_ptrne)
+{
+  int *foop = &foo;
+
+  ASSERT_PTRNE( NULL, foop );
+}
+
+TEST(test_assert_ptrne_fail)
+{
+  int *foop = &foo;
+
+  ASSERT_PTRNE( &foo, foop );
+}
+
+TEST(test_assert_ptrne_fail2)
+{
+  ASSERT_PTRNE( NULL, NULL );
+}
+
 TEST(test_fail)
 {
   FAIL( "intentionally fail!" );
@@ -158,6 +187,7 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_true );
   RUN_TEST( test_false );
   RUN_TEST( test_assert_eq );
+  RUN_TEST( test_assert_ne );
   RUN_TEST( test_assert_double_eq );
   RUN_TEST( test_assert_gt );
   RUN_TEST( test_assert_ge );
@@ -165,11 +195,13 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_le );
   RUN_TEST( test_assert_streq );
   RUN_TEST( test_assert_ptreq );
+  RUN_TEST( test_assert_ptrne );
 
   RUN_TEST( test_assert_fail );
   RUN_TEST( test_true_fail );
   RUN_TEST( test_false_fail );
   RUN_TEST( test_assert_eq_fail );
+  RUN_TEST( test_assert_ne_fail );
   RUN_TEST( test_assert_double_eq_fail );
   RUN_TEST( test_assert_gt_fail );
   RUN_TEST( test_assert_ge_fail );
@@ -178,6 +210,8 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_streq_fail );
   RUN_TEST( test_assert_ptreq_fail );
   RUN_TEST( test_assert_ptreq_fail2 );
+  RUN_TEST( test_assert_ptrne_fail );
+  RUN_TEST( test_assert_ptrne_fail2 );
 
   RUN_TEST( test_fail );
 }

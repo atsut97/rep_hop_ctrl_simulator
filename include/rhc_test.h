@@ -82,6 +82,16 @@ static void (*__test_teardown)() = NULL;
    }\
 } while( 0 )
 
+#define ASSERT_NE(expected, actual) do{\
+  if( (expected) == (actual) ){\
+    __test_status = 1;\
+    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) != (%s)\n But was: %g vs %g", #expected, #actual, (double)expected, (double)actual );\
+    STACK_FAILURE_MESSAGE( __test_last_message );\
+    __test_fail++;\
+    return;\
+  }\
+} while( 0 )
+
 #define ASSERT_DOUBLE_EQ(expected, actual) do{\
   double __expected_double = (expected);\
   double __actual_double   = (actual);\
@@ -160,6 +170,16 @@ static void (*__test_teardown)() = NULL;
     __test_fail++;\
     return;\
    }\
+} while( 0 )
+
+#define ASSERT_PTRNE(expected, actual) do{\
+  if( (expected) == (actual) ){\
+    __test_status = 1;\
+    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) != (%s)\n But was: %p vs %p", #expected, #actual, expected, actual );\
+    STACK_FAILURE_MESSAGE( __test_last_message );\
+    __test_fail++;\
+    return;\
+  }\
 } while( 0 )
 
 #define RUN_TEST(test_name) do{\
