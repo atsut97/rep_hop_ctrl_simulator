@@ -38,4 +38,8 @@ vec_t vec_mul(vec_t v1, double k, vec_t v);
 vec_t vec_div(vec_t v1, double k, vec_t v);
 vec_t vec_cat(vec_t v1, double k, vec_t v2, vec_t v);
 
+/* output */
+void vec_f_write(FILE *fp, vec_t v);
+#define vec_write(v) vec_f_write( stdout, v )
+
 #endif /* __RHC_VEC_H__ */

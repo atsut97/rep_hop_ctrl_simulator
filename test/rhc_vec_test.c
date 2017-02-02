@@ -441,6 +441,50 @@ TEST(test_vec_cat_size_mismatch)
     check_vec_cat_size_mismatch( (*c).s1, (*c).s2, (*c).s3 );
 }
 
+void check_vec_f_write(size_t n, double *val)
+{
+  vec_t v;
+  char expected[BUFSIZ], actual[BUFSIZ], str[BUFSIZ];
+  FILE *fp;
+  register size_t i;
+
+  /* given */
+  v = vec_create_array( n, val );
+  expected[0] = '\0';
+  for( i=0; i<n; i++ ){
+    sprintf( str, "%.10g ", vec_elem(v,i) );
+    strcat( expected, str );
+  }
+  strcat( expected, "\n" );
+  fp = tmpfile();
+  /* when */
+  vec_f_write( fp, v );
+  /* then */
+  rewind( fp );
+  if( fgets( actual, BUFSIZ, fp ) == NULL )
+    FAIL( "failure on 'fgets'" );
+  ASSERT_STREQ( expected, actual );
+  /* clean */
+  fclose( fp );
+  vec_destroy( v );
+}
+
+TEST(test_vec_f_write)
+{
+  struct case_t {
+    size_t n;
+    double val[10];
+  } cases[] = {
+    { 3, { 0.0, 0.1, 0.2 } },
+    { 5, { 1.0, 2.33, 3.44, -2.1, -5.3 } },
+    { 0, {} }
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n>0; c++ )
+    check_vec_f_write( c->n, c->val );
+}
+
 TEST_SUITE(test_vec)
 {
   RUN_TEST(test_vec_create);
@@ -461,6 +505,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_div_by_zero);
   RUN_TEST(test_vec_cat);
   RUN_TEST(test_vec_cat_size_mismatch);
+  RUN_TEST(test_vec_f_write);
 }
 
 int main(int argc, char *argv[])
