@@ -485,6 +485,14 @@ TEST(test_vec_f_write)
     check_vec_f_write( c->n, c->val );
 }
 
+TEST(test_vec_f_write_given_null)
+{
+  FILE *fp = tmpfile();
+
+  vec_f_write( fp, NULL );
+  fclose( fp );
+}
+
 TEST_SUITE(test_vec)
 {
   RUN_TEST(test_vec_create);
@@ -506,6 +514,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_cat);
   RUN_TEST(test_vec_cat_size_mismatch);
   RUN_TEST(test_vec_f_write);
+  RUN_TEST(test_vec_f_write_given_null);
 }
 
 int main(int argc, char *argv[])

@@ -148,6 +148,7 @@ void vec_f_write(FILE *fp, vec_t v)
 {
   register size_t i;
 
+  if( !v ) return;
   for( i=0; i<vec_size(v); i++ )
     fprintf( fp, "%.10g ", vec_elem(v,i) );
   fprintf( fp, "\n" );
