@@ -57,6 +57,11 @@ static void (*__test_teardown)() = NULL;
   }\
 } while( 0 )
 
+#define FAIL(message) do{\
+  snprintf( __test_last_message, TEST_BUFSIZ, "%s", message);\
+  ASSERT( 0, __test_last_message );\
+} while( 0 )
+
 #define ASSERT_TRUE(cond) do{\
   snprintf( __test_last_message, TEST_BUFSIZ, "Value of %s\nExpected: true\n But was: false", #cond );\
   ASSERT( (cond), __test_last_message );\

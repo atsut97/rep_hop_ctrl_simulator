@@ -145,6 +145,11 @@ TEST(test_assert_ptreq_fail2)
   ASSERT_PTREQ( NULL, foop );
 }
 
+TEST(test_fail)
+{
+  FAIL( "intentionally fail!" );
+}
+
 TEST_SUITE(all_tests)
 {
   CONFIGURE_SUITE( &setup, &teardown );
@@ -173,6 +178,8 @@ TEST_SUITE(all_tests)
   RUN_TEST( test_assert_streq_fail );
   RUN_TEST( test_assert_ptreq_fail );
   RUN_TEST( test_assert_ptreq_fail2 );
+
+  RUN_TEST( test_fail );
 }
 
 int main(int argc, char *argv[])
