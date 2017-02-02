@@ -3,11 +3,10 @@
 ode_t *ode_init_euler(ode_t *self, int dim, vec_t (* f)(double,vec_t,void*,vec_t))
 {
   self->f = f;
-  /* if( ( self->_ws = vec_create( dim ) ) == NULL ){ */
-  /*   ALLOC_ERR(); */
-  /*   return NULL; */
-  /* } */
-  self->_ws = vec_create( dim );
+  if( ( self->_ws = vec_create( dim ) ) == NULL ){
+    ALLOC_ERR();
+    return NULL;
+  }
   return self;
 }
 
