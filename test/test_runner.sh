@@ -118,7 +118,7 @@ if [ $MEMCHECK = true ]; then
     command_exist valgrind
     ret=$?
     if [ $ret -eq 0 ]; then
-        VALGRIND="valgrind --leak-check=full "
+        VALGRIND="valgrind -q --leak-check=full --error-exitcode=1 "
     fi
 fi
 
