@@ -43,6 +43,15 @@ TEST(test_vec_create_zero_size)
   vec_destroy( v );
 }
 
+TEST(test_destroy)
+{
+  vec_t v;
+
+  v = vec_create( 2 );
+  vec_destroy( v );
+  /* ASSERT_PTREQ( NULL, vec_buf(v) ); */
+}
+
 void check_vec_elem(vec_t v, size_t size, ... )
 {
   va_list args;
@@ -497,6 +506,7 @@ TEST_SUITE(test_vec)
 {
   RUN_TEST(test_vec_create);
   RUN_TEST(test_vec_create_zero_size);
+  RUN_TEST(test_destroy);
   RUN_TEST(test_vec_set_elem);
   RUN_TEST(test_vec_set_elem_list);
   RUN_TEST(test_vec_create_list);
