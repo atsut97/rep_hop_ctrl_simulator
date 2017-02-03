@@ -70,6 +70,7 @@ vec_t vec_create_array(size_t size, double array[])
 
 void vec_destroy(vec_t v)
 {
+  if( !v ) return;
   sfree( vec_buf(v) );
   free( v );
 }
