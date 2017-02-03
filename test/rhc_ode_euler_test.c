@@ -9,6 +9,16 @@ vec_t dp(double t, vec_t p, void *dummy, vec_t v)
   return v;
 }
 
+double unit_circle(vec_t x)
+{
+  return sqr( vec_elem(x,0) ) + sqr( vec_elem(x,1) ) - 1.0;
+}
+
+bool curve_fit(vec_t x, double (*f)(vec_t), double tol)
+{
+  return istol( f(x), tol ) ? true : false;
+}
+
 ode_t ode;
 vec_t x;
 double t;
@@ -53,12 +63,23 @@ TEST(test_ode_euler_update)
   ASSERT_DOUBLE_EQ( 0.02,   vec_elem(x,1) );
 }
 
+TEST(test_ode_euler_integrate)
+{
+  char msg[BUFSIZ];
+
+  for( t=0; t<T; t+=DT ){
+    sprintf( msg, "not fit to unit circle: t=%f", t );
+    ASSERT( curve_fit(x,unit_circle,TOL), msg );
+  }
+}
+
 TEST_SUITE(test_ode_euler)
 {
   CONFIGURE_SUITE( &setup, &teardown );
   RUN_TEST(test_ode_euler_init);
   RUN_TEST(test_ode_euler_destroy);
   RUN_TEST(test_ode_euler_update);
+  RUN_TEST(test_ode_euler_integrate);
 }
 
 int main(int argc, char *argv[])
