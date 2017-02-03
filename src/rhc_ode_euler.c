@@ -12,7 +12,8 @@ ode_t *ode_init_euler(ode_t *self, int dim, vec_t (* f)(double,vec_t,void*,vec_t
 
 vec_t ode_update_euler(ode_t *self, double t, vec_t x, double dt, void *util)
 {
-  return x;
+  self->f( t, x, util, self->_ws );
+  return vec_cat( x, dt, self->_ws, x );
 }
 
 void ode_destroy_euler(ode_t *self)

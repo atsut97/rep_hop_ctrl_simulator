@@ -43,21 +43,22 @@ TEST(test_ode_euler_destroy)
   ASSERT_PTREQ( NULL, ode._ws );
 }
 
-/* TEST(test_ode_euler_update) */
-/* { */
-/*   vec_write( x ); */
-/*   for( t=0; t<T; t+=DT ){ */
-/*     ode_update( &ode, t, x, DT, NULL ); */
-/*     vec_write( x ); */
-/*   } */
-/* } */
+TEST(test_ode_euler_update)
+{
+  ode_update( &ode, t, x, DT, NULL );
+  ASSERT_DOUBLE_EQ( 1.0,  vec_elem(x,0) );
+  ASSERT_DOUBLE_EQ( 0.01, vec_elem(x,1) );
+  ode_update( &ode, t, x, DT, NULL );
+  ASSERT_DOUBLE_EQ( 0.9999, vec_elem(x,0) );
+  ASSERT_DOUBLE_EQ( 0.02,   vec_elem(x,1) );
+}
 
 TEST_SUITE(test_ode_euler)
 {
   CONFIGURE_SUITE( &setup, &teardown );
   RUN_TEST(test_ode_euler_init);
   RUN_TEST(test_ode_euler_destroy);
-  /* RUN_TEST(test_ode_euler_update); */
+  RUN_TEST(test_ode_euler_update);
 }
 
 int main(int argc, char *argv[])
