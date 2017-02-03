@@ -68,8 +68,9 @@ TEST(test_ode_euler_integrate)
   char msg[BUFSIZ];
 
   for( t=0; t<T; t+=DT ){
+    ode_update( &ode, t, x, DT, NULL );
     sprintf( msg, "not fit to unit circle: t=%f", t );
-    ASSERT( curve_fit(x,unit_circle,TOL), msg );
+    ASSERT( curve_fit(x,unit_circle,0.2), msg );
   }
 }
 
