@@ -42,7 +42,7 @@ void teardown()
 
 TEST(test_ode_euler_init)
 {
-  ASSERT_PTREQ( &dp, ode.f );
+  ASSERT_PTREQ( dp, ode.f );
   ASSERT_EQ( 2, vec_size( (vec_t)ode._ws ) );
 }
 
