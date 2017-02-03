@@ -6,3 +6,4 @@
 
 # Test executables
 /test/*_test
+/example/*_test
