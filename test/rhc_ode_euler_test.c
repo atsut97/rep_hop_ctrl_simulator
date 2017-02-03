@@ -25,7 +25,8 @@ void setup()
 void teardown()
 {
   vec_destroy( x );
-  ode_destroy( &ode );
+  if( ode._ws )
+    ode_destroy( &ode );
 }
 
 
@@ -33,6 +34,13 @@ TEST(test_ode_euler_init)
 {
   ASSERT_PTREQ( &dp, ode.f );
   ASSERT_EQ( 2, vec_size( (vec_t)ode._ws ) );
+}
+
+TEST(test_ode_euler_destroy)
+{
+  ode_destroy( &ode );
+  ASSERT_PTREQ( NULL, ode.f );
+  ASSERT_PTREQ( NULL, ode._ws );
 }
 
 /* TEST(test_ode_euler_update) */
@@ -48,6 +56,7 @@ TEST_SUITE(test_ode_euler)
 {
   CONFIGURE_SUITE( &setup, &teardown );
   RUN_TEST(test_ode_euler_init);
+  RUN_TEST(test_ode_euler_destroy);
   /* RUN_TEST(test_ode_euler_update); */
 }
 

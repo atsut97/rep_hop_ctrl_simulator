@@ -17,4 +17,7 @@ vec_t ode_update_euler(ode_t *self, double t, vec_t x, double dt, void *util)
 
 void ode_destroy_euler(ode_t *self)
 {
+  vec_destroy( (vec_t)self->_ws );
+  self->f = NULL;
+  self->_ws = NULL;
 }
