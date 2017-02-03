@@ -97,7 +97,19 @@ static void (*__test_teardown)() = NULL;
   double __actual_double   = (actual);\
   if( fabs( (__expected_double) - (__actual_double) ) > TEST_TOL ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %g\n But was: %g", #actual, __expected_double, __actual_double);\
+    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %.10g\n But was: %.10g", #actual, __expected_double, __actual_double);\
+    STACK_FAILURE_MESSAGE( __test_last_message );\
+    __test_fail++;\
+    return;\
+  } \
+} while( 0 )
+
+#define ASSERT_NEAR(expected, actual, tol) do{\
+  double __expected_double = (expected);\
+  double __actual_double   = (actual);\
+  if( fabs( (__expected_double) - (__actual_double) ) > (tol) ){\
+    __test_status = 1;\
+    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %.10g\n But was: %.10g\nTolerance: %.10g", #actual, __expected_double, __actual_double, (tol) );\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
