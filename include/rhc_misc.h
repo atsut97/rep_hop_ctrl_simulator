@@ -8,6 +8,9 @@
 #define istol(x,tol) ( fabs(x) <= (tol) )
 #define istiny(x)    istol( x, TOL )
 
+/* mathematics */
+inline double sqr(double x){ return x * x; }
+
 /* for dynamic memory allocation */
 #define nalloc(t,n) ( (n) == 0 ? NULL : (t *)calloc( (n), sizeof(t) ) )
 #define sfree(m)    do{ if((m)){ free(m); (m)=NULL; } } while(0)
