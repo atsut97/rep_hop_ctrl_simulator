@@ -28,7 +28,7 @@ const double DT = 0.01;
 void setup()
 {
   ode_assign( &ode, euler );
-  ode_init( &ode, 2, &dp );
+  ode_init( &ode, 2, dp );
   x = vec_create_list( 2, 1.0, 0.0 );
 }
 
