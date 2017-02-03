@@ -26,7 +26,7 @@ debug:
 	@echo "DEPS   =" $(DEPS)
 
 %_test: %_test.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LINK)
+	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LINK)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $*.o
@@ -34,5 +34,7 @@ debug:
 .PHONY: clean
 clean:
 	rm -f *.o *~ $(OBJS) $(DEPS) $(TARGET)
+
+.PRECIOUS: $(OBJS)
 
 -include $(DEPS)

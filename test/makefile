@@ -30,7 +30,7 @@ test: all
 	./test_runner.sh
 
 %_test: %_test.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LINK)
+	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LINK)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $*.o
@@ -38,5 +38,7 @@ test: all
 .PHONY: clean
 clean:
 	rm -f *.o *~ $(OBJS) $(DEPS) $(TARGET)
+
+.PRECIOUS: $(OBJS)
 
 -include $(DEPS)
