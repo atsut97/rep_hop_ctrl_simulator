@@ -70,9 +70,8 @@ vec_t vec_create_array(size_t size, double array[])
 
 void vec_destroy(vec_t v)
 {
-  if( vec_buf(v) )
-    sfree( vec_buf(v) );
-  sfree( v );
+  sfree( vec_buf(v) );
+  free( v );
 }
 
 vec_t vec_add(vec_t v1, vec_t v2, vec_t v)
