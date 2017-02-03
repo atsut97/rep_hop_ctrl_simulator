@@ -22,5 +22,6 @@ typedef struct _ode_t{
 #define ode_destroy(self) (self)->destroy( self )
 
 #include "rhc_ode_euler.h"
+#include "rhc_ode_rk4.h"
 
 #endif /* __RHC_ODE_H__ */
