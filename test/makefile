@@ -6,6 +6,7 @@ LINK=-lm -lrt
 
 CC=gcc
 CFLAGS=-Wall -O3 $(INCLUDE) -funroll-loops -MMD -MP
+MEMCHECK=n
 
 OBJS_SRC=$(wildcard $(SRCDIR)/*.c)
 TEST_SRC=$(wildcard *_test.c)
@@ -27,7 +28,12 @@ debug:
 
 .PHONY: test
 test: all
-	./test_runner.sh
+ifeq ($(MEMCHECK),y)
+	@echo "Running test_runner in memory check mode..."
+	@./test_runner.sh -m
+else
+	@./test_runner.sh
+endif
 
 %_test: %_test.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LINK)
