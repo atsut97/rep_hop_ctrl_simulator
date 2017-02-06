@@ -28,5 +28,6 @@ typedef struct _vec_list_t{
 
 vec_list_t *vec_list_init(vec_list_t *self);
 void vec_list_destroy(vec_list_t *self);
+vec_list_t *vec_list_insert_tail(vec_list_t *self, vec_list_node_t *node);
 
 #endif /* __RHC_VEC_LIST_H__ */

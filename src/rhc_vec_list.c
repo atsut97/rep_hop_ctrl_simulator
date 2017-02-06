@@ -47,3 +47,10 @@ vec_list_t *vec_list_init(vec_list_t *self)
 void vec_list_destroy(vec_list_t *self)
 {
 }
+
+vec_list_t *vec_list_insert_tail(vec_list_t *self, vec_list_node_t *node)
+{
+  vec_list_node_insert_next( vec_list_root(self), node );
+  vec_list_inc( self );
+  return self;
+}
