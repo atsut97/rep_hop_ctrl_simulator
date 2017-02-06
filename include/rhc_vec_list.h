@@ -13,6 +13,7 @@ typedef struct _vec_list_node_t{
 
 vec_list_node_t *vec_list_node_init(vec_list_node_t *self);
 void vec_list_node_destroy(vec_list_node_t *self);
+vec_list_node_t *vec_list_node_insert_next(vec_list_node_t *self, vec_list_node_t *node);
 
 typedef struct _vec_list_t{
   size_t num;
