@@ -151,6 +151,22 @@ TEST(test_vec_list_init)
   vec_list_destroy( &vl );
 }
 
+TEST(test_vec_list_inc)
+{
+  vec_list_t vl;
+
+  vec_list_init( &vl );
+  ASSERT_EQ( 0, vec_list_num( &vl ) );
+  vec_list_inc( &vl );
+  ASSERT_EQ( 1, vec_list_num( &vl ) );
+  vec_list_inc( &vl );
+  ASSERT_EQ( 2, vec_list_num( &vl ) );
+  vec_list_inc( &vl );
+  vec_list_inc( &vl );
+  vec_list_inc( &vl );
+  ASSERT_EQ( 5, vec_list_num( &vl ) );
+}
+
 TEST_SUITE(test_vec_list)
 {
   RUN_TEST(test_vec_list_node_init);
