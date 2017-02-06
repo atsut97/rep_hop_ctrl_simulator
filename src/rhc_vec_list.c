@@ -26,7 +26,8 @@ vec_list_node_t *vec_list_node_delete_next(vec_list_node_t *self)
   vec_list_node_t *node;
 
   node = self->next;
-  self->next = self;
+  self->next = node->next;
+  node->next = node;
   return node;
 }
 
