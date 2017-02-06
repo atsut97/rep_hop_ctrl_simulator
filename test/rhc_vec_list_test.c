@@ -43,7 +43,7 @@ TEST(test_vec_list_node_destroy)
 
   vec_list_node_init( &node );
   v = vec_create( 2 );
-  /* ret = vec_list_node_set_data( &node, v ); */
+  vec_list_node_set_data( &node, v );
   vec_list_node_destroy( &node );
   ASSERT_PTREQ( NULL, vec_list_node_next(&node) );
   ASSERT_PTREQ( NULL, vec_list_node_data(&node) );
