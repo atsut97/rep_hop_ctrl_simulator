@@ -14,6 +14,7 @@ typedef struct _vec_list_node_t{
 vec_list_node_t *vec_list_node_init(vec_list_node_t *self);
 void vec_list_node_destroy(vec_list_node_t *self);
 vec_list_node_t *vec_list_node_insert_next(vec_list_node_t *self, vec_list_node_t *node);
+vec_list_node_t *vec_list_node_delete_next(vec_list_node_t *self);
 vec_t vec_list_node_set_data(vec_list_node_t *self, vec_t v);
 
 typedef struct _vec_list_t{
