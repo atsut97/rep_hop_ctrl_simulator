@@ -20,6 +20,12 @@ vec_list_node_t *vec_list_node_insert_next(vec_list_node_t *self, vec_list_node_
   return node;
 }
 
+vec_t vec_list_node_set_data(vec_list_node_t *self, vec_t v)
+{
+  self->v = v;
+  return v;
+}
+
 vec_list_t *vec_list_init(vec_list_t *self)
 {
   vec_list_node_init( vec_list_root(self) );

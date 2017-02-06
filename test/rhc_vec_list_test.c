@@ -23,6 +23,19 @@ TEST(test_vec_list_node_insert_next)
   vec_list_node_destroy( &node1 );
 }
 
+TEST(test_vec_list_node_set_data)
+{
+  vec_list_node_t node;
+  vec_t v, ret;
+
+  vec_list_node_init( &node );
+  v = vec_create( 2 );
+  ret = vec_list_node_set_data( &node, v );
+  ASSERT_PTREQ( v, vec_list_node_data(&node) );
+  ASSERT_PTREQ( v, ret );
+  vec_destroy( v );
+}
+
 TEST(test_vec_list_node_destroy)
 {
   vec_list_node_t node;
@@ -51,6 +64,7 @@ TEST_SUITE(test_vec_list)
 {
   RUN_TEST(test_vec_list_node_init);
   RUN_TEST(test_vec_list_node_insert_next);
+  RUN_TEST(test_vec_list_node_set_data);
   RUN_TEST(test_vec_list_node_destroy);
   RUN_TEST(test_vec_list_init);
 }
