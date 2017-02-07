@@ -31,3 +31,8 @@ complex_t *complex_conj(complex_t *c, complex_t *cc)
 {
   return complex_init( cc, c->re, -c->im );
 }
+
+complex_t *complex_add(complex_t *c1, complex_t *c2, complex_t *c)
+{
+  return complex_init( c, c1->re + c2->re, c1->im + c2->im );
+}

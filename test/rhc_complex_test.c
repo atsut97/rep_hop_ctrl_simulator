@@ -182,6 +182,27 @@ TEST(test_complex_conj)
     check_method_c_c( &c->arg, &c->expected, complex_conj );
 }
 
+TEST(test_complex_add)
+{
+  struct case_t {
+    complex_t arg1;
+    complex_t arg2;
+    complex_t expected;
+    bool end;
+  } cases[] = {
+    { { 0, 0 }, { 0, 0 }, { 0, 0 }, false },
+    { { 1, 0 }, { 3, 0 }, { 4, 0 }, false },
+    { { -1, 3 }, { 2, -2 }, { 1, 1 }, false },
+    { { 1, 3 }, { -4, -8 }, { -3, -5 }, false },
+    { { 5, -6 }, { -3, -4 }, { 2, -10 }, false },
+    { { 0, 0 }, { 0, 0 }, { 0, 0 }, true }
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->end; c++ )
+    check_method_cc_c( &c->arg1, &c->arg2, &c->expected, complex_add );
+}
+
 TEST_SUITE(test_complex)
 {
   RUN_TEST(test_complex_init);
@@ -191,6 +212,7 @@ TEST_SUITE(test_complex)
   RUN_TEST(test_complex_abs);
   RUN_TEST(test_complex_arg);
   RUN_TEST(test_complex_conj);
+  RUN_TEST(test_complex_add);
 }
 
 int main(int argc, char *argv[])
