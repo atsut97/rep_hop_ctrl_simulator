@@ -86,12 +86,14 @@ report_failed_tests () {
         printf "\033[31m   * $i\n"
     done
     printf "\033[31m==============================\n"
+    printf "\033[0m"
 }
 
 # show tests are passed
 report_all_green () {
     printf "\n"
     printf "\033[32mAll green!\n"
+    printf "\033[0m"
 }
 
 # report summary of the run tests
