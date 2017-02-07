@@ -39,6 +39,14 @@ void check_method_cc_c(complex_t *arg1, complex_t *arg2, complex_t *expected, co
   check_eq_complex( expected, &actual );
 }
 
+void check_method_cd_c(complex_t *arg1, double arg2, complex_t *expected, complex_t* (*method)(complex_t*,double,complex_t*))
+{
+  complex_t actual;
+
+  method( arg1, arg2, &actual );
+  check_eq_complex( expected, &actual );
+}
+
 TEST(test_complex_init)
 {
   struct case_t {
@@ -224,6 +232,27 @@ TEST(test_complex_sub)
     check_method_cc_c( &c->arg1, &c->arg2, &c->expected, complex_sub );
 }
 
+TEST(test_complex_mul)
+{
+  struct case_t {
+    complex_t arg1;
+    double arg2;
+    complex_t expected;
+    bool end;
+  } cases[] = {
+    { { 0, 0 }, 0, { 0, 0 }, false },
+    { { 1, 0 }, 3, { 3, 0 }, false },
+    { { -1, 3 }, -2, { 2, -6 }, false },
+    { { 1, 3 }, -4, { -4, -12 }, false },
+    { { 5, -6 }, 4, { 20, -24 }, false },
+    { { 0, 0 }, 0, { 0, 0 }, true }
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->end; c++ )
+    check_method_cd_c( &c->arg1, c->arg2, &c->expected, complex_mul );
+}
+
 TEST_SUITE(test_complex)
 {
   RUN_TEST(test_complex_init);
@@ -235,6 +264,7 @@ TEST_SUITE(test_complex)
   RUN_TEST(test_complex_conj);
   RUN_TEST(test_complex_add);
   RUN_TEST(test_complex_sub);
+  RUN_TEST(test_complex_mul);
 }
 
 int main(int argc, char *argv[])
