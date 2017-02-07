@@ -46,6 +46,12 @@ vec_list_t *vec_list_init(vec_list_t *self)
 
 void vec_list_destroy(vec_list_t *self)
 {
+  vec_list_node_t *node;
+
+  while( !vec_list_is_empty(self) ){
+    node = vec_list_delete_tail( self );
+    vec_list_node_destroy( node );
+  }
 }
 
 vec_list_node_t *vec_list_insert_next(vec_list_t *self, vec_list_node_t *node, vec_list_node_t *new)
