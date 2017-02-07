@@ -112,12 +112,41 @@ TEST(test_complex_abs)
     check_complex_abs( c->re, c->im, c->expected );
 }
 
+void check_complex_arg(double re, double im, double expected)
+{
+  complex_t c;
+
+  complex_init( &c, re, im );
+  ASSERT_DOUBLE_EQ( expected, complex_arg( &c ) );
+}
+
+TEST(test_complex_arg)
+{
+  struct case_t {
+    double re, im;
+    double expected;
+    bool end;
+  } cases[] = {
+    {  0, 0, 0, false },
+    {  1, 1, PI/4, false },
+    {  1, sqrt(3), PI/3, false },
+    { -1, 1, 3*PI/4, false },
+    { -sqrt(3), -1, -5*PI/6, false },
+    { 0, 0, 0, true },
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->end; c++ )
+    check_complex_arg( c->re, c->im, c->expected );
+}
+
 TEST_SUITE(test_complex)
 {
   RUN_TEST(test_complex_init);
   RUN_TEST(test_complex_polar);
   RUN_TEST(test_complex_sqr_abs);
   RUN_TEST(test_complex_abs);
+  RUN_TEST(test_complex_arg);
 }
 
 int main(int argc, char *argv[])

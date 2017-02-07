@@ -13,5 +13,7 @@ complex_t *complex_polar(complex_t *c, double r, double theta);
 
 double complex_sqr_abs(complex_t *c);
 #define complex_abs(c) sqrt( complex_sqr_abs(c) )
+double complex_arg(complex_t *c);
+
 
 #endif /* __RHC_COMPLEX_H__ */

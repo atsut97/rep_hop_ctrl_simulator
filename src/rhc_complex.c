@@ -16,3 +16,8 @@ double complex_sqr_abs(complex_t *c)
 {
   return sqr(c->re) + sqr(c->im);
 }
+
+double complex_arg(complex_t *c)
+{
+  return atan2( c->im, c->re );
+}
