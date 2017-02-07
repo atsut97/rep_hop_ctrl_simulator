@@ -339,6 +339,19 @@ TEST(test_vec_list_delete_next_between)
   vec_list_destroy( &vl );
 }
 
+TEST(test_vec_list_is_empty)
+{
+  vec_list_t vl;
+  vec_list_node_t node;
+
+  vec_list_init( &vl );
+  ASSERT_TRUE( vec_list_is_empty( &vl ) );
+  vec_list_insert_tail( &vl, &node );
+  ASSERT_FALSE( vec_list_is_empty( &vl ) );
+  vec_list_delete_tail( &vl );
+  ASSERT_TRUE( vec_list_is_empty( &vl ) );
+}
+
 TEST_SUITE(test_vec_list)
 {
   RUN_TEST(test_vec_list_node_init);
@@ -362,6 +375,7 @@ TEST_SUITE(test_vec_list)
   RUN_TEST(test_vec_list_delete_next);
   RUN_TEST(test_vec_list_delete_next_last);
   RUN_TEST(test_vec_list_delete_next_between);
+  RUN_TEST(test_vec_list_is_empty);
 }
 
 int main(int argc, char *argv[])

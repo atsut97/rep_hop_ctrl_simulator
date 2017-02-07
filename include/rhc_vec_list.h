@@ -27,6 +27,7 @@ typedef struct _vec_list_t{
 #define vec_list_tail(self) vec_list_node_next( vec_list_root(self) )
 #define vec_list_inc(self)  ( vec_list_num(self)++ )
 #define vec_list_dec(self)  ( vec_list_num(self)-- )
+#define vec_list_is_empty(self) ( vec_list_num(self) == 0 )
 
 vec_list_t *vec_list_init(vec_list_t *self);
 void vec_list_destroy(vec_list_t *self);
