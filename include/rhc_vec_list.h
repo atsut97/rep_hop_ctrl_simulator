@@ -24,6 +24,7 @@ typedef struct _vec_list_t{
 
 #define vec_list_num(self)  ( (self)->num )
 #define vec_list_root(self) ( &(self)->root )
+#define vec_list_tail(self) vec_list_node_next( vec_list_root(self) )
 #define vec_list_inc(self)  ( vec_list_num(self)++ )
 #define vec_list_dec(self)  ( vec_list_num(self)-- )
 
