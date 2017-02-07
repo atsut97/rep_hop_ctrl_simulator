@@ -58,6 +58,16 @@ TEST(test_complex_polar)
     check_complex_polar( c->r, c->theta, c->re, c->im );
 }
 
+TEST(test_complex_clear)
+{
+  complex_t c;
+
+  complex_init( &c, 1, 2 );
+  complex_clear( &c );
+  ASSERT_DOUBLE_EQ( 0, c.re );
+  ASSERT_DOUBLE_EQ( 0, c.im );
+}
+
 void check_complex_sqr_abs(double re, double im, double expected)
 {
   complex_t c;
@@ -173,6 +183,7 @@ TEST_SUITE(test_complex)
 {
   RUN_TEST(test_complex_init);
   RUN_TEST(test_complex_polar);
+  RUN_TEST(test_complex_clear);
   RUN_TEST(test_complex_sqr_abs);
   RUN_TEST(test_complex_abs);
   RUN_TEST(test_complex_arg);
