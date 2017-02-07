@@ -253,6 +253,40 @@ TEST(test_complex_mul)
     check_method_cd_c( &c->arg1, c->arg2, &c->expected, complex_mul );
 }
 
+TEST(test_complex_div)
+{
+  struct case_t {
+    complex_t arg1;
+    double arg2;
+    complex_t expected;
+    bool end;
+  } cases[] = {
+    { { 3, 0 }, 3, { 1, 0 }, false },
+    { { -6, 3 }, -2, { 3, -1.5 }, false },
+    { { 1, 3 }, -4, { -0.25, -0.75 }, false },
+    { { 12, -6 }, 4, { 3, -1.5 }, false },
+    { { 0, 0 }, 0, { 0, 0 }, true }
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->end; c++ )
+    check_method_cd_c( &c->arg1, c->arg2, &c->expected, complex_div );
+}
+
+TEST(test_complex_div_by_zero)
+{
+  complex_t c1, c2;
+  complex_t *ret;
+
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  complex_init( &c1, 2, 4 );
+  ret = complex_div( &c1, 0.0, &c2 );
+  ASSERT_STREQ( ERR_ZERODIV, __err_last_msg );
+  ASSERT_PTREQ( NULL, ret );
+  ECHO_ON();
+}
+
 TEST_SUITE(test_complex)
 {
   RUN_TEST(test_complex_init);
@@ -265,6 +299,8 @@ TEST_SUITE(test_complex)
   RUN_TEST(test_complex_add);
   RUN_TEST(test_complex_sub);
   RUN_TEST(test_complex_mul);
+  RUN_TEST(test_complex_div);
+  RUN_TEST(test_complex_div_by_zero);
 }
 
 int main(int argc, char *argv[])

@@ -46,3 +46,12 @@ complex_t *complex_mul(complex_t *c1, double k, complex_t *c)
 {
   return complex_init( c, c1->re * k, c1->im * k );
 }
+
+complex_t *complex_div(complex_t *c1, double k, complex_t *c)
+{
+  if( istiny( k ) ){
+    RUNTIME_ERR( ERR_ZERODIV );
+    return NULL;
+  }
+  return complex_init( c, c1->re / k, c1->im / k );
+}
