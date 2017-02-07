@@ -1,7 +1,7 @@
 #ifndef __RHC_MISC_H__
 #define __RHC_MISC_H__
 
-#include <rhc_defs.h>
+#include "rhc_defs.h"
 
 /* tolerance on computation */
 #define TOL          ( 1.0e-12 )
