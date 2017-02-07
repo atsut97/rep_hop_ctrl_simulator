@@ -21,3 +21,8 @@ double complex_arg(complex_t *c)
 {
   return atan2( c->im, c->re );
 }
+
+complex_t *complex_conj(complex_t *c, complex_t *cc)
+{
+  return complex_init( cc, c->re, -c->im );
+}

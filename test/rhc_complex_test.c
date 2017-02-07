@@ -140,6 +140,35 @@ TEST(test_complex_arg)
     check_complex_arg( c->re, c->im, c->expected );
 }
 
+void check_complex_conj(complex_t *c1, complex_t *expected)
+{
+  complex_t c2;
+
+  complex_conj( c1, &c2 );
+  ASSERT_DOUBLE_EQ( expected->re, c2.re );
+  ASSERT_DOUBLE_EQ( expected->im, c2.im );
+}
+
+TEST(test_complex_conj)
+{
+  struct case_t {
+    complex_t c1;
+    complex_t expected;
+    bool end;
+  } cases[] = {
+    { { 0, 0 }, { 0, 0 }, false },
+    { { 1, 2 }, { 1, -2 }, false },
+    { { -3, 2 }, { -3, -2 }, false },
+    { { 2, -5 }, { 2, 5 }, false },
+    { { -1, -4 }, { -1, 4 }, false },
+    { { 0, 0 }, { 0, 0 }, true }
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->end; c++ )
+    check_complex_conj( &c->c1, &c->expected );
+}
+
 TEST_SUITE(test_complex)
 {
   RUN_TEST(test_complex_init);
@@ -147,6 +176,7 @@ TEST_SUITE(test_complex)
   RUN_TEST(test_complex_sqr_abs);
   RUN_TEST(test_complex_abs);
   RUN_TEST(test_complex_arg);
+  RUN_TEST(test_complex_conj);
 }
 
 int main(int argc, char *argv[])
