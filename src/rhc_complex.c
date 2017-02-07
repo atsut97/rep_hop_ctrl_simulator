@@ -36,3 +36,8 @@ complex_t *complex_add(complex_t *c1, complex_t *c2, complex_t *c)
 {
   return complex_init( c, c1->re + c2->re, c1->im + c2->im );
 }
+
+complex_t *complex_sub(complex_t *c1, complex_t *c2, complex_t *c)
+{
+  return complex_init( c, c1->re - c2->re, c1->im - c2->im );
+}

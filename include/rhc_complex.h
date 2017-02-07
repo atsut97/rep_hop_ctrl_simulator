@@ -17,5 +17,6 @@ double complex_sqr_abs(complex_t *c);
 double complex_arg(complex_t *c);
 complex_t *complex_conj(complex_t *c, complex_t *cc);
 complex_t *complex_add(complex_t *c1, complex_t *c2, complex_t *c);
+complex_t *complex_sub(complex_t *c1, complex_t *c2, complex_t *c);
 
 #endif /* __RHC_COMPLEX_H__ */
