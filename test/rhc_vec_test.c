@@ -232,7 +232,7 @@ void check_vec_size_2(size_t s1, size_t s2, vec_t (*method)(vec_t,double,vec_t))
   v1 = vec_create( s1 );
   v2 = vec_create( s2 );
   ret = method( v1, 1.0, v2 );
-  ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+  ASSERT_STREQ( ERR_SIZMIS, __err_last_msg );
   ASSERT_PTREQ( NULL, ret );
   vec_destroy( v1 );
   vec_destroy( v2 );
@@ -249,7 +249,7 @@ void check_vec_size_3(size_t s1, size_t s2, size_t s3, vec_t (*method)(vec_t,vec
   v2 = vec_create( s2 );
   v3 = vec_create( s3 );
   ret = method( v1, v2, v3 );
-  ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+  ASSERT_STREQ( ERR_SIZMIS, __err_last_msg );
   ASSERT_PTREQ( NULL, ret );
   vec_destroy( v1 );
   vec_destroy( v2 );
@@ -393,7 +393,7 @@ TEST(test_vec_div_by_zero)
   ECHO_OFF();
   v1 = vec_create_list( 2, 1.0, 1.0 );
   ret = vec_div( v1, 0.0, v1 );
-  ASSERT_STREQ( VEC_ERR_ZERODIV, __err_last_msg );
+  ASSERT_STREQ( ERR_ZERODIV, __err_last_msg );
   ASSERT_PTREQ( NULL, ret );
   vec_destroy( v1 );
   ECHO_ON();
@@ -444,7 +444,7 @@ void check_vec_cat_size_mismatch(size_t s1, size_t s2, size_t s3)
   v2 = vec_create( s2 );
   v3 = vec_create( s3 );
   ret = vec_cat( v1, 1.0, v2, v3 );
-  ASSERT_STREQ( VEC_ERR_SIZMIS, __err_last_msg );
+  ASSERT_STREQ( ERR_SIZMIS, __err_last_msg );
   ASSERT_PTREQ( NULL, ret );
   vec_destroy( v1 );
   vec_destroy( v2 );

@@ -11,6 +11,10 @@
 #define BUFSIZ 512
 #endif  /* BUFSIZ */
 
+/* error messages */
+#define ERR_SIZMIS  "size mismatch of vector"
+#define ERR_ZERODIV "division by zero"
+
 #ifndef __USE_MISC
 typedef unsigned int       uint;
 typedef unsigned long int  ulong;
@@ -29,5 +33,6 @@ typedef ubyte bool;
 enum{
   false = 0, true = 1
 };
+
 
 #endif /* __RHC_DEFS_H__ */

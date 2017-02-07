@@ -10,10 +10,6 @@ typedef struct{
 
 typedef _vec_t * vec_t;
 
-/* error messages */
-#define VEC_ERR_SIZMIS  "size mismatch of vector"
-#define VEC_ERR_ZERODIV "division by zero"
-
 /* vector size */
 #define vec_size(v)      ( (v)->size )
 #define vec_set_size(v,s) ( vec_size(v) = (s) )

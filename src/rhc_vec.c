@@ -80,7 +80,7 @@ vec_t vec_add(vec_t v1, vec_t v2, vec_t v)
   size_t i;
 
   if( vec_size(v1) != vec_size(v2) || vec_size(v2) != vec_size(v) ){
-    RUNTIME_ERR( VEC_ERR_SIZMIS );
+    RUNTIME_ERR( ERR_SIZMIS );
     return NULL;
   }
   for( i=0; i<vec_size(v1); i++ )
@@ -93,7 +93,7 @@ vec_t vec_sub(vec_t v1, vec_t v2, vec_t v)
   size_t i;
 
   if( vec_size(v1) != vec_size(v2) || vec_size(v2) != vec_size(v) ){
-    RUNTIME_ERR( VEC_ERR_SIZMIS );
+    RUNTIME_ERR( ERR_SIZMIS );
     return NULL;
   }
   for( i=0; i<vec_size(v1); i++ )
@@ -106,7 +106,7 @@ vec_t vec_mul(vec_t v1, double k, vec_t v)
   size_t i;
 
   if( vec_size(v1) != vec_size(v) ){
-    RUNTIME_ERR( VEC_ERR_SIZMIS );
+    RUNTIME_ERR( ERR_SIZMIS );
     return NULL;
   }
   for( i=0; i<vec_size(v1); i++ )
@@ -119,11 +119,11 @@ vec_t vec_div(vec_t v1, double k, vec_t v)
   size_t i;
 
   if( vec_size(v1) != vec_size(v) ){
-    RUNTIME_ERR( VEC_ERR_SIZMIS );
+    RUNTIME_ERR( ERR_SIZMIS );
     return NULL;
   }
   if( istiny( k ) ){
-    RUNTIME_ERR( VEC_ERR_ZERODIV );
+    RUNTIME_ERR( ERR_ZERODIV );
     return NULL;
   }
   for( i=0; i<vec_size(v1); i++ )
@@ -136,7 +136,7 @@ vec_t vec_cat(vec_t v1, double k, vec_t v2, vec_t v)
   size_t i;
 
   if( vec_size(v1) != vec_size(v2) || vec_size(v2) != vec_size(v) ){
-    RUNTIME_ERR( VEC_ERR_SIZMIS );
+    RUNTIME_ERR( ERR_SIZMIS );
     return NULL;
   }
   for( i=0; i<vec_size(v1); i++ )
