@@ -48,9 +48,14 @@ void vec_list_destroy(vec_list_t *self)
 {
 }
 
-vec_list_t *vec_list_insert_next(vec_list_t *self, vec_list_node_t *node, vec_list_node_t *new)
+vec_list_node_t *vec_list_insert_next(vec_list_t *self, vec_list_node_t *node, vec_list_node_t *new)
 {
-  vec_list_node_insert_next( node, new );
   vec_list_inc( self );
-  return self;
+  return vec_list_node_insert_next( node, new );
+}
+
+vec_list_node_t *vec_list_delete_next(vec_list_t *self, vec_list_node_t *node)
+{
+  vec_list_dec( self );
+  return vec_list_node_delete_next( node );
 }
