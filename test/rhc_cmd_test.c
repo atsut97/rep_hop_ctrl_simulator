@@ -14,11 +14,16 @@ void teardown()
   cmd_destroy( &cmd );
 }
 
+void set_rand(cmd_t *cmd)
+{
+  cmd->zd = rand();
+  cmd->z0 = rand();
+  cmd->zb = rand();
+}
+
 TEST(test_cmd_init)
 {
-  cmd.zd = rand();
-  cmd.z0 = rand();
-  cmd.zb = rand();
+  set_rand( &cmd );
   cmd_init( &cmd );
   ASSERT_EQ( 0, cmd.zd );
   ASSERT_EQ( 0, cmd.z0 );
@@ -27,9 +32,7 @@ TEST(test_cmd_init)
 
 TEST(test_cmd_destroy)
 {
-  cmd.zd = rand();
-  cmd.z0 = rand();
-  cmd.zb = rand();
+  set_rand( &cmd );
   cmd_destroy( &cmd );
   ASSERT_EQ( 0, cmd.zd );
   ASSERT_EQ( 0, cmd.z0 );
