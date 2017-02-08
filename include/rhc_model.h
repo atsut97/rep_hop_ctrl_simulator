@@ -12,6 +12,9 @@ typedef struct{
 #define model_mass(self) ( (self)->m )
 #define model_cmd(self)  ( (self)->cmd )
 
+#define model_set_mass(self,m) ( model_mass(self) = (m) )
+#define model_set_cmd(self,c)  ( model_cmd(self) = (c) )
+
 model_t *model_init(model_t *self, double m, cmd_t *cmd);
 void model_destroy(model_t *self);
 
