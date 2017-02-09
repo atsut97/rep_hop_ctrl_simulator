@@ -1,28 +1,38 @@
 #include "rhc_ctrl.h"
 #include "rhc_test.h"
 
+static cmd_t cmd;
+static ctrl_t ctrl;
+static vec_t p;
+
+void setup()
+{
+  cmd_default_init( &cmd );
+  ctrl_init( &ctrl, &cmd );
+  p = vec_create( 2 );
+}
+
+void teardown()
+{
+  vec_destroy( p );
+  ctrl_destroy( &ctrl );
+  cmd_destroy( &cmd );
+}
+
 TEST(test_ctrl_init)
 {
-  cmd_t cmd;
-  ctrl_t ctrl;
-
-  ctrl_init( &ctrl, &cmd );
   ASSERT_PTREQ( &cmd, ctrl_cmd( &ctrl ) );
-  ctrl_destroy( &ctrl );
 }
 
 TEST(test_ctrl_destroy)
 {
-  cmd_t cmd;
-  ctrl_t ctrl;
-
-  ctrl_init( &ctrl, &cmd );
   ctrl_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
 }
 
 TEST_SUITE(test_ctrl)
 {
+  CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_init);
   RUN_TEST(test_ctrl_destroy);
 }
