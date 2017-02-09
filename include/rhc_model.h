@@ -4,6 +4,8 @@
 #include "rhc_vec.h"
 #include "rhc_cmd.h"
 
+#define G  9.806652
+
 typedef struct{
   double m;
   cmd_t *cmd;
@@ -17,5 +19,7 @@ typedef struct{
 
 model_t *model_init(model_t *self, double m, cmd_t *cmd);
 void model_destroy(model_t *self);
+
+double model_calc_acc(model_t *self, double z, double z0, double fz, double fe);
 
 #endif /* __RHC_MODEL_H__ */
