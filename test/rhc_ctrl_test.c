@@ -22,6 +22,7 @@ void teardown()
 TEST(test_ctrl_init)
 {
   ASSERT_PTREQ( &cmd, ctrl_cmd( &ctrl ) );
+  ASSERT_EQ( 0, ctrl_fz( &ctrl ) );
 }
 
 TEST(test_ctrl_destroy)
