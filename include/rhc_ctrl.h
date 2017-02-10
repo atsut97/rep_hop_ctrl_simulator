@@ -15,4 +15,8 @@ typedef struct{
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd);
 void ctrl_destroy(ctrl_t *self);
 
+bool ctrl_is_in_flight(ctrl_t *self, vec_t p);
+bool ctrl_is_in_compression(ctrl_t *self, vec_t p);
+bool ctrl_is_in_decompression(ctrl_t *self, vec_t p);
+
 #endif /* __RHC_CTRL_H__ */
