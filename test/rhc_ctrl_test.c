@@ -210,6 +210,12 @@ TEST(test_ctrl_v0)
   }
 }
 
+TEST(test_ctrl_update)
+{
+  /* dummy */
+  ASSERT_TRUE( true );
+}
+
 TEST_SUITE(test_ctrl)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -222,6 +228,7 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_compression);
   RUN_TEST(test_ctrl_decompression);
   RUN_TEST(test_ctrl_v0);
+  RUN_TEST(test_ctrl_update);
 }
 
 int main(int argc, char *argv[])

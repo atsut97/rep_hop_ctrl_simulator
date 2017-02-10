@@ -31,3 +31,9 @@ double ctrl_calc_sqr_v0(double z0, double zd)
 {
   return 2.0 * G * ( zd - z0 );
 }
+
+ctrl_t *ctrl_update(ctrl_t *self, double t, vec_t p)
+{
+  /* dummy */
+  return self;
+}

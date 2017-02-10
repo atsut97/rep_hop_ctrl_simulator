@@ -27,4 +27,6 @@ double ctrl_calc_sqr_v0(double z0, double zd);
 #define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_z0(self), ctrl_zd(self) )
 #define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
 
+ctrl_t *ctrl_update(ctrl_t *self, double t, vec_t p);
+
 #endif /* __RHC_CTRL_H__ */
