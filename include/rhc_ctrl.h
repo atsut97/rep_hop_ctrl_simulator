@@ -22,4 +22,9 @@ bool ctrl_is_in_flight(ctrl_t *self, vec_t p);
 bool ctrl_is_in_compression(ctrl_t *self, vec_t p);
 bool ctrl_is_in_decompression(ctrl_t *self, vec_t p);
 
+double ctrl_calc_sqr_v0(double z0, double zd);
+#define ctrl_calc_v0(self,z0,zd) sqrt( ctrl_calc_sqr_v0( z0, zd ) )
+#define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_z0(self), ctrl_zd(self) )
+#define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
+
 #endif /* __RHC_CTRL_H__ */

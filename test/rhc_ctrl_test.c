@@ -190,6 +190,26 @@ TEST(test_ctrl_decompression)
   }
 }
 
+TEST(test_ctrl_v0)
+{
+  struct case_t {
+    double z0, zd;
+    double expected;
+  } cases[] = {
+    { 0.26, 0.28, sqrt(0.04*G) },
+    { 0.25, 0.28, sqrt(0.06*G) },
+    { 0.27, 0.3,  sqrt(0.06*G) },
+    { 0, 0, 0 }
+  };
+  struct case_t *c;
+
+  for( c=cases; c->z0>0; c++ ){
+    cmd.z0 = c->z0;
+    cmd.zd = c->zd;
+    ASSERT_DOUBLE_EQ( c->expected, ctrl_v0( &ctrl ) );
+  }
+}
+
 TEST_SUITE(test_ctrl)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -201,6 +221,7 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_flight);
   RUN_TEST(test_ctrl_compression);
   RUN_TEST(test_ctrl_decompression);
+  RUN_TEST(test_ctrl_v0);
 }
 
 int main(int argc, char *argv[])
