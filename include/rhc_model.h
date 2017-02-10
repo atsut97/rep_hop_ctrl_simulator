@@ -3,8 +3,6 @@
 
 #include "rhc_misc.h"
 
-#define G  9.806652
-
 typedef struct{
   double m;
 } model_t;
