@@ -9,7 +9,7 @@
 typedef struct{
   double t;
   ode_t ode;
-  vec_t p;
+  vec_t state;
   cmd_t *cmd;
   ctrl_t *ctrl;
   model_t *model;
@@ -18,6 +18,8 @@ typedef struct{
 #define simulator_cmd(self)   (self)->cmd
 #define simulator_ctrl(self)  (self)->ctrl
 #define simulator_model(self) (self)->model
+#define simulator_time(self)  (self)->t
+#define simulator_state(self) (self)->state
 
 simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void simulator_destroy(simulator_t *self);

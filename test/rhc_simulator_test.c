@@ -27,6 +27,8 @@ TEST(test_simulator_init)
   ASSERT_PTREQ( &cmd, simulator_cmd( &sim ) );
   ASSERT_PTREQ( &ctrl, simulator_ctrl( &sim ) );
   ASSERT_PTREQ( &model, simulator_model( &sim ) );
+  ASSERT_EQ( 0, simulator_time( &sim ) );
+  ASSERT_EQ( 2, vec_size( simulator_state( &sim ) ) );
 }
 
 TEST(test_simulator_destroy)
@@ -35,6 +37,8 @@ TEST(test_simulator_destroy)
   ASSERT_PTREQ( NULL, simulator_cmd( &sim ) );
   ASSERT_PTREQ( NULL, simulator_ctrl( &sim ) );
   ASSERT_PTREQ( NULL, simulator_model( &sim ) );
+  ASSERT_EQ( 0, simulator_time( &sim ) );
+  ASSERT_PTREQ( NULL, simulator_state( &sim ) );
 }
 
 TEST_SUITE(test_simulator)
