@@ -5,7 +5,7 @@ cmd_t cmd;
 ctrl_t ctrl;
 model_t model;
 simulator_t sim;
-vec_t z0;
+vec_t z;
 
 void setup()
 {
@@ -13,12 +13,12 @@ void setup()
   ctrl_init( &ctrl, &cmd );
   model_init( &model, 1.0 );
   simulator_init( &sim, &cmd, &ctrl, &model );
-  z0 = vec_create( 2 );
+  z = vec_create( 2 );
 }
 
 void teardown()
 {
-  vec_destroy( z0 );
+  vec_destroy( z );
   simulator_destroy( &sim );
   model_destroy( &model );
   ctrl_destroy( &ctrl );
@@ -64,14 +64,24 @@ TEST(test_simulator_inc_time)
   ASSERT_EQ( 0.07, simulator_time( &sim ) );
 }
 
+TEST(test_simulator_update)
+{
+  double dt;
+
+  vec_set_elem_list( z, 2, 0.28, 0.0 );
+  dt = 0.01;
+  simulator_update( &sim, z, 0.0, dt );
+  ASSERT_EQ( 0.01, simulator_time( &sim ) );
+}
+
 TEST(test_simulator_run)
 {
   double T;
 
-  vec_set_elem_list( z0, 2, 0.28, 0.0 );
+  vec_set_elem_list( z, 2, 0.28, 0.0 );
   T = 10;
   ASSERT_EQ( 0, simulator_time( &sim ) );
-  simulator_run( &sim, z0, T );
+  simulator_run( &sim, z, T );
   ASSERT_EQ( T, simulator_time( &sim ) );
 }
 
@@ -81,6 +91,7 @@ TEST_SUITE(test_simulator)
   RUN_TEST(test_simulator_init);
   RUN_TEST(test_simulator_destroy);
   RUN_TEST(test_simulator_inc_time);
+  RUN_TEST(test_simulator_update);
   RUN_TEST(test_simulator_run);
 }
 
