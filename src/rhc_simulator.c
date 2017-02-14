@@ -19,3 +19,8 @@ void simulator_destroy(simulator_t *self)
   vec_destroy( simulator_state( self ) );
   simulator_state( self ) = NULL;
 }
+
+void simulator_run(simulator_t *self, vec_t p0, double time)
+{
+  simulator_time( self ) = 10;
+}
