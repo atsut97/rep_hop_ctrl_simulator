@@ -21,6 +21,9 @@ typedef struct{
 #define simulator_time(self)  (self)->t
 #define simulator_state(self) (self)->state
 
+#define simulator_set_time(self,t)  ( simulator_time(self)  = (t) )
+#define simulator_inc_time(self,dt) ( simulator_time(self) += (dt) )
+
 simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void simulator_destroy(simulator_t *self);
 

@@ -44,6 +44,26 @@ TEST(test_simulator_destroy)
   ASSERT_PTREQ( NULL, simulator_state( &sim ) );
 }
 
+TEST(test_simulator_inc_time)
+{
+  double dt;
+
+  dt = 0.01;
+  ASSERT_EQ( 0, simulator_time( &sim ) );
+  simulator_inc_time( &sim, dt );
+  ASSERT_EQ( 0.01, simulator_time( &sim ) );
+  simulator_inc_time( &sim, dt );
+  ASSERT_EQ( 0.02, simulator_time( &sim ) );
+  simulator_inc_time( &sim, dt );
+  ASSERT_EQ( 0.03, simulator_time( &sim ) );
+
+  dt = 0.02;
+  simulator_inc_time( &sim, dt );
+  ASSERT_EQ( 0.05, simulator_time( &sim ) );
+  simulator_inc_time( &sim, dt );
+  ASSERT_EQ( 0.07, simulator_time( &sim ) );
+}
+
 TEST(test_simulator_run)
 {
   double T;
@@ -60,6 +80,7 @@ TEST_SUITE(test_simulator)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_simulator_init);
   RUN_TEST(test_simulator_destroy);
+  RUN_TEST(test_simulator_inc_time);
   RUN_TEST(test_simulator_run);
 }
 
