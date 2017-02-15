@@ -28,7 +28,7 @@ simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t
 void simulator_destroy(simulator_t *self);
 
 vec_t simulator_dp(double t, vec_t x, void *util, vec_t v);
-void simulator_update(simulator_t *self, vec_t p, double fe, double dt);
-void simulator_run(simulator_t *self, vec_t p0, double time);
+void simulator_update(simulator_t *self, double fe, double dt);
+void simulator_run(simulator_t *self, vec_t p0, double time, double dt);
 
 #endif /* __RHC_SIMULATOR_H__ */

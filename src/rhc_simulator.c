@@ -35,12 +35,16 @@ vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
   return v;
 }
 
-void simulator_update(simulator_t *self, vec_t p, double fe, double dt)
+void simulator_update(simulator_t *self, double fe, double dt)
 {
+  ode_update( &self->ode, simulator_time(self), simulator_state(self), dt, self );
   simulator_inc_time( self, dt );
 }
 
-void simulator_run(simulator_t *self, vec_t p0, double time)
+void simulator_run(simulator_t *self, vec_t p0, double time, double dt)
 {
-  simulator_time( self ) = 10;
+  vec_copy( p0, simulator_state(self) );
+  while( simulator_time(self) < time ){
+    simulator_update( self, 0.0, dt );
+  }
 }

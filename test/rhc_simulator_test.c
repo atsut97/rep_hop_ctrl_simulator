@@ -73,19 +73,20 @@ TEST(test_simulator_update)
 
   vec_set_elem_list( z, 2, 0.28, 0.0 );
   dt = 0.01;
-  simulator_update( &sim, z, 0.0, dt );
+  simulator_update( &sim, 0.0, dt );
   ASSERT_EQ( 0.01, simulator_time( &sim ) );
 }
 
 TEST(test_simulator_run)
 {
-  double T;
+  double T, dt;
 
   vec_set_elem_list( z, 2, 0.28, 0.0 );
   T = 10;
+  dt = 0.01;
   ASSERT_EQ( 0, simulator_time( &sim ) );
-  simulator_run( &sim, z, T );
-  ASSERT_EQ( T, simulator_time( &sim ) );
+  simulator_run( &sim, z, T, dt );
+  ASSERT_DOUBLE_EQ( T+dt, simulator_time( &sim ) );
 }
 
 TEST_SUITE(test_simulator)
