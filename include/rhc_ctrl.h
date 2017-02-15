@@ -34,12 +34,4 @@ ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p);
 #define ctrl_update(self,t,p) ((ctrl_t*)self)->_update( self, t, p )
 #define ctrl_destroy(self)    ((ctrl_t*)self)->_destroy( self )
 
-typedef struct{
-  double k;
-} _ctrl_sub_prp;
-
-ctrl_t *ctrl_sub_create(ctrl_t *self, cmd_t *cmd, double k);
-void ctrl_sub_destroy(ctrl_t *self);
-ctrl_t *ctrl_sub_update(ctrl_t *self, double t, vec_t p);
-
 #endif /* __RHC_CTRL_H__ */

@@ -235,41 +235,9 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_update);
 }
 
-TEST(test_ctrl_sub_create)
-{
-  ctrl_sub_create( &ctrl, &cmd, 10 );
-  ASSERT_EQ( 10, ((_ctrl_sub_prp*)ctrl.prp)->k );
-  ctrl_sub_destroy( &ctrl );
-}
-
-TEST(test_ctrl_sub_update)
-{
-  ctrl_sub_create( &ctrl, &cmd, 10 );
-  ctrl_update( &ctrl, 0, p );
-  ASSERT_EQ( 10, ctrl_fz( &ctrl ) );
-  ctrl_sub_destroy( &ctrl );
-}
-
-TEST(test_ctrl_sub_destroy)
-{
-  ctrl_sub_create( &ctrl, &cmd, 10 );
-  ASSERT_EQ( 10, ((_ctrl_sub_prp*)ctrl.prp)->k );
-  ctrl_sub_destroy( &ctrl );
-  ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
-  ASSERT_PTREQ( NULL, ctrl.prp );
-}
-
-TEST_SUITE(test_ctrl_sub)
-{
-  RUN_TEST(test_ctrl_sub_create);
-  RUN_TEST(test_ctrl_sub_update);
-  RUN_TEST(test_ctrl_sub_destroy);
-}
-
 int main(int argc, char *argv[])
 {
   RUN_SUITE(test_ctrl);
-  RUN_SUITE(test_ctrl_sub);
   TEST_REPORT();
   TEST_EXIT();
 }
