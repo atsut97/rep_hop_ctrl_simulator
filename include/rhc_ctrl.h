@@ -9,7 +9,6 @@ typedef struct _ctrl_t{
   cmd_t *cmd;
   double fz;
   void *prp;
-  complex_t c;
   double n, phi;
   struct _ctrl_t* (*_update)(struct _ctrl_t*,double,vec_t);
   void (*_destroy)(struct _ctrl_t*);
@@ -20,7 +19,6 @@ typedef struct _ctrl_t{
 #define ctrl_z0(self)  ctrl_cmd(self)->z0
 #define ctrl_zd(self)  ctrl_cmd(self)->zd
 #define ctrl_zb(self)  ctrl_cmd(self)->zb
-#define ctrl_c(self)   ( &((ctrl_t*)self)->c )
 #define ctrl_n(self)   ((ctrl_t*)self)->n
 #define ctrl_phi(self) ((ctrl_t*)self)->phi
 
@@ -34,9 +32,13 @@ bool ctrl_is_in_compression(ctrl_t *self, vec_t p);
 bool ctrl_is_in_decompression(ctrl_t *self, vec_t p);
 
 double ctrl_calc_sqr_v0(double z0, double zd);
-#define ctrl_calc_v0(self,z0,zd) sqrt( ctrl_calc_sqr_v0( z0, zd ) )
+#define ctrl_calc_v0(z0,zd) sqrt( ctrl_calc_sqr_v0( z0, zd ) )
 #define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_z0(self), ctrl_zd(self) )
 #define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
+
+complex_t *ctrl_calc_phase(double z0, double zd, double zb, vec_t p, complex_t *c);
+#define ctrl_phase(self,p,c) ctrl_calc_phase( ctrl_z0(self), ctrl_zd(self), ctrl_zb(self), p, c )
+double ctrl_calc_phi(double z0, double zd, double zb, vec_t p);
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p);
 void ctrl_destroy_default(ctrl_t *self);

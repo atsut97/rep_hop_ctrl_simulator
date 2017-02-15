@@ -26,8 +26,6 @@ TEST(test_ctrl_init)
   ASSERT_PTREQ( ctrl_update_default, ctrl._update );
   ASSERT_PTREQ( ctrl_destroy_default, ctrl._destroy );
   ASSERT_PTREQ( NULL, ctrl.prp);
-  ASSERT_EQ( 0, ctrl_c( &ctrl )->re );
-  ASSERT_EQ( 0, ctrl_c( &ctrl )->im );
   ASSERT_EQ( 0, ctrl_n( &ctrl ) );
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
@@ -37,8 +35,6 @@ TEST(test_ctrl_destroy)
   ctrl_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl.prp );
-  ASSERT_EQ( 0, ctrl_c( &ctrl )->re );
-  ASSERT_EQ( 0, ctrl_c( &ctrl )->im );
   ASSERT_EQ( 0, ctrl_n( &ctrl ) );
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
@@ -228,6 +224,81 @@ TEST(test_ctrl_update)
   ASSERT_TRUE( true );
 }
 
+TEST(test_ctrl_calc_phase)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    complex_t expected;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.28, 0.0, { 1.0, 0.0 } },           /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), { 0.0, 1.0 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, { -1.0, 0.0 } },          /* bottom */
+    { 0.28, 0.26, 0.24, 0.24, -0.0, { -1.0, 0.0 } },         /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), { 0.0, -1.0 } }, /* lift-off */
+    { 0, 0, 0, 0, 0, { 0, 0 } },
+  };
+  struct case_t *c;
+  complex_t cp;
+
+  for( c=cases; c->zd>0; c++ ){
+    vec_set_elem_list( p, 2, c->z, c->v );
+    ctrl_calc_phase( c->z0, c->zd, c->zb, p, &cp );
+    ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
+    ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
+  }
+}
+
+TEST(test_ctrl_phase)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    complex_t expected;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.28, 0.0, { 1.0, 0.0 } },           /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), { 0.0, 1.0 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, { -1.0, 0.0 } },          /* bottom */
+    { 0.28, 0.26, 0.24, 0.24, -0.0, { -1.0, 0.0 } },         /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), { 0.0, -1.0 } }, /* lift-off */
+    { 0, 0, 0, 0, 0, { 0, 0 } },
+  };
+  struct case_t *c;
+  complex_t cp;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, 2, c->z, c->v );
+    ctrl_phase( &ctrl, p, &cp );
+    ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
+    ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
+  }
+}
+
+TEST(test_ctrl_calc_phi)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    double expected;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 0.0 },            /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), PI_2 }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, -0.0, PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, -PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), -PI_2 }, /* lift-off */
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    vec_set_elem_list( p, 2, c->z, c->v );
+    ASSERT_DOUBLE_EQ( c->expected, ctrl_calc_phi( c->z0, c->zd, c->zb, p ) );
+  }
+}
+
 TEST_SUITE(test_ctrl)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -241,6 +312,9 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_decompression);
   RUN_TEST(test_ctrl_v0);
   RUN_TEST(test_ctrl_update);
+  RUN_TEST(test_ctrl_calc_phase);
+  RUN_TEST(test_ctrl_phase);
+  RUN_TEST(test_ctrl_calc_phi);
 }
 
 int main(int argc, char *argv[])

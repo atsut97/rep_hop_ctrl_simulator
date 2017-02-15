@@ -7,7 +7,6 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd)
   self->_update = ctrl_update_default;
   self->_destroy = ctrl_destroy_default;
   self->prp = NULL;
-  complex_clear( ctrl_c( self ) );
   ctrl_n( self ) = 0;
   ctrl_phi( self ) = 0;
   return self;
@@ -17,7 +16,6 @@ void ctrl_destroy_default(ctrl_t *self)
 {
   self->cmd = NULL;
   self->prp = NULL;
-  complex_clear( ctrl_c( self ) );
   ctrl_n( self ) = 0;
   ctrl_phi( self ) = 0;
 }
@@ -46,4 +44,23 @@ ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
 {
   /* dummy */
   return self;
+}
+
+complex_t *ctrl_calc_phase(double z0, double zd, double zb, vec_t p, complex_t *c)
+{
+  double z, v, v0;
+
+  z = vec_elem( p, 0 );
+  v = vec_elem( p, 1 );
+  v0 = ctrl_calc_v0( z0, zd );
+  complex_init( c, (z-z0)/(z0-zb), -v/v0 );
+  return c;
+}
+
+double ctrl_calc_phi(double z0, double zd, double zb, vec_t p)
+{
+  complex_t c;
+
+  ctrl_calc_phase( z0, zd, zb, p, &c );
+  return complex_arg( &c );
 }
