@@ -26,6 +26,10 @@ TEST(test_ctrl_init)
   ASSERT_PTREQ( ctrl_update_default, ctrl._update );
   ASSERT_PTREQ( ctrl_destroy_default, ctrl._destroy );
   ASSERT_PTREQ( NULL, ctrl.prp);
+  ASSERT_EQ( 0, ctrl_c( &ctrl )->re );
+  ASSERT_EQ( 0, ctrl_c( &ctrl )->im );
+  ASSERT_EQ( 0, ctrl_n( &ctrl ) );
+  ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
 TEST(test_ctrl_destroy)
@@ -33,6 +37,10 @@ TEST(test_ctrl_destroy)
   ctrl_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl.prp );
+  ASSERT_EQ( 0, ctrl_c( &ctrl )->re );
+  ASSERT_EQ( 0, ctrl_c( &ctrl )->im );
+  ASSERT_EQ( 0, ctrl_n( &ctrl ) );
+  ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
 TEST(test_ctrl_z0)

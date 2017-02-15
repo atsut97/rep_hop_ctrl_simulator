@@ -7,6 +7,9 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd)
   self->_update = ctrl_update_default;
   self->_destroy = ctrl_destroy_default;
   self->prp = NULL;
+  complex_clear( ctrl_c( self ) );
+  ctrl_n( self ) = 0;
+  ctrl_phi( self ) = 0;
   return self;
 }
 
@@ -14,6 +17,9 @@ void ctrl_destroy_default(ctrl_t *self)
 {
   self->cmd = NULL;
   self->prp = NULL;
+  complex_clear( ctrl_c( self ) );
+  ctrl_n( self ) = 0;
+  ctrl_phi( self ) = 0;
 }
 
 bool ctrl_is_in_flight(ctrl_t *self, vec_t p)

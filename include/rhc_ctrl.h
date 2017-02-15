@@ -1,6 +1,7 @@
 #ifndef __RHC_CTRL_H__
 #define __RHC_CTRL_H__
 
+#include "rhc_complex.h"
 #include "rhc_vec.h"
 #include "rhc_cmd.h"
 
@@ -8,6 +9,8 @@ typedef struct _ctrl_t{
   cmd_t *cmd;
   double fz;
   void *prp;
+  complex_t c;
+  double n, phi;
   struct _ctrl_t* (*_update)(struct _ctrl_t*,double,vec_t);
   void (*_destroy)(struct _ctrl_t*);
 } ctrl_t;
@@ -17,6 +20,9 @@ typedef struct _ctrl_t{
 #define ctrl_z0(self)  ctrl_cmd(self)->z0
 #define ctrl_zd(self)  ctrl_cmd(self)->zd
 #define ctrl_zb(self)  ctrl_cmd(self)->zb
+#define ctrl_c(self)   ( &((ctrl_t*)self)->c )
+#define ctrl_n(self)   ((ctrl_t*)self)->n
+#define ctrl_phi(self) ((ctrl_t*)self)->phi
 
 #define ctrl_update(self,t,p) ((ctrl_t*)self)->_update( self, t, p )
 #define ctrl_destroy(self)    ((ctrl_t*)self)->_destroy( self )
