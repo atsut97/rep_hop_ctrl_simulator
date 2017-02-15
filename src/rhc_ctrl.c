@@ -46,7 +46,7 @@ ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
   return self;
 }
 
-complex_t *ctrl_calc_phase(double z0, double zd, double zb, vec_t p, complex_t *c)
+complex_t *ctrl_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c)
 {
   double z, v, v0;
 
@@ -61,6 +61,6 @@ double ctrl_calc_phi(double z0, double zd, double zb, vec_t p)
 {
   complex_t c;
 
-  ctrl_calc_phase( z0, zd, zb, p, &c );
+  ctrl_calc_phase_complex( z0, zd, zb, p, &c );
   return complex_arg( &c );
 }

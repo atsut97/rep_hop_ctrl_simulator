@@ -224,7 +224,7 @@ TEST(test_ctrl_update)
   ASSERT_TRUE( true );
 }
 
-TEST(test_ctrl_calc_phase)
+TEST(test_ctrl_calc_phase_complex)
 {
   struct case_t {
     double zd, z0, zb;
@@ -243,13 +243,13 @@ TEST(test_ctrl_calc_phase)
 
   for( c=cases; c->zd>0; c++ ){
     vec_set_elem_list( p, 2, c->z, c->v );
-    ctrl_calc_phase( c->z0, c->zd, c->zb, p, &cp );
+    ctrl_calc_phase_complex( c->z0, c->zd, c->zb, p, &cp );
     ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
     ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
   }
 }
 
-TEST(test_ctrl_phase)
+TEST(test_ctrl_phase_complex)
 {
   struct case_t {
     double zd, z0, zb;
@@ -271,7 +271,7 @@ TEST(test_ctrl_phase)
     cmd.z0 = c->z0;
     cmd.zb = c->zb;
     vec_set_elem_list( p, 2, c->z, c->v );
-    ctrl_phase( &ctrl, p, &cp );
+    ctrl_phase_complex( &ctrl, p, &cp );
     ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
     ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
   }
@@ -312,8 +312,8 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_decompression);
   RUN_TEST(test_ctrl_v0);
   RUN_TEST(test_ctrl_update);
-  RUN_TEST(test_ctrl_calc_phase);
-  RUN_TEST(test_ctrl_phase);
+  RUN_TEST(test_ctrl_calc_phase_complex);
+  RUN_TEST(test_ctrl_phase_complex);
   RUN_TEST(test_ctrl_calc_phi);
 }
 
