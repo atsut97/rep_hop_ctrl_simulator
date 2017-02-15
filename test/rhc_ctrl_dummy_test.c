@@ -31,7 +31,7 @@ TEST(test_ctrl_dummy_update)
   ASSERT_EQ( 10, ctrl_fz( &ctrl ) );
 }
 
-TEST(test_ctrl_dummy_update_loop)
+TEST(test_ctrl_dummy_update_phase)
 {
   struct case_t {
     double zd, z0, zb;
@@ -65,6 +65,36 @@ TEST(test_ctrl_dummy_update_loop)
   }
 }
 
+TEST(test_ctrl_dummy_update_flight_zero)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    double expct_fz;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 0.0 },          /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), 10 }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, 10 },           /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), 10 },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 0.0 },          /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), 10 }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, 10 },           /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), 10 },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 0.0 },          /* top */
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+  double t;
+
+  t = 0;
+  for( c=cases; c->zd>0; c++ ){
+    vec_set_elem_list( p, 2, c->z, c->v );
+    ctrl_update( &ctrl, t, p );
+    ASSERT_DOUBLE_EQ( c->expct_fz, ctrl_fz( &ctrl ) );
+    t += 0.01;
+  }
+}
+
 TEST(test_ctrl_dummy_destroy)
 {
   ASSERT_EQ( 10, ((ctrl_dummy_prp*)ctrl.prp)->k );
@@ -78,7 +108,8 @@ TEST_SUITE(test_ctrl_dummy)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_dummy_create);
   RUN_TEST(test_ctrl_dummy_update);
-  RUN_TEST(test_ctrl_dummy_update_loop);
+  RUN_TEST(test_ctrl_dummy_update_phase);
+  RUN_TEST(test_ctrl_dummy_update_flight_zero);
   RUN_TEST(test_ctrl_dummy_destroy);
 }
 

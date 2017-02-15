@@ -30,5 +30,6 @@ ctrl_t *ctrl_dummy_update(ctrl_t *self, double t, vec_t p)
   ctrl_update_default( self, t, p );
   prp = self->prp;
   self->fz = prp->k;
+  if( ctrl_is_in_flight( self, p ) ) self->fz = 0;
   return self;
 }
