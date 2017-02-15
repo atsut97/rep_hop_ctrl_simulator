@@ -27,6 +27,7 @@ ctrl_t *ctrl_dummy_update(ctrl_t *self, double t, vec_t p)
 {
   ctrl_dummy_prp *prp;
 
+  ctrl_update_default( self, t, p );
   prp = self->prp;
   self->fz = prp->k;
   return self;
