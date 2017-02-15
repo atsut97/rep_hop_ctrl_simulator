@@ -18,8 +18,10 @@ typedef struct _ctrl_t{
 #define ctrl_zd(self)  ctrl_cmd(self)->zd
 #define ctrl_zb(self)  ctrl_cmd(self)->zb
 
+#define ctrl_update(self,t,p) ((ctrl_t*)self)->_update( self, t, p )
+#define ctrl_destroy(self)    ((ctrl_t*)self)->_destroy( self )
+
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd);
-void ctrl_destroy_default(ctrl_t *self);
 
 bool ctrl_is_in_flight(ctrl_t *self, vec_t p);
 bool ctrl_is_in_compression(ctrl_t *self, vec_t p);
@@ -31,7 +33,6 @@ double ctrl_calc_sqr_v0(double z0, double zd);
 #define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p);
-#define ctrl_update(self,t,p) ((ctrl_t*)self)->_update( self, t, p )
-#define ctrl_destroy(self)    ((ctrl_t*)self)->_destroy( self )
+void ctrl_destroy_default(ctrl_t *self);
 
 #endif /* __RHC_CTRL_H__ */
