@@ -20,7 +20,8 @@ void simulator_destroy(simulator_t *self)
   simulator_time( self )  = 0;
   vec_destroy( simulator_state( self ) );
   simulator_state( self ) = NULL;
-  ode_destroy( &self->ode );
+  if( self->ode._ws )
+    ode_destroy( &self->ode );
 }
 
 vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
