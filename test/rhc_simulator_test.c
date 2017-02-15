@@ -1,4 +1,5 @@
 #include "rhc_simulator.h"
+#include "rhc_ctrl_dummy.h"
 #include "rhc_test.h"
 
 cmd_t cmd;
@@ -10,7 +11,7 @@ vec_t z;
 void setup()
 {
   cmd_default_init( &cmd );
-  ctrl_init( &ctrl, &cmd );
+  ctrl_dummy_create( &ctrl, &cmd, 10 );
   model_init( &model, 1.0 );
   simulator_init( &sim, &cmd, &ctrl, &model );
   z = vec_create( 2 );
