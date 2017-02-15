@@ -26,6 +26,12 @@ void simulator_destroy(simulator_t *self)
 
 vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
 {
+  simulator_t *sim = util;
+
+  ctrl_update( sim->ctrl, t, x );
+  model_update( sim->model, ctrl_fz(sim->ctrl), 0 );
+  vec_set_elem( v, 0, vec_elem(x,1) );
+  vec_set_elem( v, 1, model_acc( sim->model ) );
   return v;
 }
 
