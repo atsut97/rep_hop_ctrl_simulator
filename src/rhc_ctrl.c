@@ -42,7 +42,11 @@ double ctrl_calc_sqr_v0(double z0, double zd)
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
 {
-  /* dummy */
+  double phi;
+
+  phi = ctrl_calc_phi( ctrl_z0(self), ctrl_zd(self), ctrl_zb(self), p );
+  if( ctrl_phi( self ) < 0 && phi >= 0 ) ctrl_n(self)++;
+  ctrl_phi( self ) = phi;
   return self;
 }
 

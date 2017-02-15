@@ -218,10 +218,38 @@ TEST(test_ctrl_v0)
   }
 }
 
-TEST(test_ctrl_update)
+TEST(test_ctrl_update_default)
 {
-  /* dummy */
-  ASSERT_TRUE( true );
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    int expct_n;
+    double expct_phi;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 0, 0.0 },            /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), 0, PI_2 }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, -0.0, 0, PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, 0, -PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), 0, -PI_2 }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 1, 0.0 },            /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), 1, PI_2 }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, -0.0, 1, PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, 1, -PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), 1, -PI_2 }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 2, 0.0 },            /* top */
+    { 0, 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+  double t;
+
+  t = 0;
+  for( c=cases; c->zd>0; c++ ){
+    vec_set_elem_list( p, 2, c->z, c->v );
+    ctrl_update( &ctrl, t, p );
+    ASSERT_DOUBLE_EQ( c->expct_n, ctrl_n( &ctrl ) );
+    ASSERT_DOUBLE_EQ( c->expct_phi, ctrl_phi( &ctrl ) );
+    t += 0.01;
+  }
 }
 
 TEST(test_ctrl_calc_phase_complex)
@@ -311,7 +339,7 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_compression);
   RUN_TEST(test_ctrl_decompression);
   RUN_TEST(test_ctrl_v0);
-  RUN_TEST(test_ctrl_update);
+  RUN_TEST(test_ctrl_update_default);
   RUN_TEST(test_ctrl_calc_phase_complex);
   RUN_TEST(test_ctrl_phase_complex);
   RUN_TEST(test_ctrl_calc_phi);
