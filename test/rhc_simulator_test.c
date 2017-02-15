@@ -33,6 +33,8 @@ TEST(test_simulator_init)
   ASSERT_PTREQ( &model, simulator_model( &sim ) );
   ASSERT_EQ( 0, simulator_time( &sim ) );
   ASSERT_EQ( 2, vec_size( simulator_state( &sim ) ) );
+  ASSERT_PTREQ( simulator_dp, sim.ode.f );
+  ASSERT_PTRNE( NULL, sim.ode._ws );
 }
 
 TEST(test_simulator_destroy)
