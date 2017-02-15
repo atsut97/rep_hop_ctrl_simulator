@@ -468,6 +468,67 @@ TEST(test_vec_cat_size_mismatch)
     check_vec_cat_size_mismatch( (*c).s1, (*c).s2, (*c).s3 );
 }
 
+void check_vec_copy(size_t n, double *val, double *expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n, val );
+  v2 = vec_create( n );
+  vec_copy( v1, v2 );
+  check_vec_elem_with_array( expected, v2 );
+  vec_destroy( v2 );
+  vec_destroy( v1 );
+}
+
+TEST(test_vec_copy)
+{
+  struct case_t {
+    size_t n;
+    double val[10];
+    double expected[10];
+  } cases[] = {
+    { 2, { 1.0, 1.0 }, { 1.0, 1.0 } },
+    { 4, { -2.0, 3.0, -4.0, 5.0 }, { -2.0, 3.0, -4.0, 5.0 } },
+    { 5, { 0.0, 0.0, 3.0, 2.0, -1.0 }, { 0.0, 0.0, 3.0, 2.0, -1.0 } },
+    { 0, {}, {} },
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n > 0; c++ )
+    check_vec_copy( (*c).n, (*c).val, (*c).expected );
+}
+
+void check_vec_copy_size_mismatch(size_t s1, size_t s2)
+{
+  vec_t v1, v2, ret;
+
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  v1 = vec_create( s1 );
+  v2 = vec_create( s2 );
+  ret = vec_copy( v1, v2 );
+  ASSERT_STREQ( ERR_SIZMIS, __err_last_msg );
+  ASSERT_PTREQ( NULL, ret );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+  ECHO_ON();
+}
+
+TEST(test_vec_copy_size_mismatch)
+{
+  struct case_t {
+    size_t s1, s2;
+  } cases[] = {
+    { 2, 3 },
+    { 4, 3 },
+    { 0, 0 }
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).s1>0; c++ )
+    check_vec_copy_size_mismatch( (*c).s1, (*c).s2 );
+}
+
 void check_vec_f_write(size_t n, double *val)
 {
   vec_t v;
@@ -542,6 +603,8 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_div_by_zero);
   RUN_TEST(test_vec_cat);
   RUN_TEST(test_vec_cat_size_mismatch);
+  RUN_TEST(test_vec_copy);
+  RUN_TEST(test_vec_copy_size_mismatch);
   RUN_TEST(test_vec_f_write);
   RUN_TEST(test_vec_f_write_given_null);
 }

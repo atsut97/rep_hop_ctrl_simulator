@@ -27,6 +27,9 @@ vec_t vec_create_list(size_t size, ... );
 vec_t vec_create_array(size_t size, double array[]);
 void vec_destroy(vec_t v);
 
+/* copy */
+vec_t vec_copy(vec_t src, vec_t dst);
+
 /* arithmatic operations */
 vec_t vec_add(vec_t v1, vec_t v2, vec_t v);
 vec_t vec_sub(vec_t v1, vec_t v2, vec_t v);

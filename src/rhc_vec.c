@@ -75,6 +75,19 @@ void vec_destroy(vec_t v)
   free( v );
 }
 
+vec_t vec_copy(vec_t src, vec_t dst)
+{
+  size_t i;
+
+  if( vec_size(src) != vec_size(dst) ){
+    RUNTIME_ERR( ERR_SIZMIS );
+    return NULL;
+  }
+  for( i=0; i<vec_size(src); i++ )
+    vec_set_elem( dst, i, vec_elem(src,i) );
+  return dst;
+}
+
 vec_t vec_add(vec_t v1, vec_t v2, vec_t v)
 {
   size_t i;
