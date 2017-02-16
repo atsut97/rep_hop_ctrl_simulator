@@ -7,6 +7,7 @@ simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t
   simulator_model( self ) = model;
   simulator_time( self )  = 0;
   simulator_state( self ) = vec_create( 2 );
+  simulator_set_fe( self, 0 );
   ode_assign( &self->ode, rk4 );
   ode_init( &self->ode, 2, simulator_dp );
   return self;
@@ -20,6 +21,7 @@ void simulator_destroy(simulator_t *self)
   simulator_time( self )  = 0;
   vec_destroy( simulator_state( self ) );
   simulator_state( self ) = NULL;
+  simulator_set_fe( self, 0 );
   if( self->ode._ws )
     ode_destroy( &self->ode );
 }

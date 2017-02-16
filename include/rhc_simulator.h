@@ -10,6 +10,7 @@ typedef struct{
   double t;
   ode_t ode;
   vec_t state;
+  double fe;
   cmd_t *cmd;
   ctrl_t *ctrl;
   model_t *model;
@@ -20,9 +21,11 @@ typedef struct{
 #define simulator_model(self) (self)->model
 #define simulator_time(self)  (self)->t
 #define simulator_state(self) (self)->state
+#define simulator_fe(self)    (self)->fe
 
 #define simulator_set_time(self,t)  ( simulator_time(self)  = (t) )
 #define simulator_inc_time(self,dt) ( simulator_time(self) += (dt) )
+#define simulator_set_fe(self,fe)   ( simulator_fe(self) = (fe) )
 
 simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void simulator_destroy(simulator_t *self);
