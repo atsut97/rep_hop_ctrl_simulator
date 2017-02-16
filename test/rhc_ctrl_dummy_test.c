@@ -2,6 +2,7 @@
 #include "rhc_test.h"
 
 static cmd_t cmd;
+static model_t model;
 static ctrl_t ctrl;
 static vec_t p;
 static double k = 10;
@@ -9,7 +10,8 @@ static double k = 10;
 void setup()
 {
   cmd_default_init( &cmd );
-  ctrl_dummy_create( &ctrl, &cmd, k );
+  model_init( &model, 10 );
+  ctrl_dummy_create( &ctrl, &cmd, &model, k );
   p = vec_create( 2 );
 }
 

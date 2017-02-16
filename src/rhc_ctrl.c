@@ -1,8 +1,9 @@
 #include "rhc_ctrl.h"
 
-ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd)
+ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
 {
   self->cmd = cmd;
+  self->model = model;
   self->fz = 0;
   self->_update = ctrl_update_default;
   self->_destroy = ctrl_destroy_default;
@@ -15,6 +16,7 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd)
 void ctrl_destroy_default(ctrl_t *self)
 {
   self->cmd = NULL;
+  self->model = NULL;
   self->prp = NULL;
   ctrl_n( self ) = 0;
   ctrl_phi( self ) = 0;

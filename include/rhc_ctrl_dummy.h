@@ -7,7 +7,7 @@ typedef struct{
   double k;
 } ctrl_dummy_prp;
 
-ctrl_t *ctrl_dummy_create(ctrl_t *self, cmd_t *cmd, double k);
+ctrl_t *ctrl_dummy_create(ctrl_t *self, cmd_t *cmd, model_t *model, double k);
 void ctrl_dummy_destroy(ctrl_t *self);
 ctrl_t *ctrl_dummy_update(ctrl_t *self, double t, vec_t p);
 

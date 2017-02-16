@@ -1,10 +1,10 @@
 #include "rhc_ctrl_dummy.h"
 
-ctrl_t *ctrl_dummy_create(ctrl_t *self, cmd_t *cmd, double k)
+ctrl_t *ctrl_dummy_create(ctrl_t *self, cmd_t *cmd, model_t *model, double k)
 {
   ctrl_dummy_prp *prp;
 
-  ctrl_init( self, cmd  );
+  ctrl_init( self, cmd, model );
   self->_update = ctrl_dummy_update;
   self->_destroy = ctrl_dummy_destroy;
 

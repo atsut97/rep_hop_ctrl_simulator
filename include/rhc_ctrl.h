@@ -4,9 +4,11 @@
 #include "rhc_complex.h"
 #include "rhc_vec.h"
 #include "rhc_cmd.h"
+#include "rhc_model.h"
 
 typedef struct _ctrl_t{
   cmd_t *cmd;
+  model_t *model;
   double fz;
   void *prp;
   double n, phi;
@@ -14,18 +16,19 @@ typedef struct _ctrl_t{
   void (*_destroy)(struct _ctrl_t*);
 } ctrl_t;
 
-#define ctrl_cmd(self) ((ctrl_t*)self)->cmd
-#define ctrl_fz(self)  ((ctrl_t*)self)->fz
-#define ctrl_z0(self)  ctrl_cmd(self)->z0
-#define ctrl_zd(self)  ctrl_cmd(self)->zd
-#define ctrl_zb(self)  ctrl_cmd(self)->zb
-#define ctrl_n(self)   ((ctrl_t*)self)->n
-#define ctrl_phi(self) ((ctrl_t*)self)->phi
+#define ctrl_cmd(self)   ((ctrl_t*)self)->cmd
+#define ctrl_model(self) ((ctrl_t*)self)->model
+#define ctrl_fz(self)    ((ctrl_t*)self)->fz
+#define ctrl_z0(self)    ctrl_cmd(self)->z0
+#define ctrl_zd(self)    ctrl_cmd(self)->zd
+#define ctrl_zb(self)    ctrl_cmd(self)->zb
+#define ctrl_n(self)     ((ctrl_t*)self)->n
+#define ctrl_phi(self)   ((ctrl_t*)self)->phi
 
 #define ctrl_update(self,t,p) ((ctrl_t*)self)->_update( self, t, p )
 #define ctrl_destroy(self)    ((ctrl_t*)self)->_destroy( self )
 
-ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd);
+ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model);
 
 bool ctrl_is_in_flight(ctrl_t *self, vec_t p);
 bool ctrl_is_in_compression(ctrl_t *self, vec_t p);

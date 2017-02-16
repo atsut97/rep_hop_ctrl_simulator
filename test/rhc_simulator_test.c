@@ -11,7 +11,7 @@ vec_t z;
 void setup()
 {
   cmd_default_init( &cmd );
-  ctrl_dummy_create( &ctrl, &cmd, 10 );
+  ctrl_dummy_create( &ctrl, &cmd, &model, 10 );
   model_init( &model, 1.0 );
   simulator_init( &sim, &cmd, &ctrl, &model );
   z = vec_create( 2 );

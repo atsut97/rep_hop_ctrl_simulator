@@ -2,13 +2,15 @@
 #include "rhc_test.h"
 
 static cmd_t cmd;
+static model_t model;
 static ctrl_t ctrl;
 static vec_t p;
 
 void setup()
 {
   cmd_default_init( &cmd );
-  ctrl_init( &ctrl, &cmd );
+  model_init( &model, 10 );
+  ctrl_init( &ctrl, &cmd, &model );
   p = vec_create( 2 );
 }
 
@@ -22,6 +24,7 @@ void teardown()
 TEST(test_ctrl_init)
 {
   ASSERT_PTREQ( &cmd, ctrl_cmd( &ctrl ) );
+  ASSERT_PTREQ( &model, ctrl_model( &ctrl ) );
   ASSERT_EQ( 0, ctrl_fz( &ctrl ) );
   ASSERT_PTREQ( ctrl_update_default, ctrl._update );
   ASSERT_PTREQ( ctrl_destroy_default, ctrl._destroy );
@@ -34,6 +37,7 @@ TEST(test_ctrl_destroy)
 {
   ctrl_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
+  ASSERT_PTREQ( NULL, ctrl_model( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl.prp );
   ASSERT_EQ( 0, ctrl_n( &ctrl ) );
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
