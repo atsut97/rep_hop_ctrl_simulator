@@ -49,6 +49,28 @@ TEST(test_simulator_destroy)
   ASSERT_EQ( 0, simulator_fe( &sim ) );
 }
 
+TEST(test_simulator_set_state)
+{
+  struct case_t {
+    double x1, x2;
+    bool abort;
+  } cases[] = {
+    { 0, 0, false },
+    { 10, -20, false },
+    { -5, 13, false },
+    { -3, -22, false },
+    { 0, 0, true },
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->abort; c++ ){
+    vec_set_elem_list( z, 2, c->x1, c->x2 );
+    simulator_set_state( &sim, z );
+    ASSERT_EQ( c->x1, vec_elem( simulator_state(&sim), 0 ) );
+    ASSERT_EQ( c->x2, vec_elem( simulator_state(&sim), 1 ) );
+  }
+}
+
 TEST(test_simulator_inc_time)
 {
   double dt;
@@ -107,6 +129,7 @@ TEST_SUITE(test_simulator)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_simulator_init);
   RUN_TEST(test_simulator_destroy);
+  RUN_TEST(test_simulator_set_state);
   RUN_TEST(test_simulator_inc_time);
   RUN_TEST(test_simulator_set_fe);
   RUN_TEST(test_simulator_update);

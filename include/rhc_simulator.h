@@ -23,6 +23,7 @@ typedef struct{
 #define simulator_state(self) (self)->state
 #define simulator_fe(self)    (self)->fe
 
+#define simulator_set_state(self,p) vec_copy( p, simulator_state(self) )
 #define simulator_set_time(self,t)  ( simulator_time(self)  = (t) )
 #define simulator_inc_time(self,dt) ( simulator_time(self) += (dt) )
 #define simulator_set_fe(self,fe)   ( simulator_fe(self) = (fe) )
