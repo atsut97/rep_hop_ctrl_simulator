@@ -1,0 +1,17 @@
+#ifndef __RHC_CTRL_SLIP_H__
+#define __RHC_CTRL_SLIP_H__
+
+#include "rhc_ctrl.h"
+
+typedef struct{
+  double k;
+} ctrl_slip_prp;
+
+ctrl_t *ctrl_slip_create(ctrl_t *self, cmd_t *cmd, model_t *model);
+void ctrl_slip_destroy(ctrl_t *self);
+ctrl_t *ctrl_slip_update(ctrl_t *self, double t, vec_t p);
+
+double ctrl_slip_calc_stiffness(double m, double z0, double zd, double zb);
+#define ctrl_slip_stiffness(self) ctrl_slip_calc_stiffness( ctrl_model(self)->m, ctrl_z0(self), ctrl_zd(self), ctrl_zb(self) )
+
+#endif /* __RHC_CTRL_SLIP_H__ */
