@@ -45,7 +45,7 @@ void simulator_update(simulator_t *self, double fe, double dt)
 
 void simulator_run(simulator_t *self, vec_t p0, double time, double dt)
 {
-  vec_copy( p0, simulator_state(self) );
+  simulator_set_state( self, p0 );
   while( simulator_time(self) < time ){
     simulator_update( self, 0.0, dt );
   }
