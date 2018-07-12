@@ -14,15 +14,15 @@ void teardown()
 TEST(test_logger_init)
 {
   logger_t l;
-  logger_init(&l, "test.log");
-  ASSERT_STREQ( "test.log", logger_filename(&l) );
+  logger_init(&l, "/tmp/test.log");
+  ASSERT_STREQ( "/tmp/test.log", logger_filename(&l) );
   ASSERT_PTRNE(NULL, l.fp);
 }
 
 TEST(test_logger_destroy)
 {
   logger_t l;
-  logger_init(&l, "test.log");
+  logger_init(&l, "/tmp/test.log");
   logger_destroy(&l);
   ASSERT_PTREQ(NULL, l.fp);
 }
