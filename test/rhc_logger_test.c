@@ -34,6 +34,7 @@ TEST(test_logger_open)
   logger_open( &logger, "/tmp/test.log" );
   ASSERT_STREQ( "/tmp/test.log", logger_filename(&logger) );
   ASSERT_PTRNE( NULL, logger.fp );
+  logger_close( &logger );
 }
 
 TEST(test_logger_close)
