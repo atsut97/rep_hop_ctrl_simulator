@@ -44,6 +44,13 @@ TEST(test_logger_open)
   ASSERT_PTRNE( NULL, logger.fp );
 }
 
+TEST(test_logger_close)
+{
+  logger_open( &logger, "/tmp/test.log" );
+  logger_close( &logger );
+  ASSERT_PTREQ( NULL, logger.fp );
+}
+
 TEST_SUITE(test_logger)
 {
   CONFIGURE_SUITE( setup, teardown );

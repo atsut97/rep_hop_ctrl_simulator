@@ -16,9 +16,7 @@ logger_t *logger_init(logger_t *self, const char *filename)
 
 void logger_destroy(logger_t *self)
 {
-  if( self->fp )
-    fclose(self->fp);
-  self->fp = NULL;
+  logger_close( self );
 }
 
 FILE* logger_open(logger_t *self, const char *filename)
@@ -30,4 +28,11 @@ FILE* logger_open(logger_t *self, const char *filename)
     return NULL;
   }
   return self->fp;
+}
+
+void logger_close(logger_t *self)
+{
+  if( self->fp )
+    fclose( self->fp );
+  self->fp = NULL;
 }
