@@ -37,12 +37,20 @@ TEST(test_logger_destroy)
   ASSERT_PTREQ( NULL, l.fp );
 }
 
+TEST(test_logger_open)
+{
+  logger_open( &logger, "/tmp/test.log" );
+  ASSERT_STREQ( "/tmp/test.log", logger_filename(&logger) );
+  ASSERT_PTRNE( NULL, logger.fp );
+}
+
 TEST_SUITE(test_logger)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST( test_logger_init );
   RUN_TEST( test_logger_init_stdout );
   RUN_TEST( test_logger_destroy );
+  RUN_TEST( test_logger_open );
 }
 
 int main(int argc, char *argv[])
