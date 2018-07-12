@@ -5,6 +5,7 @@
 
 typedef struct{
   char filename[BUFSIZ];
+  FILE* fp;
 } logger_t;
 
 #define logger_filename(self) (self)->filename
