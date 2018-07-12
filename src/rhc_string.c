@@ -1,5 +1,5 @@
 #include "rhc_string.h"
 
-char *string_copy(char *s, char *d) {
+char *string_copy(const char *s, char *d) {
   return strcpy(d, s);
 }

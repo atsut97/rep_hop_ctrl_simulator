@@ -11,7 +11,7 @@ void teardown()
 
 TEST(test_string_copy)
 {
-  char s[] = "test string";
+  const char s[] = "test string";
   char d[BUFSIZ];
   char *ret;
 

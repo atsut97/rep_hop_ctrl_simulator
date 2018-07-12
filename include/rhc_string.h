@@ -4,6 +4,6 @@
 #include <string.h>
 #include "rhc_defs.h"
 
-char *string_copy(char *s, char *d);
+char *string_copy(const char *s, char *d);
 
 #endif /* __RHC_STRING_H__ */
