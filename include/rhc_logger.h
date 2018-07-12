@@ -10,7 +10,7 @@ typedef struct{
 
 #define logger_filename(self) (self)->filename
 
-logger_t *logger_init(logger_t *self, const char *filename);
+logger_t *logger_init(logger_t *self);
 void logger_destroy(logger_t *self);
 
 FILE* logger_open(logger_t *self, const char *filename);

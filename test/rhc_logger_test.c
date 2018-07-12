@@ -5,34 +5,26 @@ logger_t logger;
 
 void setup()
 {
-  /* logger_init( &logger, NULL ); */
+  logger_init( &logger );
 }
 
 void teardown()
 {
-  /* logger_destroy( &logger ); */
+  logger_destroy( &logger );
 }
 
 TEST(test_logger_init)
 {
   logger_t l;
-  logger_init( &l, "/tmp/test.log" );
-  ASSERT_STREQ( "/tmp/test.log", logger_filename(&l) );
-  ASSERT_PTRNE( NULL, l.fp );
-  logger_destroy( &l );
-}
-
-TEST(test_logger_init_stdout)
-{
-  logger_t l;
-  logger_init( &l, NULL );
+  logger_init( &l );
+  ASSERT_PTREQ( NULL, l.fp );
   logger_destroy( &l );
 }
 
 TEST(test_logger_destroy)
 {
   logger_t l;
-  logger_init( &l, "/tmp/test.log" );
+  logger_init( &l );
   logger_destroy( &l );
   ASSERT_PTREQ( NULL, l.fp );
 }
@@ -55,9 +47,9 @@ TEST_SUITE(test_logger)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST( test_logger_init );
-  RUN_TEST( test_logger_init_stdout );
   RUN_TEST( test_logger_destroy );
   RUN_TEST( test_logger_open );
+  RUN_TEST( test_logger_close );
 }
 
 int main(int argc, char *argv[])

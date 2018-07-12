@@ -1,16 +1,10 @@
 #include "rhc_logger.h"
 #include "rhc_string.h"
 
-logger_t *logger_init(logger_t *self, const char *filename)
+logger_t *logger_init(logger_t *self)
 {
-  if(filename) {
-    /* open file */
-    logger_open(self, filename);
-  } else {
-    /* supposed to use stdout */
-    string_copy("", self->filename);
-    self->fp = NULL;
-  }
+  self->filename[0] = '\0';
+  self->fp = NULL;
   return self;
 }
 
