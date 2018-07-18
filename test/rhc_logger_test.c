@@ -108,6 +108,15 @@ TEST(test_logger_is_open)
   ASSERT_FALSE( logger_is_open(&logger) );
 }
 
+TEST(test_logger_create)
+{
+  logger_t *l = logger_create( "/tmp/test.log", output );
+  ASSERT_STREQ( "/tmp/test.log", logger_filename(l) );
+  ASSERT_PTRNE( NULL, l->fp );
+  ASSERT_PTREQ( output, l->writer );
+  logger_destroy( l );
+}
+
 TEST_SUITE(test_logger)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -120,6 +129,7 @@ TEST_SUITE(test_logger)
   RUN_TEST( test_logger_write );
   RUN_TEST( test_logger_write_not_regiseter_writer );
   RUN_TEST( test_logger_is_open );
+  RUN_TEST( test_logger_create );
 }
 
 int main(int argc, char *argv[])

@@ -14,6 +14,19 @@ void logger_destroy(logger_t *self)
   logger_close( self );
 }
 
+logger_t *logger_create(const char *filename, logger_writer_fp_t writer)
+{
+  logger_t *logger;
+
+  if( ( logger = nalloc( logger_t, 1 ) ) == NULL ) {
+    ALLOC_ERR();
+    return NULL;
+  }
+  logger_open( logger, filename );
+  logger_register( logger, writer );
+  return logger;
+}
+
 FILE* logger_open(logger_t *self, const char *filename)
 {
   string_copy(filename, self->filename);

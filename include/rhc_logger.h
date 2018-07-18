@@ -19,6 +19,7 @@ typedef struct{
 
 logger_t *logger_init(logger_t *self);
 void logger_destroy(logger_t *self);
+logger_t *logger_create(const char *filename, logger_writer_fp_t writer);
 
 FILE* logger_open(logger_t *self, const char *filename);
 void logger_close(logger_t *self);
