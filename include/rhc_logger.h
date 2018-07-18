@@ -23,6 +23,8 @@ void logger_destroy(logger_t *self);
 FILE* logger_open(logger_t *self, const char *filename);
 void logger_close(logger_t *self);
 void logger_register(logger_t *self, logger_writer_fp_t writer);
+void logger_delegate(logger_t *src, logger_t *dst);
+
 void logger_write(logger_t *self, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util);
 
 #endif /* __RHC_LOGGER_H__ */

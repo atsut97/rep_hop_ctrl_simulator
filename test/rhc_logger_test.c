@@ -67,6 +67,25 @@ TEST(test_logger_register)
   ASSERT_PTREQ( output, logger.writer );
 }
 
+TEST(test_logger_delegate)
+{
+  logger_t src, dst;
+  FILE *tmp_fp;
+
+  logger_open( &src, "/tmp/test.log" );
+  tmp_fp = src.fp;
+  logger_register( &src, output );
+  logger_delegate( &src, &dst );
+  ASSERT_STREQ( "", logger_filename(&src) );
+  ASSERT_PTREQ( NULL, src.fp );
+  ASSERT_PTREQ( NULL, src.writer );
+  ASSERT_STREQ( "/tmp/test.log", logger_filename(&dst) );
+  ASSERT_PTREQ( tmp_fp, dst.fp );
+  ASSERT_PTREQ( output, dst.writer );
+  logger_close( &src );
+  logger_close( &dst );
+}
+
 TEST(test_logger_write)
 {
   logger_register( &logger, output );
@@ -97,6 +116,7 @@ TEST_SUITE(test_logger)
   RUN_TEST( test_logger_open );
   RUN_TEST( test_logger_close );
   RUN_TEST( test_logger_register );
+  RUN_TEST( test_logger_delegate );
   RUN_TEST( test_logger_write );
   RUN_TEST( test_logger_write_not_regiseter_writer );
   RUN_TEST( test_logger_is_open );

@@ -37,6 +37,14 @@ void logger_register(logger_t *self, logger_writer_fp_t writer)
   self->writer = writer;
 }
 
+void logger_delegate(logger_t *src, logger_t *dst)
+{
+  string_copy( logger_filename(src), logger_filename(dst) );
+  dst->fp = src->fp;
+  dst->writer = src->writer;
+  logger_init( src );
+}
+
 void logger_write(logger_t *self, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util)
 {
   if( !self->writer ) {
