@@ -25,7 +25,7 @@ debug:
 	@echo "TARGET =" $(TARGET)
 	@echo "DEPS   =" $(DEPS)
 
-%_test: %_test.c $(OBJS)
+%_test: %_test.o $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LINK)
 
 %.o: %.c

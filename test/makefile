@@ -35,7 +35,7 @@ else
 	@./test_runner.sh
 endif
 
-%_test: %_test.c $(OBJS)
+%_test: %_test.o $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LINK)
 
 %.o: %.c

@@ -120,7 +120,7 @@ TEST(test_simulator_run)
   T = 10;
   dt = 0.01;
   ASSERT_EQ( 0, simulator_time( &sim ) );
-  simulator_run( &sim, z, T, dt );
+  simulator_run( &sim, z, T, dt, NULL );
   ASSERT_DOUBLE_EQ( T+dt, simulator_time( &sim ) );
 }
 

@@ -43,10 +43,19 @@ void simulator_update(simulator_t *self, double fe, double dt)
   simulator_inc_time( self, dt );
 }
 
-void simulator_run(simulator_t *self, vec_t p0, double time, double dt)
+void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger)
 {
   simulator_set_state( self, p0 );
   while( simulator_time(self) < time ){
+    if( logger )
+      simulator_dump( self, logger );
     simulator_update( self, 0.0, dt );
   }
+}
+
+void simulator_dump(simulator_t *self, logger_t *logger)
+{
+  logger_write( logger, simulator_time(self),
+                simulator_state(self), simulator_fe(self),
+                simulator_cmd(self), simulator_model(self), NULL );
 }
