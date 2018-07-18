@@ -3,27 +3,29 @@
 
 #define DT 0.001
 #define T  10
+
+void output(FILE *fp, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util) {
+  vec_f_write( fp, state );
+}
+
 int main(int argc, char *argv[])
 {
   cmd_t cmd;
   model_t model;
   ctrl_t ctrl;
+  logger_t logger;
   simulator_t sim;
   vec_t p;
-  /* double t; */
 
   cmd_default_init( &cmd );
   model_init( &model, 10 );
   ctrl_slip_create( &ctrl, &cmd, &model );
+  logger_init( &logger );
+  logger_register( &logger, output );
   simulator_init( &sim, &cmd, &ctrl, &model );
   p = vec_create_list( 2, 0.28, 0.0 );
 
-  simulator_run( &sim, p, T, DT );
-  /* simulator_set_state( &sim, p ); */
-  /* for( t=0; t<=T; t+=DT ){ */
-  /*   vec_write( simulator_state(&sim) ); */
-  /*   simulator_update( &sim, 0, DT ); */
-  /* } */
+  simulator_run( &sim, p, T, DT, &logger );
 
   vec_destroy( p );
   simulator_destroy( &sim );
