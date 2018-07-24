@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
 
 
 def plot(data):
-    plt.plot(data[:, 1], data[:, 2])
+    plt.plot(data.z, data.v)
 
 
 def main():
     import sys
-    data = np.loadtxt(sys.argv[1])
+    data = pd.read_csv(sys.argv[1])
     plot(data)
     plt.show()
 
