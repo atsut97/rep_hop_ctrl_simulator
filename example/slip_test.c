@@ -4,9 +4,12 @@
 #define DT 0.001
 #define T  10
 
+void header(FILE *fp, void *util) {
+  fprintf(fp, "t,x,y,z\n" );
+}
+
 void output(FILE *fp, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util) {
-  fprintf( fp, "%f ", t );
-  vec_f_write( fp, state );
+  fprintf( fp, "%f,%f,%f,%f\n", t, vec_elem(state, 0), vec_elem(state, 1), vec_elem(state, 2) );
 }
 
 int main(int argc, char *argv[])
@@ -22,7 +25,7 @@ int main(int argc, char *argv[])
   model_init( &model, 10 );
   ctrl_slip_create( &ctrl, &cmd, &model );
   logger_init( &logger );
-  logger_register( &logger, output );
+  logger_register( &logger, header, output );
   simulator_init( &sim, &cmd, &ctrl, &model );
   p = vec_create_list( 2, 0.28, 0.0 );
 
