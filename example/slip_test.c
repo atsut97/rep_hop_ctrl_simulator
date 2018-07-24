@@ -5,11 +5,11 @@
 #define T  10
 
 void header(FILE *fp, void *util) {
-  fprintf(fp, "t,x,y,z\n" );
+  fprintf(fp, "t,z,v\n" );
 }
 
 void output(FILE *fp, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util) {
-  fprintf( fp, "%f,%f,%f,%f\n", t, vec_elem(state, 0), vec_elem(state, 1), vec_elem(state, 2) );
+  fprintf( fp, "%f,%f,%f\n", t, vec_elem(state, 0), vec_elem(state, 1) );
 }
 
 int main(int argc, char *argv[])
