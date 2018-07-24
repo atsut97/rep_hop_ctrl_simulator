@@ -5,6 +5,7 @@
 #define T  10
 
 void output(FILE *fp, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util) {
+  fprintf( fp, "%f ", t );
   vec_f_write( fp, state );
 }
 
