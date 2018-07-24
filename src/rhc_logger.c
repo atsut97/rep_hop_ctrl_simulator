@@ -77,22 +77,22 @@ void logger_write_header(logger_t *self, void *util)
   self->header_written_flag = true;
 }
 
-void logger_write_data(logger_t *self, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util)
+void logger_write_data(logger_t *self, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, ctrl_t *ctrl, void *util)
 {
   if( !self->writer ) {
     RUNTIME_WARN( "No logger output" );
     return;
   }
   if( logger_is_open(self) ) {
-    self->writer( self->fp, t, state, fe, cmd, model, util );
+    self->writer( self->fp, t, state, fe, cmd, model, ctrl, util );
   } else {
-    self->writer( stdout, t, state, fe, cmd, model, util );
+    self->writer( stdout, t, state, fe, cmd, model, ctrl, util );
   }
 }
 
-void logger_write(logger_t *self, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util)
+void logger_write(logger_t *self, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, ctrl_t *ctrl, void *util)
 {
   if( !logger_is_header_written(self) )
     logger_write_header( self, util );
-  logger_write_data( self, t, state, fe, cmd, model, util );
+  logger_write_data( self, t, state, fe, cmd, model, ctrl, util );
 }

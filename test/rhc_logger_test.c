@@ -6,6 +6,7 @@ double t;
 vec_t state;
 cmd_t cmd;
 model_t model;
+ctrl_t ctrl;
 
 void setup()
 {
@@ -15,6 +16,7 @@ void setup()
   vec_clear( state );
   cmd_init( &cmd );
   model_init( &model, 1.0 );
+  ctrl_init( &ctrl, &cmd, &model );
 }
 
 void teardown()
@@ -63,7 +65,7 @@ void header(FILE *fp, void *util) {
   fprintf( fp, "t,x,y,z,fe,zd,z0,zb,m,az\n");
 }
 
-void output(FILE *fp, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, void *util) {
+void output(FILE *fp, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, ctrl_t *ctrl, void *util) {
   fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
            t, vec_elem(state,0), vec_elem(state,1), vec_elem(state,2),
            fe, cmd->zd, cmd->z0, cmd->zb,
@@ -111,7 +113,7 @@ TEST(test_logger_delegate_2)
   tmp_fp = src.fp;
   logger_register( &src, header, output );
   ECHO_OFF();
-  logger_write_data( &logger, 0.001, state, -0.1, &cmd, &model, NULL );
+  logger_write_data( &logger, 0.001, state, -0.1, &cmd, &model, &ctrl, NULL );
   ECHO_ON();
   is_header_written = logger_is_header_written( &src );
   logger_delegate( &src, &dst );
@@ -163,7 +165,7 @@ TEST(test_logger_write_not_regiseter_header)
 TEST(test_logger_write_not_regiseter_writer)
 {
   ECHO_OFF();
-  logger_write_data( &logger, 0.0, state, 0.0, &cmd, &model, NULL);
+  logger_write_data( &logger, 0.0, state, 0.0, &cmd, &model, &ctrl, NULL);
   ECHO_ON();
 }
 

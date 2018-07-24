@@ -57,5 +57,6 @@ void simulator_dump(simulator_t *self, logger_t *logger)
 {
   logger_write( logger, simulator_time(self),
                 simulator_state(self), simulator_fe(self),
-                simulator_cmd(self), simulator_model(self), NULL );
+                simulator_cmd(self), simulator_model(self),
+                simulator_ctrl(self), NULL );
 }
