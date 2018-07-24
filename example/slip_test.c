@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
   vec_destroy( p );
   simulator_destroy( &sim );
+  logger_destroy( &logger );
   ctrl_destroy( &ctrl );
   model_destroy( &model );
   cmd_destroy( &cmd );
