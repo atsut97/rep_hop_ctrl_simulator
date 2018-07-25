@@ -7,7 +7,7 @@
 #include "rhc_model.h"
 #include "rhc_logger.h"
 
-typedef struct{
+typedef struct _simulator_t{
   double t;
   ode_t ode;
   vec_t state;

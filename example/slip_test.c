@@ -8,10 +8,14 @@ void header(FILE *fp, void *util) {
   fprintf(fp, "t,z,v,fz,fe,zd,z0,zb\n" );
 }
 
-void output(FILE *fp, double t, vec_t state, double fe, cmd_t *cmd, model_t *model, ctrl_t *ctrl, void *util) {
+void output(FILE *fp, simulator_t *s, void *util) {
+  vec_t state = simulator_state(s);
+  ctrl_t *ctrl = simulator_ctrl(s);
+  cmd_t *cmd = simulator_cmd(s);
   fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f\n",
-           t, vec_elem(state, 0), vec_elem(state, 1),
-           ctrl_fz(ctrl), fe,
+           simulator_time(s),
+           vec_elem(state, 0), vec_elem(state, 1),
+           ctrl_fz(ctrl), simulator_fe(s),
            cmd->zd, cmd->z0, cmd->zb );
 }
 
@@ -32,7 +36,7 @@ int main(int argc, char *argv[])
   simulator_init( &sim, &cmd, &ctrl, &model );
   p = vec_create_list( 2, 0.28, 0.0 );
 
-  simulator_run( &sim, p, T, DT, &logger );
+  simulator_run( &sim, p, T, DT, &logger, NULL );
 
   vec_destroy( p );
   simulator_destroy( &sim );

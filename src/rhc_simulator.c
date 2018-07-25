@@ -55,10 +55,7 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
 
 void simulator_dump(simulator_t *self, logger_t *logger, void *util)
 {
-  logger_write( logger, simulator_time(self),
-                simulator_state(self), simulator_fe(self),
-                simulator_cmd(self), simulator_model(self),
-                simulator_ctrl(self), NULL );
+  logger_write( logger, self, util );
 }
 
 void simulator_dump_header(simulator_t *self, logger_t *logger, void *util)
@@ -68,8 +65,5 @@ void simulator_dump_header(simulator_t *self, logger_t *logger, void *util)
 
 void simulator_dump_data(simulator_t *self, logger_t *logger, void *util)
 {
-  logger_write_data( logger, simulator_time(self),
-                     simulator_state(self), simulator_fe(self),
-                     simulator_cmd(self), simulator_model(self),
-                     simulator_ctrl(self), NULL );
+  logger_write_data( logger, self, util );
 }
