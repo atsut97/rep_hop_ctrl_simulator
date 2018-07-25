@@ -15,6 +15,9 @@ class Data(object):
             self.data = pd.read_csv(df_or_filename)
             self.filename = df_or_filename
 
+        for c in self.data.clumns:
+            setattr(self, c, getattr(self.data, c))
+
     def getData(self):
         return self.data
 
@@ -23,34 +26,6 @@ class Data(object):
 
     def getFilename(self):
         return self.filename
-
-    @property
-    def z(self):
-        return self.data.z
-
-    @property
-    def vz(self):
-        return self.data.vz
-
-    @property
-    def fz(self):
-        return self.data.fz
-
-    @property
-    def fe(self):
-        return self.data.fe
-
-    @property
-    def zd(self):
-        return self.data.zd
-
-    @property
-    def z0(self):
-        return self.data.z0
-
-    @property
-    def zb(self):
-        return self.data.zb
 
 
 def plot(data):
