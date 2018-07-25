@@ -37,5 +37,7 @@ void simulator_update(simulator_t *self, double fe, double dt);
 void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger);
 
 void simulator_dump(simulator_t *self, logger_t *logger);
+void simulator_dump_header(simulator_t *self, logger_t *logger);
+void simulator_dump_data(simulator_t *self, logger_t *logger);
 
 #endif /* __RHC_SIMULATOR_H__ */

@@ -60,3 +60,16 @@ void simulator_dump(simulator_t *self, logger_t *logger)
                 simulator_cmd(self), simulator_model(self),
                 simulator_ctrl(self), NULL );
 }
+
+void simulator_dump_header(simulator_t *self, logger_t *logger)
+{
+  logger_write_header( logger, NULL );
+}
+
+void simulator_dump_data(simulator_t *self, logger_t *logger)
+{
+  logger_write_data( logger, simulator_time(self),
+                     simulator_state(self), simulator_fe(self),
+                     simulator_cmd(self), simulator_model(self),
+                     simulator_ctrl(self), NULL );
+}
