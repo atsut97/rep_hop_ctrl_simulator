@@ -43,17 +43,17 @@ void simulator_update(simulator_t *self, double fe, double dt)
   simulator_inc_time( self, dt );
 }
 
-void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger)
+void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger, void *util)
 {
   simulator_set_state( self, p0 );
   while( simulator_time(self) < time ){
     if( logger )
-      simulator_dump( self, logger );
+      simulator_dump( self, logger, util );
     simulator_update( self, 0.0, dt );
   }
 }
 
-void simulator_dump(simulator_t *self, logger_t *logger)
+void simulator_dump(simulator_t *self, logger_t *logger, void *util)
 {
   logger_write( logger, simulator_time(self),
                 simulator_state(self), simulator_fe(self),
@@ -61,12 +61,12 @@ void simulator_dump(simulator_t *self, logger_t *logger)
                 simulator_ctrl(self), NULL );
 }
 
-void simulator_dump_header(simulator_t *self, logger_t *logger)
+void simulator_dump_header(simulator_t *self, logger_t *logger, void *util)
 {
   logger_write_header( logger, NULL );
 }
 
-void simulator_dump_data(simulator_t *self, logger_t *logger)
+void simulator_dump_data(simulator_t *self, logger_t *logger, void *util)
 {
   logger_write_data( logger, simulator_time(self),
                      simulator_state(self), simulator_fe(self),
