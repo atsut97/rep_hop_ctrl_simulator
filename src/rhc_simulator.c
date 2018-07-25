@@ -10,6 +10,7 @@ simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t
   simulator_set_fe( self, 0 );
   ode_assign( &self->ode, rk4 );
   ode_init( &self->ode, 2, simulator_dp );
+  self->n_trial = 0;
   return self;
 }
 
@@ -24,6 +25,7 @@ void simulator_destroy(simulator_t *self)
   simulator_set_fe( self, 0 );
   if( self->ode._ws )
     ode_destroy( &self->ode );
+  self->n_trial = 0;
 }
 
 vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
@@ -51,6 +53,7 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
       simulator_dump( self, logger, util );
     simulator_update( self, 0.0, dt );
   }
+  simulator_inc_trial( self );
 }
 
 void simulator_header_default(FILE *fp, void *util)

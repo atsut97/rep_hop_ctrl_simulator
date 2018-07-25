@@ -15,6 +15,7 @@ typedef struct _simulator_t{
   cmd_t *cmd;
   ctrl_t *ctrl;
   model_t *model;
+  int n_trial;
 } simulator_t;
 
 #define simulator_cmd(self)   (self)->cmd
@@ -23,11 +24,13 @@ typedef struct _simulator_t{
 #define simulator_time(self)  (self)->t
 #define simulator_state(self) (self)->state
 #define simulator_fe(self)    (self)->fe
+#define simulator_n_trial(self) (self)->n_trial
 
 #define simulator_set_state(self,p) vec_copy( p, simulator_state(self) )
 #define simulator_set_time(self,t)  ( simulator_time(self)  = (t) )
 #define simulator_inc_time(self,dt) ( simulator_time(self) += (dt) )
 #define simulator_set_fe(self,fe)   ( simulator_fe(self) = (fe) )
+#define simulator_inc_trial(self)   ( simulator_n_trial(self)++ )
 
 simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void simulator_destroy(simulator_t *self);

@@ -36,6 +36,7 @@ TEST(test_simulator_init)
   ASSERT_EQ( 0, simulator_fe( &sim ) );
   ASSERT_PTREQ( simulator_dp, sim.ode.f );
   ASSERT_PTRNE( NULL, sim.ode._ws );
+  ASSERT_EQ( 0, simulator_n_trial( &sim ) );
 }
 
 TEST(test_simulator_destroy)
@@ -47,6 +48,7 @@ TEST(test_simulator_destroy)
   ASSERT_EQ( 0, simulator_time( &sim ) );
   ASSERT_PTREQ( NULL, simulator_state( &sim ) );
   ASSERT_EQ( 0, simulator_fe( &sim ) );
+  ASSERT_EQ( 0, simulator_n_trial( &sim ) );
 }
 
 TEST(test_simulator_set_state)
@@ -122,6 +124,7 @@ TEST(test_simulator_run)
   ASSERT_EQ( 0, simulator_time( &sim ) );
   simulator_run( &sim, z, T, dt, NULL, NULL );
   ASSERT_DOUBLE_EQ( T+dt, simulator_time( &sim ) );
+  ASSERT_EQ( 1, simulator_n_trial( &sim ) );
 }
 
 TEST_SUITE(test_simulator)
