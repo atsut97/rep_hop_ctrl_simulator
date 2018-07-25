@@ -58,7 +58,7 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
 
 void simulator_header_default(FILE *fp, void *util)
 {
-  fprintf( fp, "t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m\n");
+  fprintf( fp, "id,t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m\n");
 }
 
 void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
@@ -66,7 +66,8 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
   vec_t state = simulator_state(s);
   model_t *model = simulator_model(s);
   ctrl_t *ctrl = simulator_ctrl(s);
-  fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+  fprintf( fp, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+           simulator_n_trial(s),
            simulator_time(s),
            vec_elem(state,0), vec_elem(state,1),
            model_acc(model),
