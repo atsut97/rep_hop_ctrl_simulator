@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
   model_init( &model, 10 );
   ctrl_slip_create( &ctrl, &cmd, &model );
   logger_init( &logger );
-  logger_register( &logger, header, output );
   simulator_init( &sim, &cmd, &ctrl, &model );
+  simulator_set_default_logger( &sim, &logger );
   p = vec_create_list( 2, 0.28, 0.0 );
 
   simulator_run( &sim, p, T, DT, &logger, NULL );

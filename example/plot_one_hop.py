@@ -29,8 +29,8 @@ class Data(object):
         return self.data.z
 
     @property
-    def v(self):
-        return self.data.v
+    def vz(self):
+        return self.data.vz
 
     @property
     def fz(self):
@@ -66,7 +66,7 @@ def plot(data):
     ax.axvline(data.zd[0], ls='--', lw=1, c='k')
     ax.axvline(data.zb[0], ls='--', lw=1, c='k')
     # plot one hop
-    ax.plot(data.z, data.v, ls='-', lw=1, c='k')
+    ax.plot(data.z, data.vz, ls='-', lw=1, c='k')
     ax.grid()
 
 
