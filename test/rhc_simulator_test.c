@@ -32,6 +32,7 @@ TEST(test_simulator_init)
   ASSERT_PTREQ( &ctrl, simulator_ctrl( &sim ) );
   ASSERT_PTREQ( &model, simulator_model( &sim ) );
   ASSERT_EQ( 0, simulator_time( &sim ) );
+  ASSERT_EQ( 0, simulator_step( &sim ) );
   ASSERT_EQ( 2, vec_size( simulator_state( &sim ) ) );
   ASSERT_EQ( 0, simulator_fe( &sim ) );
   ASSERT_PTREQ( simulator_dp, sim.ode.f );
@@ -46,6 +47,7 @@ TEST(test_simulator_destroy)
   ASSERT_PTREQ( NULL, simulator_ctrl( &sim ) );
   ASSERT_PTREQ( NULL, simulator_model( &sim ) );
   ASSERT_EQ( 0, simulator_time( &sim ) );
+  ASSERT_EQ( 0, simulator_step( &sim ) );
   ASSERT_PTREQ( NULL, simulator_state( &sim ) );
   ASSERT_EQ( 0, simulator_fe( &sim ) );
   ASSERT_EQ( 0, simulator_n_trial( &sim ) );
@@ -73,24 +75,15 @@ TEST(test_simulator_set_state)
   }
 }
 
-TEST(test_simulator_inc_time)
+TEST(test_simulator_inc_step)
 {
-  double dt;
-
-  dt = 0.01;
-  ASSERT_EQ( 0, simulator_time( &sim ) );
-  simulator_inc_time( &sim, dt );
-  ASSERT_EQ( 0.01, simulator_time( &sim ) );
-  simulator_inc_time( &sim, dt );
-  ASSERT_EQ( 0.02, simulator_time( &sim ) );
-  simulator_inc_time( &sim, dt );
-  ASSERT_EQ( 0.03, simulator_time( &sim ) );
-
-  dt = 0.02;
-  simulator_inc_time( &sim, dt );
-  ASSERT_EQ( 0.05, simulator_time( &sim ) );
-  simulator_inc_time( &sim, dt );
-  ASSERT_EQ( 0.07, simulator_time( &sim ) );
+  ASSERT_EQ( 0, simulator_step( &sim ) );
+  simulator_inc_step( &sim );
+  ASSERT_EQ( 1, simulator_step( &sim ) );
+  simulator_inc_step( &sim );
+  ASSERT_EQ( 2, simulator_step( &sim ) );
+  simulator_inc_step( &sim );
+  ASSERT_EQ( 3, simulator_step( &sim ) );
 }
 
 TEST(test_simulator_set_fe)
@@ -104,6 +97,16 @@ TEST(test_simulator_set_fe)
   }
 }
 
+TEST(test_simulator_reset)
+{
+  simulator_update( &sim, 0.0, 0.01 );
+  ASSERT_NE( 0.0, simulator_time( &sim ) );
+  ASSERT_NE( 0, simulator_step( &sim ) );
+  simulator_reset( &sim );
+  ASSERT_EQ( 0.0, simulator_time( &sim ) );
+  ASSERT_EQ( 0, simulator_step( &sim ) );
+}
+
 TEST(test_simulator_update)
 {
   double dt;
@@ -112,6 +115,7 @@ TEST(test_simulator_update)
   dt = 0.01;
   simulator_update( &sim, 0.0, dt );
   ASSERT_EQ( 0.01, simulator_time( &sim ) );
+  ASSERT_EQ( 1, simulator_step( &sim ) );
 }
 
 TEST(test_simulator_run)
@@ -122,9 +126,31 @@ TEST(test_simulator_run)
   T = 10;
   dt = 0.01;
   ASSERT_EQ( 0, simulator_time( &sim ) );
+  ASSERT_EQ( 0, simulator_step( &sim ) );
   simulator_run( &sim, z, T, dt, NULL, NULL );
-  ASSERT_DOUBLE_EQ( T+dt, simulator_time( &sim ) );
+  ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
+  ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
   ASSERT_EQ( 1, simulator_n_trial( &sim ) );
+}
+
+TEST(test_simulator_run_multiple_times)
+{
+  double T, dt;
+
+  vec_set_elem_list( z, 2, 0.28, 0.0 );
+  T = 10;
+  dt = 0.01;
+  ASSERT_EQ( 0, simulator_time( &sim ) );
+  ASSERT_EQ( 0, simulator_step( &sim ) );
+  simulator_run( &sim, z, T, dt, NULL, NULL );
+  ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
+  ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
+  ASSERT_EQ( 1, simulator_n_trial( &sim ) );
+  T = 0.8;
+  simulator_run( &sim, z, T, dt, NULL, NULL );
+  ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
+  ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
+  ASSERT_EQ( 2, simulator_n_trial( &sim ) );
 }
 
 TEST_SUITE(test_simulator)
@@ -133,10 +159,12 @@ TEST_SUITE(test_simulator)
   RUN_TEST(test_simulator_init);
   RUN_TEST(test_simulator_destroy);
   RUN_TEST(test_simulator_set_state);
-  RUN_TEST(test_simulator_inc_time);
+  RUN_TEST(test_simulator_inc_step);
   RUN_TEST(test_simulator_set_fe);
+  RUN_TEST(test_simulator_reset);
   RUN_TEST(test_simulator_update);
   RUN_TEST(test_simulator_run);
+  RUN_TEST(test_simulator_run_multiple_times);
 }
 
 int main(int argc, char *argv[])
