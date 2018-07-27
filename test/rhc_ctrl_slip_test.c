@@ -23,6 +23,10 @@ void teardown()
 
 TEST(test_ctrl_slip_create)
 {
+  ASSERT_PTREQ( ctrl_slip_update, ctrl._update );
+  ASSERT_PTREQ( ctrl_slip_destroy, ctrl._destroy );
+  ASSERT_PTREQ( ctrl_slip_header, ctrl._header );
+  ASSERT_PTREQ( ctrl_slip_writer, ctrl._writer );
   ASSERT_EQ( 0, ((ctrl_slip_prp*)ctrl.prp)->k );
 }
 

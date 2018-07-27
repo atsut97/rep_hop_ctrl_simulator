@@ -10,6 +10,8 @@ typedef struct{
 ctrl_t *ctrl_slip_create(ctrl_t *self, cmd_t *cmd, model_t *model);
 void ctrl_slip_destroy(ctrl_t *self);
 ctrl_t *ctrl_slip_update(ctrl_t *self, double t, vec_t p);
+void ctrl_slip_header(FILE *fp, void *util);
+void ctrl_slip_writer(FILE *fp, ctrl_t *self, void *util);
 
 double ctrl_slip_calc_stiffness(double m, double z0, double zd, double zb);
 #define ctrl_slip_stiffness(self) ctrl_slip_calc_stiffness( ctrl_model(self)->m, ctrl_z0(self), ctrl_zd(self), ctrl_zb(self) )

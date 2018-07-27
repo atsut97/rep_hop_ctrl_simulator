@@ -7,6 +7,8 @@ ctrl_t *ctrl_slip_create(ctrl_t *self, cmd_t *cmd, model_t *model)
   ctrl_init( self, cmd, model );
   self->_update = ctrl_slip_update;
   self->_destroy = ctrl_slip_destroy;
+  self->_header = ctrl_slip_header;
+  self->_writer = ctrl_slip_writer;
 
   if( ( self->prp = nalloc( ctrl_slip_prp, 1 ) ) == NULL ){
     ALLOC_ERR();
@@ -33,6 +35,19 @@ ctrl_t *ctrl_slip_update(ctrl_t *self, double t, vec_t p)
   self->fz = -prp->k * ( vec_elem(p,0) - ctrl_z0(self) );
   if( ctrl_is_in_flight( self, p ) ) self->fz = 0;
   return self;
+}
+
+void ctrl_slip_header(FILE *fp, void *util)
+{
+  fprintf( fp, ",k\n" );
+}
+
+void ctrl_slip_writer(FILE *fp, ctrl_t *self, void *util)
+{
+  ctrl_slip_prp *prp;
+
+  prp = self->prp;
+  fprintf( fp, ",%f\n", prp->k );
 }
 
 double ctrl_slip_calc_stiffness(double m, double z0, double zd, double zb)
