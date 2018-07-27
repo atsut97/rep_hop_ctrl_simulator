@@ -44,7 +44,6 @@ class DataSet(object):
 
     def makeDataList(self):
         self.datadict = {}
-        self.grouped = None
 
         if 'tag' in self.dataframe.columns:
             grouped = self.dataframe.groupby('tag')
