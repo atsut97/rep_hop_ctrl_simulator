@@ -99,7 +99,8 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
 
 void simulator_header_default(FILE *fp, simulator_t *s, void *util)
 {
-  fprintf( fp, "tag,t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m\n" );
+  fprintf( fp, "tag,t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m" );
+  ctrl_header( fp, s->ctrl, util );
 }
 
 void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
@@ -107,7 +108,7 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
   vec_t state = simulator_state(s);
   model_t *model = simulator_model(s);
   ctrl_t *ctrl = simulator_ctrl(s);
-  fprintf( fp, "%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+  fprintf( fp, "%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
            simulator_tag(s),
            simulator_time(s),
            vec_elem(state,0), vec_elem(state,1),
@@ -116,6 +117,7 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
            ctrl_z0(ctrl), ctrl_zd(ctrl), ctrl_zb(ctrl),
            ctrl_n(ctrl), ctrl_phi(ctrl),
            model_mass(model) );
+  ctrl_writer( fp, s->ctrl, util );
 }
 
 void simulator_set_default_logger(simulator_t *self, logger_t *logger)

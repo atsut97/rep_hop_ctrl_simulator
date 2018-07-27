@@ -27,8 +27,10 @@ typedef struct _ctrl_t{
 #define ctrl_n(self)     ((ctrl_t*)self)->n
 #define ctrl_phi(self)   ((ctrl_t*)self)->phi
 
-#define ctrl_update(self,t,p) ((ctrl_t*)self)->_update( self, t, p )
-#define ctrl_destroy(self)    ((ctrl_t*)self)->_destroy( self )
+#define ctrl_update(self,t,p)     ((ctrl_t*)self)->_update( self, t, p )
+#define ctrl_destroy(self)        ((ctrl_t*)self)->_destroy( self )
+#define ctrl_header(fp,self,util) ((ctrl_t*)self)->_header( fp, util )
+#define ctrl_writer(fp,self,util) ((ctrl_t*)self)->_writer( fp, self, util )
 
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model);
 
@@ -47,5 +49,7 @@ double ctrl_calc_phi(double z0, double zd, double zb, vec_t p);
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p);
 void ctrl_destroy_default(ctrl_t *self);
+void ctrl_header_default(FILE *fp, void *util);
+void ctrl_writer_default(FILE *fp, ctrl_t *self, void *util);
 
 #endif /* __RHC_CTRL_H__ */

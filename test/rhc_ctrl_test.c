@@ -28,8 +28,8 @@ TEST(test_ctrl_init)
   ASSERT_EQ( 0, ctrl_fz( &ctrl ) );
   ASSERT_PTREQ( ctrl_update_default, ctrl._update );
   ASSERT_PTREQ( ctrl_destroy_default, ctrl._destroy );
-  ASSERT_PTREQ( NULL, ctrl._header );
-  ASSERT_PTREQ( NULL, ctrl._writer );
+  ASSERT_PTREQ( ctrl_header_default, ctrl._header );
+  ASSERT_PTREQ( ctrl_writer_default, ctrl._writer );
   ASSERT_PTREQ( NULL, ctrl.prp);
   ASSERT_EQ( 0, ctrl_n( &ctrl ) );
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );

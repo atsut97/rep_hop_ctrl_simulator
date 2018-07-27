@@ -7,8 +7,8 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
   self->fz = 0;
   self->_update = ctrl_update_default;
   self->_destroy = ctrl_destroy_default;
-  self->_header = NULL;
-  self->_writer = NULL;
+  self->_header = ctrl_header_default;
+  self->_writer = ctrl_writer_default;
   self->prp = NULL;
   ctrl_n( self ) = 0;
   ctrl_phi( self ) = 0;
@@ -52,6 +52,16 @@ ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
   if( ctrl_phi( self ) < 0 && phi >= 0 ) ctrl_n(self)++;
   ctrl_phi( self ) = phi;
   return self;
+}
+
+void ctrl_header_default(FILE *fp, void *util)
+{
+  fprintf( fp, "\n" );
+}
+
+void ctrl_writer_default(FILE *fp, ctrl_t *self, void *util)
+{
+  fprintf( fp, "\n" );
 }
 
 complex_t *ctrl_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c)
