@@ -43,24 +43,33 @@ class DataSet(object):
         self.makeDataList()
 
     def makeDataList(self):
-        self.dataset = []
+        self.datadict = {}
         self.grouped = None
 
-        if 'id' in self.dataframe.columns:
-            grouped = self.dataframe.groupby('id')
-            ids = grouped.groups.keys()
-            self.dataset = [Data(grouped.get_group(i)) for i in ids]
+        if 'tag' in self.dataframe.columns:
+            grouped = self.dataframe.groupby('tag')
+            tags = grouped.groups.keys()
+            self.datadict = {i: Data(grouped.get_group(i)) for i in tags}
         else:
-            self.dataset = [Data(self.dataframe)]
+            self.datadict = {'00000': Data(self.dataframe)}
 
     def __iter__(self):
-        return iter(self.dataset)
+        return iter(self.datadict.values())
+
+    def tags(self):
+        return list(self.datadict.keys())
+
+    def items(self):
+        return list(self.datadict.items())
 
     def getDataFrame(self):
         return self.dataframe
 
-    def getData(self, index):
-        return self.dataset[index]
+    def getDataDict(self):
+        return self.datadict
+
+    def getData(self, tag):
+        return self.datadict[tag]
 
     def hasFilename(self):
         return self.filename is not None
@@ -68,11 +77,13 @@ class DataSet(object):
     def getFilename(self):
         return self.filename
 
-    def getParam(self, key, id=0, index=0):
-        return self.dataset[id].getParam(key, index)
+    def getParam(self, key, tag=None, index=0):
+        if tag is None:
+            tag = list(self.datadict.keys())[0]
+        return self.datadict[tag].getParam(key, index)
 
-    def getParamList(self, key_list, id=0, index=0):
-        return [self.getParam(key, id, index) for key in key_list]
+    def getParamList(self, key_list, tag=None, index=0):
+        return [self.getParam(key, tag, index) for key in key_list]
 
 
 def plot(dataset):
