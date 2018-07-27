@@ -4,21 +4,6 @@
 #define DT 0.001
 #define T  10
 
-void header(FILE *fp, void *util) {
-  fprintf(fp, "t,z,v,fz,fe,zd,z0,zb\n" );
-}
-
-void output(FILE *fp, simulator_t *s, void *util) {
-  vec_t state = simulator_state(s);
-  ctrl_t *ctrl = simulator_ctrl(s);
-  cmd_t *cmd = simulator_cmd(s);
-  fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f\n",
-           simulator_time(s),
-           vec_elem(state, 0), vec_elem(state, 1),
-           ctrl_fz(ctrl), simulator_fe(s),
-           cmd->zd, cmd->z0, cmd->zb );
-}
-
 int main(int argc, char *argv[])
 {
   cmd_t cmd;
