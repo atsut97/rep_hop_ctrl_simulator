@@ -6,5 +6,6 @@
 
 char *string_copy(const char *s, char *d);
 int string_len(const char *s);
+bool string_is_digit(const char *s);
 
 #endif /* __RHC_STRING_H__ */

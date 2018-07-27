@@ -34,12 +34,22 @@ TEST(test_string_len_zero)
   ASSERT_EQ( 0, string_len( s ) );
 }
 
+TEST(test_string_is_digit)
+{
+  const char s1[] = "0123";
+  const char s2[] = "01s01";
+
+  ASSERT_TRUE( string_is_digit( s1 ) );
+  ASSERT_FALSE( string_is_digit( s2 ) );
+}
+
 TEST_SUITE(test_string)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_string_copy);
   RUN_TEST(test_string_len);
   RUN_TEST(test_string_len_zero);
+  RUN_TEST(test_string_is_digit);
 }
 
 int main(int arg, char *argv[])
