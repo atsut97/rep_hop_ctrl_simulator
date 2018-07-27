@@ -27,7 +27,14 @@ void ctrl_slip_var_stiff_destroy(ctrl_t *self)
 
 ctrl_t *ctrl_slip_var_stiff_update(ctrl_t *self, double t, vec_t p)
 {
+  ctrl_slip_var_stiff_prp *prp;
 
+  ctrl_update_default( self, t, p );
+  prp = self->prp;
+  prp->k = ctrl_slip_var_stiff_stiffness( self, p );
+  self->fz = -prp->k * ( vec_elem(p,0) - ctrl_z0(self) );
+  if( ctrl_is_in_flight( self, p ) ) self->fz = 0;
+  return self;
 }
 
 void ctrl_slip_var_stiff_header(FILE *fp, void *util)
@@ -47,6 +54,8 @@ double ctrl_slip_var_stiff_calc_stiffness_decomp(vec_t p, double m, double z0, d
 {
   double numer = 2. * G * ( zd - vec_elem(p,0) ) - sqr( vec_elem(p,1) );
   double denom = sqr( z0 - vec_elem(p,0) );
+  if( istiny( denom ) )
+    return 0;
   return m * numer / denom;
 }
 

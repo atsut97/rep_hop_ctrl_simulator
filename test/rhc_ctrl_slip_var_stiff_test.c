@@ -9,7 +9,7 @@ static vec_t p;
 void setup()
 {
   cmd_default_init( &cmd );
-  model_init( &model, 10 );
+  model_init( &model, 1 );
   ctrl_slip_var_stiff_create( &ctrl, &cmd, &model );
   p = vec_create( 2 );
 }
@@ -50,6 +50,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp)
     { 1, 0.24, 0, 0.26, 0.28, 0.24, 200*G },
     { 1, 0.25, 0.1, 0.26, 0.28, 0.24, (6*G-1)*100 },
     { 2, 0.24, 0, 0.26, 0.28, 0.24, 400*G },
+    { 1, 0.26, 0.2*sqrt(G), 0.26, 0.28, 0.24, 0 },
     { 0, 0, 0, 0, 0, 0, 0 }
   };
   struct case_t *c;
@@ -63,6 +64,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp)
     ASSERT_NEAR( c->expected_k,
                  f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
   }
+  vec_destroy( p );
 }
 
 TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp)
@@ -87,6 +89,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp)
     ASSERT_NEAR( c->expected_k,
                  f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
   }
+  vec_destroy( p );
 }
 
 TEST(test_ctrl_slip_var_stiff_calc_stiffness)
@@ -116,6 +119,36 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness)
     ASSERT_NEAR( c->expected_k,
                  f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
   }
+  vec_destroy( p );
+}
+
+TEST(test_ctrl_slip_var_stiff_update)
+{
+  struct case_t{
+    double z, v;
+    double expected_fz;
+  } cases[] = {
+    { 0.26, -0.2*sqrt(G), 0 },  /* touchdown */
+    { 0.24, 0, 4*G },             /* bottom */
+    { 0.26, 0.2*sqrt(G), 0 },   /* lift-off */
+    { 0.28, 0, 0 },               /* apex */
+    { 0, 0, 0 }
+  };
+  struct case_t *c;
+  vec_t p;
+
+  p = vec_create( 2 );
+  for( c=cases; c->z>0; c++ ) {
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, 0, p );
+    ASSERT_NEAR( c->expected_fz, ctrl_fz(&ctrl), 1e-10 );
+  }
+  /* double expected_fz; */
+
+  /* vec_set_elem_list( p, 0.24, 0.0 ); */
+  /* ctrl_update( &ctrl, 0, p ); */
+  /* expected_fz = 200*G * (0.26 - 0.24); */
+  /* ASSERT_DOUBLE_EQ( expected_fz, ctrl_fz( &ctrl ) ); */
 }
 
 TEST_SUITE(test_ctrl_slip_var_stiff)
@@ -126,6 +159,7 @@ TEST_SUITE(test_ctrl_slip_var_stiff)
   RUN_TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp);
   RUN_TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp);
   RUN_TEST(test_ctrl_slip_var_stiff_calc_stiffness);
+  RUN_TEST(test_ctrl_slip_var_stiff_update);
 }
 
 int main(int argc, char *argv[])
