@@ -38,7 +38,7 @@ class DataSet(object):
             self.dataframe = df_or_filename
             self.filename = None
         else:
-            self.dataframe = pd.read_csv(df_or_filename)
+            self.dataframe = pd.read_csv(df_or_filename, dtype={'tag': object})
             self.filename = df_or_filename
         self.makeDataList()
 
@@ -113,6 +113,9 @@ def plot(dataset):
 
 def main():
     import sys
+    if len(sys.argv) == 1:
+        print('Please specify csv data file')
+        exit()
     dataset = DataSet(sys.argv[1])
     plot(dataset)
     plt.show()
