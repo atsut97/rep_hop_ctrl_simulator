@@ -12,6 +12,7 @@ simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t
   ode_assign( &self->ode, rk4 );
   ode_init( &self->ode, 2, simulator_dp );
   self->n_trial = 0;
+  simulator_set_tag( self, "" );
   return self;
 }
 
@@ -28,6 +29,33 @@ void simulator_destroy(simulator_t *self)
   if( self->ode._ws )
     ode_destroy( &self->ode );
   self->n_trial = 0;
+  simulator_set_tag( self, "" );
+}
+
+char *simulator_set_tag(simulator_t *self, const char* tag)
+{
+  string_copy( tag, self->tag );
+  return self->tag;
+}
+
+char *simulator_update_default_tag(simulator_t *self) {
+  char default_tag[BUFSIZ];
+
+  sprintf( default_tag, "%05d", simulator_n_trial(self) );
+  return simulator_set_tag( self, default_tag );
+}
+
+bool simulator_has_default_tag(simulator_t *self) {
+  int len;
+
+  len = string_len( simulator_tag(self) );
+  if( len == 0 ) return true;
+  else if( len < 5 ) return false;
+
+  const char *c = &simulator_tag(self)[len-5];
+  if( string_is_digit( c ) && atoi( c ) == simulator_n_trial(self) - 1 )
+    return true;
+  return false;
 }
 
 vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
@@ -58,6 +86,9 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
 {
   simulator_reset( self );
   simulator_set_state( self, p0 );
+  if( simulator_has_default_tag( self ) ){
+    simulator_update_default_tag( self );
+  }
   while( simulator_time(self) < time ){
     if( logger )
       simulator_dump( self, logger, util );
@@ -68,7 +99,7 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
 
 void simulator_header_default(FILE *fp, void *util)
 {
-  fprintf( fp, "id,t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m\n");
+  fprintf( fp, "tag,t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m\n" );
 }
 
 void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
@@ -76,8 +107,8 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
   vec_t state = simulator_state(s);
   model_t *model = simulator_model(s);
   ctrl_t *ctrl = simulator_ctrl(s);
-  fprintf( fp, "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
-           simulator_n_trial(s),
+  fprintf( fp, "%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+           simulator_tag(s),
            simulator_time(s),
            vec_elem(state,0), vec_elem(state,1),
            model_acc(model),

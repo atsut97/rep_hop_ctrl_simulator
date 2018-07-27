@@ -6,6 +6,7 @@
 #include "rhc_ctrl.h"
 #include "rhc_model.h"
 #include "rhc_logger.h"
+#include "rhc_string.h"
 
 typedef struct _simulator_t{
   double t;
@@ -17,6 +18,7 @@ typedef struct _simulator_t{
   ctrl_t *ctrl;
   model_t *model;
   int n_trial;
+  char tag[BUFSIZ];
 } simulator_t;
 
 #define simulator_cmd(self)   (self)->cmd
@@ -27,6 +29,7 @@ typedef struct _simulator_t{
 #define simulator_state(self) (self)->state
 #define simulator_fe(self)    (self)->fe
 #define simulator_n_trial(self) (self)->n_trial
+#define simulator_tag(self)   (self)->tag
 
 #define simulator_set_state(self,p) vec_copy( p, simulator_state(self) )
 #define simulator_set_time(self,t)  ( simulator_time(self)  = (t) )
@@ -37,6 +40,9 @@ typedef struct _simulator_t{
 simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void simulator_destroy(simulator_t *self);
 
+char *simulator_set_tag(simulator_t *self, const char* tag);
+char *simulator_update_default_tag(simulator_t *self);
+bool simulator_has_default_tag(simulator_t *self);
 vec_t simulator_dp(double t, vec_t x, void *util, vec_t v);
 void simulator_reset(simulator_t *self);
 void simulator_update(simulator_t *self, double fe, double dt);

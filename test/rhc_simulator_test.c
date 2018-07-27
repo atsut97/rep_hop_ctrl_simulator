@@ -38,6 +38,7 @@ TEST(test_simulator_init)
   ASSERT_PTREQ( simulator_dp, sim.ode.f );
   ASSERT_PTRNE( NULL, sim.ode._ws );
   ASSERT_EQ( 0, simulator_n_trial( &sim ) );
+  ASSERT_STREQ("", simulator_tag( &sim ) );
 }
 
 TEST(test_simulator_destroy)
@@ -51,6 +52,7 @@ TEST(test_simulator_destroy)
   ASSERT_PTREQ( NULL, simulator_state( &sim ) );
   ASSERT_EQ( 0, simulator_fe( &sim ) );
   ASSERT_EQ( 0, simulator_n_trial( &sim ) );
+  ASSERT_STREQ("", simulator_tag( &sim ) );
 }
 
 TEST(test_simulator_set_state)
@@ -97,6 +99,38 @@ TEST(test_simulator_set_fe)
   }
 }
 
+TEST(test_simulator_set_tag)
+{
+  char tag[] = "test tag";
+
+  simulator_set_tag( &sim, tag );
+  ASSERT_STREQ( "test tag", simulator_tag( &sim ) );
+}
+
+TEST(test_simulator_update_default_tag)
+{
+  simulator_update_default_tag( &sim );
+  ASSERT_STREQ( "00000", simulator_tag(&sim) );
+  simulator_inc_trial( &sim );
+  simulator_update_default_tag( &sim );
+  ASSERT_STREQ( "00001", simulator_tag(&sim) );
+}
+
+TEST(test_simulator_has_default_tag)
+{
+  simulator_set_tag( &sim, "" );
+  ASSERT_TRUE( simulator_has_default_tag( &sim ) );
+  sim.n_trial = 1;
+  simulator_set_tag( &sim, "00000" );
+  ASSERT_TRUE( simulator_has_default_tag( &sim ) );
+  simulator_set_tag( &sim, "hoge00000" );
+  ASSERT_TRUE( simulator_has_default_tag( &sim ) );
+  simulator_set_tag( &sim, "test" );
+  ASSERT_FALSE( simulator_has_default_tag( &sim ) );
+  simulator_set_tag( &sim, "test033" );
+  ASSERT_FALSE( simulator_has_default_tag( &sim ) );
+}
+
 TEST(test_simulator_reset)
 {
   simulator_update( &sim, 0.0, 0.01 );
@@ -131,6 +165,7 @@ TEST(test_simulator_run)
   ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
   ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
   ASSERT_EQ( 1, simulator_n_trial( &sim ) );
+  ASSERT_STREQ( "00000", simulator_tag( &sim ) );
 }
 
 TEST(test_simulator_run_multiple_times)
@@ -146,11 +181,26 @@ TEST(test_simulator_run_multiple_times)
   ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
   ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
   ASSERT_EQ( 1, simulator_n_trial( &sim ) );
+  ASSERT_STREQ( "00000", simulator_tag( &sim ) );
   T = 0.8;
   simulator_run( &sim, z, T, dt, NULL, NULL );
   ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
   ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
   ASSERT_EQ( 2, simulator_n_trial( &sim ) );
+  ASSERT_STREQ( "00001", simulator_tag( &sim ) );
+}
+
+TEST(test_simulator_run_specify_tag)
+{
+  double T, dt;
+  char tag[] = "test";
+
+  vec_set_elem_list( z, 2, 0.28, 0.0 );
+  T = 10;
+  dt = 0.01;
+  simulator_set_tag( &sim, tag );
+  simulator_run( &sim, z, T, dt, NULL, NULL );
+  ASSERT_STREQ( tag, simulator_tag( &sim ) );
 }
 
 TEST_SUITE(test_simulator)
@@ -161,10 +211,14 @@ TEST_SUITE(test_simulator)
   RUN_TEST(test_simulator_set_state);
   RUN_TEST(test_simulator_inc_step);
   RUN_TEST(test_simulator_set_fe);
+  RUN_TEST(test_simulator_set_tag);
+  RUN_TEST(test_simulator_update_default_tag);
+  RUN_TEST(test_simulator_has_default_tag);
   RUN_TEST(test_simulator_reset);
   RUN_TEST(test_simulator_update);
   RUN_TEST(test_simulator_run);
   RUN_TEST(test_simulator_run_multiple_times);
+  RUN_TEST(test_simulator_run_specify_tag);
 }
 
 int main(int argc, char *argv[])
