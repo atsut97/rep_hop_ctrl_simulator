@@ -7,6 +7,8 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
   self->fz = 0;
   self->_update = ctrl_update_default;
   self->_destroy = ctrl_destroy_default;
+  self->_header = NULL;
+  self->_writer = NULL;
   self->prp = NULL;
   ctrl_n( self ) = 0;
   ctrl_phi( self ) = 0;

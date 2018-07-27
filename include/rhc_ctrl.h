@@ -14,6 +14,8 @@ typedef struct _ctrl_t{
   double n, phi;
   struct _ctrl_t* (*_update)(struct _ctrl_t*,double,vec_t);
   void (*_destroy)(struct _ctrl_t*);
+  void (*_header)(FILE*, void*);
+  void (*_writer)(FILE*, struct _ctrl_t*, void*);
 } ctrl_t;
 
 #define ctrl_cmd(self)   ((ctrl_t*)self)->cmd
