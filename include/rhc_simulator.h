@@ -48,7 +48,7 @@ void simulator_reset(simulator_t *self);
 void simulator_update(simulator_t *self, double fe, double dt);
 void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger, void *util);
 
-void simulator_header_default(FILE* fp, void *util);
+void simulator_header_default(FILE* fp, simulator_t *self, void *util);
 void simulator_writer_default(FILE* fp, simulator_t *self, void *util);
 void simulator_set_default_logger(simulator_t *self, logger_t *logger);
 

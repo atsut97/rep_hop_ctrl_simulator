@@ -64,7 +64,7 @@ TEST(test_logger_close)
   ASSERT_PTREQ( NULL, logger.fp );
 }
 
-void header(FILE *fp, void *util) {
+void header(FILE *fp, simulator_t *s, void *util) {
   fprintf( fp, "t,x,y,z,fe,zd,z0,zb,m,az\n");
 }
 
@@ -142,9 +142,9 @@ TEST(test_logger_write_header)
   logger_open( &logger, "/tmp/test.log" );
   logger_register( &logger, header, output );
   ASSERT_FALSE( logger_is_header_written(&logger) );
-  logger_write_header( &logger, NULL );
+  logger_write_header( &logger, &simulator, NULL );
   ASSERT_TRUE( logger_is_header_written(&logger) );
-  logger_write_header( &logger, NULL );
+  logger_write_header( &logger, &simulator, NULL );
   ASSERT_TRUE( logger_is_header_written(&logger) );
   logger_close( &logger );
 }

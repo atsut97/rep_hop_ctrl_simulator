@@ -97,7 +97,7 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
   simulator_inc_trial( self );
 }
 
-void simulator_header_default(FILE *fp, void *util)
+void simulator_header_default(FILE *fp, simulator_t *s, void *util)
 {
   fprintf( fp, "tag,t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m\n" );
 }
@@ -130,7 +130,7 @@ void simulator_dump(simulator_t *self, logger_t *logger, void *util)
 
 void simulator_dump_header(simulator_t *self, logger_t *logger, void *util)
 {
-  logger_write_header( logger, NULL );
+  logger_write_header( logger, self, NULL );
 }
 
 void simulator_dump_data(simulator_t *self, logger_t *logger, void *util)

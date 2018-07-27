@@ -64,15 +64,15 @@ void logger_delegate(logger_t *src, logger_t *dst)
   logger_init( src );
 }
 
-void logger_write_header(logger_t *self, void *util)
+void logger_write_header(logger_t *self, simulator_t *simulator, void *util)
 {
   if( !self->header )
     return;
 
   if( logger_is_open(self) ){
-    self->header( self->fp, util );
+    self->header( self->fp, simulator, util );
   } else {
-    self->header( stdout, util );
+    self->header( stdout, simulator, util );
   }
   self->header_written_flag = true;
 }
@@ -93,6 +93,6 @@ void logger_write_data(logger_t *self, simulator_t *simulator, void *util)
 void logger_write(logger_t *self, simulator_t *simulator, void *util)
 {
   if( !logger_is_header_written(self) )
-    logger_write_header( self, util );
+    logger_write_header( self, simulator, util );
   logger_write_data( self, simulator, util );
 }
