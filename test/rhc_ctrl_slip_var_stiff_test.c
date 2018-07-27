@@ -41,11 +41,91 @@ TEST(test_ctrl_slip_var_stiff_destroy)
   ASSERT_PTREQ( NULL, c.prp );
 }
 
+TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp)
+{
+  struct case_t{
+    double m, z, v, z0, zd, zb;
+    double expected_k;
+  } cases[] = {
+    { 1, 0.24, 0, 0.26, 0.28, 0.24, 200*G },
+    { 1, 0.25, 0.1, 0.26, 0.28, 0.24, (6*G-1)*100 },
+    { 2, 0.24, 0, 0.26, 0.28, 0.24, 400*G },
+    { 0, 0, 0, 0, 0, 0, 0 }
+  };
+  struct case_t *c;
+  double (*f)(vec_t,double,double,double,double);
+  vec_t p;
+
+  f = ctrl_slip_var_stiff_calc_stiffness_decomp;
+  p = vec_create( 2 );
+  for( c=cases; c->m>0; c++ ) {
+    vec_set_elem_list( p, c->z, c->v );
+    ASSERT_NEAR( c->expected_k,
+                 f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
+  }
+}
+
+TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp)
+{
+  struct case_t{
+    double m, z, v, z0, zd, zb;
+    double expected_k;
+  } cases[] = {
+    { 1, 0.26, -0.2*sqrt(G), 0.26, 0.28, 0.24, 200*G },
+    { 1, 0.25, -0.1, 0.26, 0.28, 0.24, (2*G+1)/0.03 },
+    { 2, 0.26, -0.2*sqrt(G), 0.26, 0.28, 0.24, 400*G },
+    { 0, 0, 0, 0, 0, 0, 0 }
+  };
+  struct case_t *c;
+  double (*f)(vec_t,double,double,double,double);
+  vec_t p;
+
+  f = ctrl_slip_var_stiff_calc_stiffness_comp;
+  p = vec_create( 2 );
+  for( c=cases; c->m>0; c++ ) {
+    vec_set_elem_list( p, c->z, c->v );
+    ASSERT_NEAR( c->expected_k,
+                 f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
+  }
+}
+
+TEST(test_ctrl_slip_var_stiff_calc_stiffness)
+{
+  struct case_t{
+    double m, z, v, z0, zd, zb;
+    double expected_k;
+  } cases[] = {
+    /* decompression phases */
+    { 1, 0.24, 0, 0.26, 0.28, 0.24, 200*G },
+    { 1, 0.25, 0.1, 0.26, 0.28, 0.24, (6*G-1)*100 },
+    { 2, 0.24, 0, 0.26, 0.28, 0.24, 400*G },
+    /* compression phases */
+    { 1, 0.26, -0.2*sqrt(G), 0.26, 0.28, 0.24, 200*G },
+    { 1, 0.25, -0.1, 0.26, 0.28, 0.24, (2*G+1)/0.03 },
+    { 2, 0.26, -0.2*sqrt(G), 0.26, 0.28, 0.24, 400*G },
+    { 0, 0, 0, 0, 0, 0, 0 }
+  };
+  struct case_t *c;
+  double (*f)(vec_t,double,double,double,double);
+  vec_t p;
+
+  f = ctrl_slip_var_stiff_calc_stiffness;
+  p = vec_create( 2 );
+  for( c=cases; c->m>0; c++ ) {
+    vec_set_elem_list( p, c->z, c->v );
+    ASSERT_NEAR( c->expected_k,
+                 f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
+  }
+}
+
 TEST_SUITE(test_ctrl_slip_var_stiff)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_slip_var_stiff_create);
   RUN_TEST(test_ctrl_slip_var_stiff_destroy);
+  RUN_TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp);
+  RUN_TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp);
+  RUN_TEST(test_ctrl_slip_var_stiff_calc_stiffness);
 }
 
 int main(int argc, char *argv[])
