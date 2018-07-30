@@ -35,6 +35,8 @@ TEST(test_ctrl_regulator_create)
   ASSERT_PTREQ( ctrl_regulator_header, ctrl._header );
   ASSERT_PTREQ( ctrl_regulator_writer, ctrl._writer );
   ASSERT_EQ( 0, ((ctrl_regulator_prp*)ctrl.prp)->xi );
+  ASSERT_EQ( 1, ctrl_regulator_q1(&ctrl) );
+  ASSERT_EQ( 1, ctrl_regulator_q2(&ctrl) );
 }
 
 TEST(test_ctrl_regulator_destroy)
@@ -79,10 +81,10 @@ TEST(test_ctrl_regulator_calc_fz)
     double z, v;
     double expected;
   } cases[] = {
-    { 1, 0.26, 1, 1, 0.24, 0, G/13 },
-    { 1, 0.26, 1, 2, 0.24, 0, 2*G/13 },
-    { 1, 0.26, 1, 1, 0.26, -0.2*sqrt(G), 4*G/sqrt(26) },
-    { 2, 0.26, 1, 1, 0.26, -0.2*sqrt(G), 8*G/sqrt(26) },
+    { 1, 0.26, 1, 1, 0.24, 0, G/13 + G },
+    { 1, 0.26, 1, 2, 0.24, 0, 2*G/13 + G },
+    { 1, 0.26, 1, 1, 0.26, -0.2*sqrt(G), 4*G/sqrt(26) + G },
+    { 2, 0.26, 1, 1, 0.26, -0.2*sqrt(G), 8*G/sqrt(26) + 2*G },
     { 0, 0, 0, 0, 0, 0, 0 }
   };
   struct case_t *c;
@@ -103,9 +105,9 @@ TEST(test_ctrl_regulator_update)
     double z, v;
     double expected_fz;
   } cases[] = {
-    { 0.26, -0.2*sqrt(G), 4*G/sqrt(26) },  /* touchdown */
-    { 0.24, 0, G/13 },                     /* bottom */
-    { 0.28, 0, 0 },                        /* apex */
+    { 0.26, -0.2*sqrt(G), 4*G/sqrt(26) + G },  /* touchdown */
+    { 0.24, 0, G/13 + G },                     /* bottom */
+    { 0.28, 0, 0     },                        /* apex */
     { 0, 0, 0 }
   };
   struct case_t *c;

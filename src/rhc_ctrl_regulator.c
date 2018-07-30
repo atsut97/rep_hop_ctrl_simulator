@@ -13,6 +13,7 @@ ctrl_t *ctrl_regulator_create(ctrl_t *self, cmd_t *cmd, model_t *model)
   ctrl_regulator_prp *prp;
 
   ctrl_init( self, cmd, model );
+  ctrl_regulator_cmd_init( self, cmd );
   self->_update = ctrl_regulator_update;
   self->_destroy = ctrl_regulator_destroy;
   self->_header = ctrl_regulator_header;
@@ -75,5 +76,5 @@ double ctrl_regulator_calc_fz(ctrl_t *self, vec_t p)
   xi2 = ctrl_regulator_calc_sqr_xi( z0 );
   k1 = -m * xi2 * q1 * q2;
   k2 = -m * sqrt(xi2) * ( q1 + q2 );
-  return k1 * ( vec_elem( p, 0 ) - z0 ) + k2 * vec_elem( p, 1 );
+  return k1 * ( vec_elem( p, 0 ) - z0 ) + k2 * vec_elem( p, 1 ) + m * G;
 }
