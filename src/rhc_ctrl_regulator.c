@@ -49,3 +49,26 @@ void ctrl_regulator_writer(FILE *fp, ctrl_t *self, void *util)
            ctrl_regulator_q1(self), ctrl_regulator_q2(self),
            ctrl_regulator_xi(self) );
 }
+
+double ctrl_regulator_calc_sqr_xi(double z0)
+{
+  return G / z0;
+}
+
+double ctrl_regulator_calc_fz(ctrl_t *self, vec_t p)
+{
+  double z0, q1, q2, m;
+  double xi2;
+  double k1, k2;
+
+  if ( ctrl_is_in_flight( self, p ) )
+    return 0;
+  z0 = ctrl_z0(self);
+  q1 = ctrl_regulator_q1(self);
+  q2 = ctrl_regulator_q2(self);
+  m = ctrl_model(self)->m;
+  xi2 = ctrl_regulator_calc_sqr_xi( z0 );
+  k1 = -m * xi2 * q1 * q2;
+  k2 = -m * sqrt(xi2) * ( q1 + q2 );
+  return k1 * ( vec_elem( p, 0 ) - z0 ) + k2 * vec_elem( p, 1 );
+}
