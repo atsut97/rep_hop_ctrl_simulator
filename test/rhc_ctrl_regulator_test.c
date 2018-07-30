@@ -37,11 +37,19 @@ TEST(test_ctrl_regulator_create)
   ASSERT_EQ( 0, ((ctrl_regulator_prp*)ctrl.prp)->xi );
 }
 
+TEST(test_ctrl_regulator_destroy)
+{
+  ctrl_regulator_destroy( &ctrl );
+  ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
+  ASSERT_PTREQ( NULL, ctrl.prp );
+}
+
 TEST_SUITE(test_ctrl_regulator)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_regulator_cmd_init);
   RUN_TEST(test_ctrl_regulator_create);
+  RUN_TEST(test_ctrl_regulator_destroy);
 }
 
 int main(int argc, char *argv[])
