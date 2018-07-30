@@ -30,6 +30,15 @@ TEST(test_ctrl_slip_create)
   ASSERT_EQ( 0, ((ctrl_slip_prp*)ctrl.prp)->k );
 }
 
+TEST(test_ctrl_slip_k)
+{
+  ctrl_slip_prp *prp;
+
+  prp = ctrl.prp;
+  prp->k = 1000;
+  ASSERT_EQ( 1000, ctrl_slip_k( &ctrl ) );
+}
+
 TEST(test_ctrl_slip_update)
 {
   /* ctrl_update( &ctrl, 0, p ); */
@@ -158,6 +167,7 @@ TEST_SUITE(test_ctrl_slip)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_slip_create);
+  RUN_TEST(test_ctrl_slip_k);
   RUN_TEST(test_ctrl_slip_update);
   RUN_TEST(test_ctrl_slip_update_phase);
   RUN_TEST(test_ctrl_slip_update_flight_zero);

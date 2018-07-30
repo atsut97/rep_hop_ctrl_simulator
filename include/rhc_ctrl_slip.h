@@ -7,6 +7,8 @@ typedef struct{
   double k;
 } ctrl_slip_prp;
 
+#define ctrl_slip_k(self) ( ((ctrl_slip_prp*)((self)->prp))->k )
+
 ctrl_t *ctrl_slip_create(ctrl_t *self, cmd_t *cmd, model_t *model);
 void ctrl_slip_destroy(ctrl_t *self);
 ctrl_t *ctrl_slip_update(ctrl_t *self, double t, vec_t p);
