@@ -3,8 +3,8 @@
 cmd_t *ctrl_regulator_cmd_init(ctrl_t *self, cmd_t *cmd)
 {
   cmd_default_init( cmd );
-  cmd->regulator.q1 = 1;
-  cmd->regulator.q2 = 1;
+  cmd->regulator.q1 = 2;
+  cmd->regulator.q2 = 3;
   return cmd;
 }
 

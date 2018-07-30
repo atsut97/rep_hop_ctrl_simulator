@@ -24,8 +24,8 @@ void teardown()
 TEST(test_ctrl_regulator_cmd_init)
 {
   ctrl_regulator_cmd_init( &ctrl, &cmd );
-  ASSERT_EQ( 1.0, ctrl_regulator_q1( &ctrl ) );
-  ASSERT_EQ( 1.0, ctrl_regulator_q2( &ctrl ) );
+  ASSERT_EQ( 2.0, ctrl_regulator_q1( &ctrl ) );
+  ASSERT_EQ( 3.0, ctrl_regulator_q2( &ctrl ) );
 }
 
 TEST(test_ctrl_regulator_create)
@@ -35,8 +35,8 @@ TEST(test_ctrl_regulator_create)
   ASSERT_PTREQ( ctrl_regulator_header, ctrl._header );
   ASSERT_PTREQ( ctrl_regulator_writer, ctrl._writer );
   ASSERT_EQ( 0, ((ctrl_regulator_prp*)ctrl.prp)->xi );
-  ASSERT_EQ( 1, ctrl_regulator_q1(&ctrl) );
-  ASSERT_EQ( 1, ctrl_regulator_q2(&ctrl) );
+  ASSERT_EQ( 2, ctrl_regulator_q1(&ctrl) );
+  ASSERT_EQ( 3, ctrl_regulator_q2(&ctrl) );
 }
 
 TEST(test_ctrl_regulator_destroy)
