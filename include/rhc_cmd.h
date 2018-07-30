@@ -7,6 +7,11 @@ typedef struct{
   double zd;       /* desired position */
   double z0;       /* referential lift-off position */
   double zb;       /* referential crounching position */
+  union {
+    struct _regulator {
+      double q1, q2;
+    } regulator;
+  };
 } cmd_t;
 
 cmd_t *cmd_init(cmd_t *self);
