@@ -8,9 +8,9 @@ static vec_t p;
 
 void setup()
 {
-  cmd_default_init( &cmd );
   model_init( &model, 1 );
   ctrl_regulator_create( &ctrl, &cmd, &model );
+  ctrl_regulator_cmd_init( &ctrl, &cmd );
   p = vec_create( 2 );
 }
 
@@ -79,8 +79,8 @@ TEST(test_ctrl_regulator_calc_fz)
     double z, v;
     double expected;
   } cases[] = {
-    { 1, 0.26, 1, 1, 0.27, 0.1, 0 },
     { 1, 0.26, 1, 1, 0.24, 0, G/13 },
+    { 1, 0.26, 1, 2, 0.24, 0, 2*G/13 },
     { 1, 0.26, 1, 1, 0.26, -0.2*sqrt(G), 4*G/sqrt(26) },
     { 2, 0.26, 1, 1, 0.26, -0.2*sqrt(G), 8*G/sqrt(26) },
     { 0, 0, 0, 0, 0, 0, 0 }
@@ -97,6 +97,30 @@ TEST(test_ctrl_regulator_calc_fz)
   }
 }
 
+TEST(test_ctrl_regulator_update)
+{
+  struct case_t{
+    double z, v;
+    double expected_fz;
+  } cases[] = {
+    { 0.26, -0.2*sqrt(G), 4*G/sqrt(26) },  /* touchdown */
+    { 0.24, 0, G/13 },                     /* bottom */
+    { 0.28, 0, 0 },                        /* apex */
+    { 0, 0, 0 }
+  };
+  struct case_t *c;
+  vec_t p;
+
+  p = vec_create( 2 );
+  ctrl_regulator_q1( &ctrl ) = 1;
+  ctrl_regulator_q2( &ctrl ) = 1;
+  for( c=cases; c->z>0; c++ ) {
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, 0, p );
+    ASSERT_NEAR( c->expected_fz, ctrl_fz(&ctrl), 1e-10 );
+  }
+}
+
 TEST_SUITE(test_ctrl_regulator)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -106,6 +130,7 @@ TEST_SUITE(test_ctrl_regulator)
   RUN_TEST(test_ctrl_regulator_calc_sqr_xi);
   RUN_TEST(test_ctrl_regulator_calc_xi);
   RUN_TEST(test_ctrl_regulator_calc_fz);
+  RUN_TEST(test_ctrl_regulator_update);
 }
 
 int main(int argc, char *argv[])

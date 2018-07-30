@@ -35,7 +35,14 @@ void ctrl_regulator_destroy(ctrl_t *self)
 
 ctrl_t *ctrl_regulator_update(ctrl_t *self, double t, vec_t p)
 {
+  ctrl_regulator_prp *prp;
 
+  ctrl_update_default( self, t, p );
+  prp = self->prp;
+  prp->xi = ctrl_regulator_calc_xi( ctrl_z0(self) );
+  self->fz = ctrl_regulator_calc_fz( self, p );
+  if( ctrl_is_in_flight( self, p ) ) self->fz = 0;
+  return self;
 }
 
 void ctrl_regulator_header(FILE *fp, void *util)
@@ -61,8 +68,6 @@ double ctrl_regulator_calc_fz(ctrl_t *self, vec_t p)
   double xi2;
   double k1, k2;
 
-  if ( ctrl_is_in_flight( self, p ) )
-    return 0;
   z0 = ctrl_z0(self);
   q1 = ctrl_regulator_q1(self);
   q2 = ctrl_regulator_q2(self);
