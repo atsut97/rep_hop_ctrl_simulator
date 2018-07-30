@@ -129,9 +129,9 @@ TEST(test_ctrl_slip_var_stiff_update)
     double expected_fz;
   } cases[] = {
     { 0.26, -0.2*sqrt(G), 0 },  /* touchdown */
-    { 0.24, 0, 4*G },             /* bottom */
+    { 0.24, 0, 4*G },           /* bottom */
     { 0.26, 0.2*sqrt(G), 0 },   /* lift-off */
-    { 0.28, 0, 0 },               /* apex */
+    { 0.28, 0, 0 },             /* apex */
     { 0, 0, 0 }
   };
   struct case_t *c;
@@ -143,12 +143,6 @@ TEST(test_ctrl_slip_var_stiff_update)
     ctrl_update( &ctrl, 0, p );
     ASSERT_NEAR( c->expected_fz, ctrl_fz(&ctrl), 1e-10 );
   }
-  /* double expected_fz; */
-
-  /* vec_set_elem_list( p, 0.24, 0.0 ); */
-  /* ctrl_update( &ctrl, 0, p ); */
-  /* expected_fz = 200*G * (0.26 - 0.24); */
-  /* ASSERT_DOUBLE_EQ( expected_fz, ctrl_fz( &ctrl ) ); */
 }
 
 TEST_SUITE(test_ctrl_slip_var_stiff)
