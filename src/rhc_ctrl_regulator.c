@@ -46,6 +46,6 @@ void ctrl_regulator_header(FILE *fp, void *util)
 void ctrl_regulator_writer(FILE *fp, ctrl_t *self, void *util)
 {
   fprintf( fp, ",%f,%f,%f\n",
-           ctrl_regulator_q1(self), ctrl_regulator_q1(self),
+           ctrl_regulator_q1(self), ctrl_regulator_q2(self),
            ctrl_regulator_xi(self) );
 }
