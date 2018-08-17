@@ -25,6 +25,11 @@ void setup()
 void teardown()
 {
   logger_destroy( &logger );
+  simulator_destroy( &simulator );
+  ctrl_destroy( &ctrl );
+  model_destroy( &model );
+  cmd_destroy( &cmd );
+  vec_destroy( state );
 }
 
 TEST(test_logger_init)
@@ -192,6 +197,7 @@ TEST(test_logger_create)
   ASSERT_PTRNE( NULL, l->fp );
   ASSERT_PTREQ( output, l->writer );
   logger_destroy( l );
+  free( l );
 }
 
 TEST_SUITE(test_logger)
