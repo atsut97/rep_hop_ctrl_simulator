@@ -121,6 +121,7 @@ TEST(test_ctrl_regulator_update)
     ctrl_update( &ctrl, 0, p );
     ASSERT_NEAR( c->expected_fz, ctrl_fz(&ctrl), 1e-10 );
   }
+  vec_destroy( p );
 }
 
 TEST_SUITE(test_ctrl_regulator)
