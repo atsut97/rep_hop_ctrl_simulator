@@ -15,8 +15,19 @@ void vec_list_node_destroy(vec_list_node_t *self)
   self->next = NULL;
 }
 
+vec_list_node_t *vec_list_node_insert_prev(vec_list_node_t *self, vec_list_node_t *new)
+{
+  new->next = self;
+  self->prev->next = new;
+  new->prev = self->prev;
+  self->prev = new;
+  return new;
+}
+
 vec_list_node_t *vec_list_node_insert_next(vec_list_node_t *self, vec_list_node_t *new)
 {
+  new->prev = self;
+  self->next->prev = new;
   new->next = self->next;
   self->next = new;
   return new;

@@ -24,10 +24,33 @@ TEST(test_vec_list_node_init)
   ASSERT_PTREQ( NULL, vec_list_node_data( &node1 ) );
 }
 
+TEST(test_vec_list_node_insert_prev)
+{
+  vec_list_node_insert_prev( &node1, &node2 );
+  ASSERT_PTREQ( &node2, vec_list_node_prev( &node1 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_prev( &node2 ) );
+  ASSERT_PTREQ( &node2, vec_list_node_next( &node1 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_next( &node2 ) );
+}
+
 TEST(test_vec_list_node_insert_next)
 {
   vec_list_node_insert_next( &node1, &node2 );
   ASSERT_PTREQ( &node2, vec_list_node_next( &node1 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_next( &node2 ) );
+  ASSERT_PTREQ( &node2, vec_list_node_prev( &node1 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_prev( &node2 ) );
+}
+
+TEST(test_vec_list_node_insert_prev_prepend)
+{
+  vec_list_node_insert_prev( &node1, &node2 );
+  vec_list_node_insert_prev( &node2, &node3 );
+  ASSERT_PTREQ( &node2, vec_list_node_prev( &node1 ) );
+  ASSERT_PTREQ( &node3, vec_list_node_prev( &node2 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_prev( &node3 ) );
+  ASSERT_PTREQ( &node3, vec_list_node_next( &node1 ) );
+  ASSERT_PTREQ( &node2, vec_list_node_next( &node3 ) );
   ASSERT_PTREQ( &node1, vec_list_node_next( &node2 ) );
 }
 
@@ -35,6 +58,21 @@ TEST(test_vec_list_node_insert_next_append)
 {
   vec_list_node_insert_next( &node1, &node2 );
   vec_list_node_insert_next( &node2, &node3 );
+  ASSERT_PTREQ( &node2, vec_list_node_next( &node1 ) );
+  ASSERT_PTREQ( &node3, vec_list_node_next( &node2 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_next( &node3 ) );
+  ASSERT_PTREQ( &node3, vec_list_node_prev( &node1 ) );
+  ASSERT_PTREQ( &node2, vec_list_node_prev( &node3 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_prev( &node2 ) );
+}
+
+TEST(test_vec_list_node_insert_prev_insert)
+{
+  vec_list_node_insert_prev( &node1, &node2 );
+  vec_list_node_insert_prev( &node1, &node3 );
+  ASSERT_PTREQ( &node3, vec_list_node_prev( &node1 ) );
+  ASSERT_PTREQ( &node2, vec_list_node_prev( &node3 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_prev( &node2 ) );
   ASSERT_PTREQ( &node2, vec_list_node_next( &node1 ) );
   ASSERT_PTREQ( &node3, vec_list_node_next( &node2 ) );
   ASSERT_PTREQ( &node1, vec_list_node_next( &node3 ) );
@@ -47,6 +85,9 @@ TEST(test_vec_list_node_insert_next_insert)
   ASSERT_PTREQ( &node3, vec_list_node_next( &node1 ) );
   ASSERT_PTREQ( &node2, vec_list_node_next( &node3 ) );
   ASSERT_PTREQ( &node1, vec_list_node_next( &node2 ) );
+  ASSERT_PTREQ( &node2, vec_list_node_prev( &node1 ) );
+  ASSERT_PTREQ( &node3, vec_list_node_prev( &node2 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_prev( &node3 ) );
 }
 
 TEST(test_vec_list_node_delete_next)
@@ -340,8 +381,11 @@ TEST_SUITE(test_vec_list_node)
 {
   CONFIGURE_SUITE(vec_list_node_setup, vec_list_node_teardown);
   RUN_TEST(test_vec_list_node_init);
+  RUN_TEST(test_vec_list_node_insert_prev);
   RUN_TEST(test_vec_list_node_insert_next);
+  RUN_TEST(test_vec_list_node_insert_prev_prepend);
   RUN_TEST(test_vec_list_node_insert_next_append);
+  RUN_TEST(test_vec_list_node_insert_prev_insert);
   RUN_TEST(test_vec_list_node_insert_next_insert);
   RUN_TEST(test_vec_list_node_delete_next);
   RUN_TEST(test_vec_list_node_delete_next_last);
