@@ -33,13 +33,27 @@ vec_list_node_t *vec_list_node_insert_next(vec_list_node_t *self, vec_list_node_
   return new;
 }
 
+vec_list_node_t *vec_list_node_delete_prev(vec_list_node_t *self)
+{
+  vec_list_node_t *node;
+
+  node = self->prev;
+  node->prev->next = self;
+  self->prev = node->prev;
+  node->prev = node;
+  node->next = node;
+  return node;
+}
+
 vec_list_node_t *vec_list_node_delete_next(vec_list_node_t *self)
 {
   vec_list_node_t *node;
 
   node = self->next;
+  node->next->prev = self;
   self->next = node->next;
   node->next = node;
+  node->prev = node;
   return node;
 }
 
