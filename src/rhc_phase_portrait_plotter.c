@@ -27,5 +27,9 @@ void ppp_destroy(ppp_t *self)
   ppp_cmd(self) = NULL;
   ppp_ctrl(self) = NULL;
   ppp_model(self) = NULL;
+  vec_destroy( ppp_min( self ) );
+  vec_destroy( ppp_max( self ) );
+  ppp_min( self ) = NULL;
+  ppp_max( self ) = NULL;
   sfree( self->n_sc );
 }
