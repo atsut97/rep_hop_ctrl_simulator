@@ -234,6 +234,8 @@ TEST(test_vec_list_init)
 {
   ASSERT_EQ( 0, vec_list_num( &vl ) );
   ASSERT_PTREQ( vec_list_root( &vl ),
+                vec_list_node_prev( vec_list_root(&vl) ) );
+  ASSERT_PTREQ( vec_list_root( &vl ),
                 vec_list_node_next( vec_list_root(&vl) ) );
 }
 
