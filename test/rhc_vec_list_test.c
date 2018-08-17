@@ -19,8 +19,9 @@ void vec_list_node_teardown()
 
 TEST(test_vec_list_node_init)
 {
-  ASSERT_PTREQ( &node1, vec_list_node_next(&node1) );
-  ASSERT_PTREQ( NULL, vec_list_node_data(&node1) );
+  ASSERT_PTREQ( &node1, vec_list_node_prev( &node1 ) );
+  ASSERT_PTREQ( &node1, vec_list_node_next( &node1 ) );
+  ASSERT_PTREQ( NULL, vec_list_node_data( &node1 ) );
 }
 
 TEST(test_vec_list_node_insert_next)

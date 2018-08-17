@@ -3,6 +3,7 @@
 vec_list_node_t *vec_list_node_init(vec_list_node_t *self)
 {
   self->v = NULL;
+  self->prev = self;
   self->next = self;
   return self;
 }

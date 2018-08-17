@@ -5,10 +5,11 @@
 
 typedef struct _vec_list_node_t{
   vec_t v;
-  struct _vec_list_node_t *next;
+  struct _vec_list_node_t *prev, *next;
 } vec_list_node_t;
 
 #define vec_list_node_data(self) ( (self)->v )
+#define vec_list_node_prev(self) ( (self)->prev )
 #define vec_list_node_next(self) ( (self)->next )
 
 vec_list_node_t *vec_list_node_init(vec_list_node_t *self);
