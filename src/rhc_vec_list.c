@@ -81,6 +81,11 @@ void vec_list_destroy(vec_list_t *self)
   }
 }
 
+vec_list_node_t *vec_list_insert_prev(vec_list_t *self, vec_list_node_t *node, vec_list_node_t *new) {
+  vec_list_inc( self );
+  return vec_list_node_insert_prev( node, new );
+}
+
 vec_list_node_t *vec_list_insert_next(vec_list_t *self, vec_list_node_t *node, vec_list_node_t *new)
 {
   vec_list_inc( self );
