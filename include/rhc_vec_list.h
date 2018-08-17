@@ -39,7 +39,9 @@ vec_list_node_t *vec_list_insert_prev(vec_list_t *self, vec_list_node_t *node, v
 vec_list_node_t *vec_list_insert_next(vec_list_t *self, vec_list_node_t *node, vec_list_node_t *new);
 #define vec_list_insert_head(self,n) vec_list_insert_prev( self, vec_list_root(self), (n) )
 #define vec_list_insert_tail(self,n) vec_list_insert_next( self, vec_list_root(self), (n) )
+vec_list_node_t *vec_list_delete_prev(vec_list_t *self, vec_list_node_t *node);
 vec_list_node_t *vec_list_delete_next(vec_list_t *self, vec_list_node_t *node);
+#define vec_list_delete_head(self) vec_list_delete_prev( self, vec_list_root(self) )
 #define vec_list_delete_tail(self) vec_list_delete_next( self, vec_list_root(self) )
 
 #endif /* __RHC_VEC_LIST_H__ */
