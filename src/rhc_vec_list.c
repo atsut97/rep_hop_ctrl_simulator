@@ -12,6 +12,7 @@ void vec_list_node_destroy(vec_list_node_t *self)
 {
   vec_destroy( vec_list_node_data(self) );
   self->v = NULL;
+  self->prev = NULL;
   self->next = NULL;
 }
 

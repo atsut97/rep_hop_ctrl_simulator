@@ -198,6 +198,7 @@ TEST(test_vec_list_node_destroy)
   v = vec_create( 2 );
   vec_list_node_set_data( &node1, v );
   vec_list_node_destroy( &node1 );
+  ASSERT_PTREQ( NULL, vec_list_node_prev(&node1) );
   ASSERT_PTREQ( NULL, vec_list_node_next(&node1) );
   ASSERT_PTREQ( NULL, vec_list_node_data(&node1) );
 }
@@ -210,6 +211,7 @@ TEST(test_vec_list_node_destroy_null)
   v = NULL;
   vec_list_node_set_data( &node1, v );
   vec_list_node_destroy( &node1 );
+  ASSERT_PTREQ( NULL, vec_list_node_prev(&node1) );
   ASSERT_PTREQ( NULL, vec_list_node_next(&node1) );
   ASSERT_PTREQ( NULL, vec_list_node_data(&node1) );
 }
