@@ -44,4 +44,7 @@ vec_list_node_t *vec_list_delete_next(vec_list_t *self, vec_list_node_t *node);
 #define vec_list_delete_head(self) vec_list_delete_prev( self, vec_list_root(self) )
 #define vec_list_delete_tail(self) vec_list_delete_next( self, vec_list_root(self) )
 
+#define vec_list_push(self, v)    vec_list_insert_head( self, v )
+#define vec_list_pop(self)        vec_list_delete_head( self )
+
 #endif /* __RHC_VEC_LIST_H__ */
