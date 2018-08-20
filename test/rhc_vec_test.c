@@ -529,6 +529,36 @@ TEST(test_vec_copy_size_mismatch)
     check_vec_copy_size_mismatch( (*c).s1, (*c).s2 );
 }
 
+void check_vec_clone(size_t n, double *val, double *expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n, val );
+  v2 = vec_clone( v1 );
+  check_vec_elem_with_array( expected, v2 );
+  ASSERT_PTRNE( vec_buf(v2), vec_buf(v1) );
+  vec_destroy( v2 );
+  vec_destroy( v1 );
+}
+
+TEST(test_vec_clone)
+{
+  struct case_t {
+    size_t n;
+    double val[10];
+    double expected[10];
+  } cases[] = {
+    { 2, { 1.0, 1.0 }, { 1.0, 1.0 } },
+    { 4, { -2.0, 3.0, -4.0, 5.0 }, { -2.0, 3.0, -4.0, 5.0 } },
+    { 5, { 0.0, 0.0, 3.0, 2.0, -1.0 }, { 0.0, 0.0, 3.0, 2.0, -1.0 } },
+    { 0, {}, {} },
+  };
+  struct case_t *c;
+
+  for( c=cases; (*c).n > 0; c++ )
+    check_vec_clone( (*c).n, (*c).val, (*c).expected );
+}
+
 void check_vec_f_write(size_t n, double *val)
 {
   vec_t v;
@@ -605,6 +635,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_cat_size_mismatch);
   RUN_TEST(test_vec_copy);
   RUN_TEST(test_vec_copy_size_mismatch);
+  RUN_TEST(test_vec_clone);
   RUN_TEST(test_vec_f_write);
   RUN_TEST(test_vec_f_write_given_null);
 }

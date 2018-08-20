@@ -88,6 +88,17 @@ vec_t vec_copy(vec_t src, vec_t dst)
   return dst;
 }
 
+vec_t vec_clone(vec_t src)
+{
+  vec_t cln;
+
+  if( ( cln = vec_create( vec_size(src) ) ) == NULL ){
+    ALLOC_ERR();
+    return NULL;
+  }
+  return vec_copy( src, cln );
+}
+
 vec_t vec_add(vec_t v1, vec_t v2, vec_t v)
 {
   size_t i;
