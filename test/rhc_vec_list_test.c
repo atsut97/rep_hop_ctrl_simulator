@@ -714,6 +714,44 @@ TEST(test_vec_list_push_pop)
   ASSERT_PTREQ( &node1, ret );
 }
 
+TEST(test_vec_list_enqueue_dequeue)
+{
+  vec_list_node_t *ret;
+
+  ASSERT_EQ( 0, vec_list_num( &vl ) );
+
+  vec_list_enqueue( &vl, &node1 );
+  ASSERT_EQ( 1, vec_list_num( &vl ) );
+  ASSERT_PTREQ( &node1, vec_list_head( &vl ) );
+  ASSERT_PTREQ( &node1, vec_list_tail( &vl ) );
+
+  vec_list_enqueue( &vl, &node2 );
+  ASSERT_EQ( 2, vec_list_num( &vl ) );
+  ASSERT_PTREQ( &node1, vec_list_head( &vl ) );
+  ASSERT_PTREQ( &node2, vec_list_tail( &vl ) );
+
+  vec_list_enqueue( &vl, &node3 );
+  ASSERT_EQ( 3, vec_list_num( &vl ) );
+  ASSERT_PTREQ( &node1, vec_list_head( &vl ) );
+  ASSERT_PTREQ( &node3, vec_list_tail( &vl ) );
+
+  ret = vec_list_dequeue( &vl );
+  ASSERT_EQ( 2, vec_list_num( &vl ) );
+  ASSERT_PTREQ( &node2, vec_list_head( &vl ) );
+  ASSERT_PTREQ( &node3, vec_list_tail( &vl ) );
+  ASSERT_PTREQ( &node1, ret );
+
+  ret = vec_list_dequeue( &vl );
+  ASSERT_EQ( 1, vec_list_num( &vl ) );
+  ASSERT_PTREQ( &node3, vec_list_head( &vl ) );
+  ASSERT_PTREQ( &node3, vec_list_tail( &vl ) );
+  ASSERT_PTREQ( &node2, ret );
+
+  ret = vec_list_dequeue( &vl );
+  ASSERT_EQ( 0, vec_list_num( &vl ) );
+  ASSERT_PTREQ( &node3, ret );
+}
+
 TEST_SUITE(test_vec_list_node)
 {
   CONFIGURE_SUITE(vec_list_node_setup, vec_list_node_teardown);
@@ -762,6 +800,7 @@ TEST_SUITE(test_vec_list)
   RUN_TEST(test_vec_list_is_empty);
   RUN_TEST(test_vec_list_destroy);
   RUN_TEST(test_vec_list_push_pop);
+  RUN_TEST(test_vec_list_enqueue_dequeue);
 }
 
 int main(int argc, char *argv[])
