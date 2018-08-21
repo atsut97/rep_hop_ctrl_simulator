@@ -35,6 +35,7 @@ TEST(test_phase_portrait_plotter_init)
   ASSERT_EQ( 0, vec_elem( ppp_max( &ppp ), 1 ) );
   ASSERT_EQ( 10, ppp_n_sc( &ppp, 0 ) );
   ASSERT_EQ( 10, ppp_n_sc( &ppp, 1 ) );
+  ASSERT_EQ( 0, vec_list_num( ppp_p0_list( &ppp ) ) );
 }
 
 TEST(test_phase_portrait_plotter_destroy)
@@ -46,6 +47,20 @@ TEST(test_phase_portrait_plotter_destroy)
   ASSERT_PTREQ( NULL, ppp.n_sc );
 }
 
+TEST(test_phase_portrait_plotter_push_p0)
+{
+  vec_t p0;
+  vec_list_node_t *head;
+
+  p0 = vec_create_list( 2, -3.0, 3.0 );
+  ppp_push_p0( &ppp, p0 );
+  head = vec_list_head( ppp_p0_list(&ppp) );
+  ASSERT_EQ( -3.0, vec_elem( head->v, 0 ) );
+  ASSERT_EQ(  3.0, vec_elem( head->v, 1 ) );
+  ASSERT_PTRNE( p0, head->v );
+  vec_destroy( p0 );
+}
+
 /* TEST(test_phase_portrait_plotter_) */
 /* { */
 /* } */
@@ -55,6 +70,7 @@ TEST_SUITE(test_phase_portrait_plotter)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_phase_portrait_plotter_init);
   RUN_TEST(test_phase_portrait_plotter_destroy);
+  RUN_TEST(test_phase_portrait_plotter_push_p0);
 }
 
 int main(int argc, char *argv[])

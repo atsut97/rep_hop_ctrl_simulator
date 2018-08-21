@@ -19,6 +19,9 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model)
   }
   for( i=0; i<ppp_dim(self); i++ )
     self->n_sc[i] = PHASE_PORTRAIT_PLOTTER_DEFAULT_NUM_SC;
+
+  /* prepare initial points list */
+  vec_list_init( ppp_p0_list(self) );
   return self;
 }
 
@@ -32,4 +35,19 @@ void ppp_destroy(ppp_t *self)
   ppp_min( self ) = NULL;
   ppp_max( self ) = NULL;
   sfree( self->n_sc );
+
+  vec_list_destroy( ppp_p0_list(self) );
+}
+
+vec_t ppp_push_p0(ppp_t *self, vec_t p0)
+{
+  vec_list_node_t *node;
+
+  if( ( node = nalloc( vec_list_node_t, 1 ) ) == NULL ) {
+    ALLOC_ERR();
+    return NULL;
+  }
+  vec_list_node_set_data( node, vec_clone( p0 ) );
+  vec_list_push( ppp_p0_list(self), node );
+  return p0;
 }
