@@ -78,6 +78,7 @@ void vec_list_destroy(vec_list_t *self)
   while( !vec_list_is_empty(self) ){
     node = vec_list_delete_tail( self );
     vec_list_node_destroy( node );
+    sfree( node );
   }
 }
 
