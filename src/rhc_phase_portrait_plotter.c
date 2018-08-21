@@ -45,6 +45,15 @@ void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax)
   vec_copy( pmax, ppp_max(self) );
 }
 
+void ppp_set_n_sc(ppp_t *self, int *n_sc)
+{
+  register int i;
+
+  for( i=0; i<ppp_dim(self); i++ ){
+    ppp_n_sc( self, i ) = n_sc[i];
+  }
+}
+
 vec_t ppp_push_p0(ppp_t *self, vec_t p0)
 {
   vec_list_node_t *node;

@@ -60,6 +60,14 @@ TEST(test_phase_portrait_plotter_set_lim)
   ASSERT_EQ(  5.0, vec_elem( ppp_max(&ppp), 1 ) );
 }
 
+TEST(test_phase_portrait_plotter_set_n_sc)
+{
+  int n_sc[] = { 10, 15 };
+  ppp_set_n_sc( &ppp, n_sc );
+  ASSERT_EQ( 10, ppp_n_sc(&ppp, 0) );
+  ASSERT_EQ( 15, ppp_n_sc(&ppp, 1) );
+}
+
 TEST(test_phase_portrait_plotter_push_p0)
 {
   vec_t p0;
@@ -84,6 +92,7 @@ TEST_SUITE(test_phase_portrait_plotter)
   RUN_TEST(test_phase_portrait_plotter_init);
   RUN_TEST(test_phase_portrait_plotter_destroy);
   RUN_TEST(test_phase_portrait_plotter_set_lim);
+  RUN_TEST(test_phase_portrait_plotter_set_n_sc);
   RUN_TEST(test_phase_portrait_plotter_push_p0);
 }
 
