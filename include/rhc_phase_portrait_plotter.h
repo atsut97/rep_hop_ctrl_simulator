@@ -28,6 +28,7 @@ typedef struct {
 ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void ppp_destroy(ppp_t *self);
 
+void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax);
 vec_t ppp_push_p0(ppp_t *self, vec_t p0);
 
 #endif /* __RHC_PHASE_PORTRAIT_PLOTTER_H__ */

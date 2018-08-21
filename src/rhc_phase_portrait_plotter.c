@@ -39,6 +39,12 @@ void ppp_destroy(ppp_t *self)
   vec_list_destroy( ppp_p0_list(self) );
 }
 
+void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax)
+{
+  vec_copy( pmin, ppp_min(self) );
+  vec_copy( pmax, ppp_max(self) );
+}
+
 vec_t ppp_push_p0(ppp_t *self, vec_t p0)
 {
   vec_list_node_t *node;
