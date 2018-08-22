@@ -25,11 +25,16 @@ typedef struct {
 #define ppp_n_sc(self,ax)  (self)->n_sc[ax]
 #define ppp_p0_list(self)  &(self)->p0_list
 
+#define ppp_p0_list_head(self) vec_list_head( ppp_p0_list(self) )
+#define ppp_p0_list_tail(self) vec_list_tail( ppp_p0_list(self) )
+
 ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void ppp_destroy(ppp_t *self);
 
 void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax);
 void ppp_set_n_sc(ppp_t *self, int *n_sc);
 vec_t ppp_push_p0(ppp_t *self, vec_t p0);
+
+void ppp_generate_edge_points(ppp_t *self);
 
 #endif /* __RHC_PHASE_PORTRAIT_PLOTTER_H__ */

@@ -66,3 +66,84 @@ vec_t ppp_push_p0(ppp_t *self, vec_t p0)
   vec_list_push( ppp_p0_list(self), node );
   return p0;
 }
+
+void ppp_generate_edge_points_dec2bin(ppp_t *self, int dec, int bin[])
+{
+  register int i;
+
+  i = 0;
+  while( dec > 0 ){
+    bin[i] = dec % 2;
+    dec = dec / 2;
+    i++;
+  }
+}
+
+void ppp_generate_edge_points_set_min_max(ppp_t *self, int ax, int ith, vec_t p0)
+{
+  int bin[BUFSIZ];
+  register int i, j;
+
+  memset( bin, 0, BUFSIZ );
+  ppp_generate_edge_points_dec2bin( self, ith, bin );
+  j = ppp_dim(self) - 2;
+  for( i=0; i<ppp_dim(self); i++ ){
+    if( i == ax ) continue;
+    vec_elem( p0, i ) = bin[j--] ? vec_elem( ppp_max(self), i ) : vec_elem( ppp_min(self), i );
+  }
+}
+
+bool ppp_generate_edge_points_is_descending(ppp_t *self, int ax, int ith)
+{
+  int bin[BUFSIZ];
+  register int i;
+  int bin_sum = 0;
+
+  memset( bin, 0, BUFSIZ );
+  ppp_generate_edge_points_dec2bin( self, ith, bin );
+  for( i=0; i<ppp_dim(self); i++ )
+    bin_sum += bin[i];
+  return (bool)( ( ax + bin_sum ) % 2 );
+}
+
+void ppp_generate_edge_points_set_step(ppp_t *self, int ax, int i, bool descending, vec_t p0)
+{
+  double min, max, dif;
+  int n_sc;
+
+  min = vec_elem( ppp_min(self), ax );
+  max = vec_elem( ppp_max(self), ax );
+  dif = max - min;
+  n_sc = ppp_n_sc( self, ax );
+  if( descending )
+    vec_elem( p0, ax ) = max - dif * i / n_sc;
+  else
+    vec_elem( p0, ax ) = min + dif * i / n_sc;
+}
+
+void ppp_generate_edge_points_on_each_axis(ppp_t *self, int ax)
+{
+  register int i, j;
+  vec_t p0;
+  bool is_descending;
+
+  p0 = vec_create( ppp_dim(self) );
+  for( i=0; i<pow(2, ppp_dim(self)-1); i++ ){
+    ppp_generate_edge_points_set_min_max( self, ax, i, p0 );
+    is_descending = ppp_generate_edge_points_is_descending( self, ax, i );
+    for( j=0; j<ppp_n_sc( self, ax ); j++ ){
+      ppp_generate_edge_points_set_step( self, ax, j, is_descending, p0 );
+      ppp_push_p0( self, p0 );
+    }
+  }
+  vec_destroy( p0 );
+}
+
+void ppp_generate_edge_points(ppp_t *self)
+{
+  register int i;
+
+  for( i=0; i<ppp_dim(self); i++ ){
+    ppp_generate_edge_points_on_each_axis( self, i );
+  }
+}

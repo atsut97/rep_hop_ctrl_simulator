@@ -58,6 +58,8 @@ TEST(test_phase_portrait_plotter_set_lim)
   ASSERT_EQ( -5.0, vec_elem( ppp_min(&ppp), 1 ) );
   ASSERT_EQ(  3.0, vec_elem( ppp_max(&ppp), 0 ) );
   ASSERT_EQ(  5.0, vec_elem( ppp_max(&ppp), 1 ) );
+  vec_destroy( min );
+  vec_destroy( max );
 }
 
 TEST(test_phase_portrait_plotter_set_n_sc)
@@ -82,6 +84,100 @@ TEST(test_phase_portrait_plotter_push_p0)
   vec_destroy( p0 );
 }
 
+TEST(test_phase_portrait_plotter_generate_edge_points)
+{
+  vec_t min = vec_create_list( 2, -4.0, -4.0 );
+  vec_t max = vec_create_list( 2,  4.0,  4.0 );
+  int n_sc[2] = { 4, 4 };
+  vec_list_node_t *node;
+
+  ppp_set_lim( &ppp, min, max );
+  ppp_set_n_sc( &ppp, n_sc );
+  ppp_generate_edge_points( &ppp );
+
+  ASSERT_EQ( 16, vec_list_num( ppp_p0_list( &ppp ) ) );
+
+  /* y = -4 */
+  node = ppp_p0_list_tail( &ppp );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( -2, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ(  0, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ(  2, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 1 ) );
+
+  /* y = 4 */
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( 4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( 4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( 2, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( 4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( 0, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( 4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( -2, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ(  4, vec_elem( node->v, 1 ) );
+
+  /* x = -4 */
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ(  4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ(  2, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ(  0, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( -2, vec_elem( node->v, 1 ) );
+
+  /* x = 4 */
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ(  4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( -4, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ(  4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( -2, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( 4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( 0, vec_elem( node->v, 1 ) );
+  node = vec_list_node_next( node );
+  ASSERT_DOUBLE_EQ( 4, vec_elem( node->v, 0 ) );
+  ASSERT_DOUBLE_EQ( 2, vec_elem( node->v, 1 ) );
+
+  vec_destroy( min );
+  vec_destroy( max );
+}
+
+/* TEST(test_phase_portrait_plotter_generate_edge_points2) */
+/* { */
+/*   vec_t min = vec_create_list( 3, -4.0, -4.0, -4.0 ); */
+/*   vec_t max = vec_create_list( 3,  4.0,  4.0,  4.0 ); */
+/*   int n_sc[3] = { 4, 4, 4 }; */
+/*   vec_list_node_t *node; */
+
+/*   ppp_set_lim( &ppp, min, max ); */
+/*   ppp_set_n_sc( &ppp, n_sc ); */
+/*   ppp_generate_edge_points( &ppp ); */
+
+/*   node = ppp_p0_list_tail(&ppp); */
+/*   printf( "num: %ld\n", vec_list_num( ppp_p0_list(&ppp) ) ); */
+/*   for( ; node != vec_list_root( ppp_p0_list(&ppp) ); node = vec_list_node_next(node) ){ */
+/*     vec_write( node->v ); */
+/*   } */
+
+/*   vec_destroy( min ); */
+/*   vec_destroy( max ); */
+/* } */
+
 /* TEST(test_phase_portrait_plotter_) */
 /* { */
 /* } */
@@ -94,6 +190,7 @@ TEST_SUITE(test_phase_portrait_plotter)
   RUN_TEST(test_phase_portrait_plotter_set_lim);
   RUN_TEST(test_phase_portrait_plotter_set_n_sc);
   RUN_TEST(test_phase_portrait_plotter_push_p0);
+  RUN_TEST(test_phase_portrait_plotter_generate_edge_points);
 }
 
 int main(int argc, char *argv[])
