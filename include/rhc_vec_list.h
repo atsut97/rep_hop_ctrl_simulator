@@ -50,4 +50,7 @@ vec_list_node_t *vec_list_delete_next(vec_list_t *self, vec_list_node_t *node);
 #define vec_list_enqueue(self, v) vec_list_insert_tail( self, v )
 #define vec_list_dequeue(self)    vec_list_delete_head( self )
 
+#define vec_list_for_each(self, n) \
+  for( (n)=vec_list_tail(self); (n)!=vec_list_root(self); (n)=vec_list_node_next(n) )
+
 #endif /* __RHC_VEC_LIST_H__ */

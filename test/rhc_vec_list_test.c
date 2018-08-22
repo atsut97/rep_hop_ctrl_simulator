@@ -806,6 +806,23 @@ TEST(test_vec_list_enqueue_dequeue)
   sfree( node3 );
 }
 
+TEST(test_vec_list_for_each)
+{
+  vec_list_node_t *node;
+  int i = 0;
+
+  vec_list_push( &vl, node1 );
+  vec_list_push( &vl, node2 );
+  vec_list_push( &vl, node3 );
+
+  vec_list_for_each( &vl, node ){
+    if( i == 0 ) ASSERT_PTREQ( node1, node );
+    if( i == 1 ) ASSERT_PTREQ( node2, node );
+    if( i == 2 ) ASSERT_PTREQ( node3, node );
+    i++;
+  }
+}
+
 TEST_SUITE(test_vec_list_node)
 {
   CONFIGURE_SUITE(vec_list_node_setup, vec_list_node_teardown);
@@ -855,6 +872,7 @@ TEST_SUITE(test_vec_list)
   RUN_TEST(test_vec_list_destroy);
   RUN_TEST(test_vec_list_push_pop);
   RUN_TEST(test_vec_list_enqueue_dequeue);
+  RUN_TEST(test_vec_list_for_each);
 }
 
 int main(int argc, char *argv[])
