@@ -38,6 +38,7 @@ void ppp_destroy(ppp_t *self);
 void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax);
 void ppp_set_lim_xy(ppp_t *self, double xmin, double xmax, double ymin, double ymax);
 void ppp_set_n_sc(ppp_t *self, int *n_sc);
+void ppp_set_n_sc_xy(ppp_t *self, int n_sc_x, int n_sc_y);
 vec_t ppp_push_p0(ppp_t *self, vec_t p0);
 
 void ppp_generate_edge_points(ppp_t *self);

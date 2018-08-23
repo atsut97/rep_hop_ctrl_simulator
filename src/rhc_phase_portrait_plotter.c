@@ -70,6 +70,13 @@ void ppp_set_n_sc(ppp_t *self, int *n_sc)
   }
 }
 
+void ppp_set_n_sc_xy(ppp_t *self, int n_sc_x, int n_sc_y)
+{
+  int n_sc[] = { n_sc_x, n_sc_y };
+
+  ppp_set_n_sc( self, n_sc );
+}
+
 vec_t ppp_push_p0(ppp_t *self, vec_t p0)
 {
   vec_list_node_t *node;

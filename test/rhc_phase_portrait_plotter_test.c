@@ -96,6 +96,26 @@ TEST(test_phase_portrait_plotter_set_n_sc)
   ASSERT_EQ( 15, ppp_n_sc(&ppp, 1) );
 }
 
+TEST(test_phase_portrait_plotter_set_n_sc_xy)
+{
+  struct case_t {
+    int n_x, n_y;
+    bool end;
+  } cases[] = {
+    { 10, 10, false },
+    { 10, 15, false },
+    { 5, 8, false },
+    { 0, 0, true },
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->end; c++ ){
+    ppp_set_n_sc_xy( &ppp, c->n_x, c->n_y );
+    ASSERT_EQ( c->n_x, ppp_n_sc( &ppp, 0 ) );
+    ASSERT_EQ( c->n_y, ppp_n_sc( &ppp, 1 ) );
+  }
+}
+
 TEST(test_phase_portrait_plotter_push_p0)
 {
   vec_t p0;
@@ -149,6 +169,7 @@ TEST_SUITE(test_phase_portrait_plotter)
   RUN_TEST(test_phase_portrait_plotter_set_lim);
   RUN_TEST(test_phase_portrait_plotter_set_lim_xy);
   RUN_TEST(test_phase_portrait_plotter_set_n_sc);
+  RUN_TEST(test_phase_portrait_plotter_set_n_sc_xy);
   RUN_TEST(test_phase_portrait_plotter_push_p0);
   RUN_TEST(test_phase_portrait_plotter_generate_edge_points);
 }
