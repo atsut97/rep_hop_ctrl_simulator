@@ -1,7 +1,7 @@
 #include "rhc_phase_portrait_plotter.h"
 
 #define PHASE_PORTRAIT_PLOTTER_DEFAULT_NUM_SC 10
-ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model)
+ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t *logger)
 {
   register int i;
 
@@ -9,6 +9,7 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model)
   ppp_cmd(self) = cmd;
   ppp_model(self) = model;
   ppp_ctrl(self) = ctrl;
+  ppp_logger(self) = logger;
   self->pmin = vec_create( ppp_dim( self ) );
   self->pmax = vec_create( ppp_dim( self ) );
   vec_clear( self->pmin );
@@ -19,6 +20,9 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model)
   }
   for( i=0; i<ppp_dim(self); i++ )
     self->n_sc[i] = PHASE_PORTRAIT_PLOTTER_DEFAULT_NUM_SC;
+
+  simulator_init( ppp_simulator(self), ppp_cmd(self), ppp_ctrl(self), ppp_model(self ) );
+  simulator_set_default_logger( ppp_simulator(self), ppp_logger(self) );
 
   /* prepare initial points list */
   vec_list_init( ppp_p0_list(self) );
@@ -36,6 +40,7 @@ void ppp_destroy(ppp_t *self)
   ppp_max( self ) = NULL;
   sfree( self->n_sc );
 
+  simulator_destroy( ppp_simulator(self) );
   vec_list_destroy( ppp_p0_list(self) );
 }
 
