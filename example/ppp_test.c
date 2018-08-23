@@ -35,8 +35,10 @@ void parse(int argc, char *argv[])
     ctrl_id = SLIP_VAR_STIFF;
   else if( strcmp( name, "regulator" ) == 0)
     ctrl_id = REGULATOR;
-  else
+  else {
+    fprintf( stderr, "%s is not available\n", name );
     ctrl_id = NONE;
+  }
 }
 
 void init()
