@@ -11,7 +11,13 @@ TEST="$1"
 shift
 ARGS="$@"
 make
-./$TEST "$ARGS" > $TEST.csv
+./$TEST "$ARGS" > $TEST.csv; RET=$?
+
+if [ $RET -gt 0 ]; then
+  echo "Abort."
+  exit 1
+fi
+
 if [ -f Pipfile ]; then
   pipenv run ./plot_one_hop.py $TEST.csv
 fi
