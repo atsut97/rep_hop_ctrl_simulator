@@ -7,8 +7,11 @@ if [ -z $1 ]; then
   exit 1
 fi
 
+TEST="$1"
+shift
+ARGS="$@"
 make
-./$1 > $1.csv
+./$TEST "$ARGS" > $TEST.csv
 if [ -f Pipfile ]; then
-  pipenv run ./plot_one_hop.py $1.csv
+  pipenv run ./plot_one_hop.py $TEST.csv
 fi
