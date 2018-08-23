@@ -65,6 +65,29 @@ TEST(test_phase_portrait_plotter_set_lim)
   vec_destroy( max );
 }
 
+TEST(test_phase_portrait_plotter_set_lim_xy)
+{
+  struct case_t {
+    double xmin, xmax;
+    double ymin, ymax;
+    bool end;
+  } cases[] = {
+    { -3, 3, -5, 5, false },
+    { -0.8, 0.8, -0.5, 0.5, false },
+    { 0.23, 0.29, -4, 6, false },
+    { 0, 0, 0, 0, true },
+  };
+  struct case_t *c;
+
+  for( c=cases; !c->end; c++ ){
+    ppp_set_lim_xy( &ppp, c->xmin, c->xmax, c->ymin, c->ymax );
+    ASSERT_EQ( c->xmin, vec_elem( ppp_min(&ppp), 0 ) );
+    ASSERT_EQ( c->xmax, vec_elem( ppp_max(&ppp), 0 ) );
+    ASSERT_EQ( c->ymin, vec_elem( ppp_min(&ppp), 1 ) );
+    ASSERT_EQ( c->ymax, vec_elem( ppp_max(&ppp), 1 ) );
+  }
+}
+
 TEST(test_phase_portrait_plotter_set_n_sc)
 {
   int n_sc[] = { 10, 15 };
@@ -191,6 +214,7 @@ TEST_SUITE(test_phase_portrait_plotter)
   RUN_TEST(test_phase_portrait_plotter_init);
   RUN_TEST(test_phase_portrait_plotter_destroy);
   RUN_TEST(test_phase_portrait_plotter_set_lim);
+  RUN_TEST(test_phase_portrait_plotter_set_lim_xy);
   RUN_TEST(test_phase_portrait_plotter_set_n_sc);
   RUN_TEST(test_phase_portrait_plotter_push_p0);
   RUN_TEST(test_phase_portrait_plotter_generate_edge_points);

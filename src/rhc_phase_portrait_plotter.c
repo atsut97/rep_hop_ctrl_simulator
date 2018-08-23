@@ -50,6 +50,17 @@ void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax)
   vec_copy( pmax, ppp_max(self) );
 }
 
+void ppp_set_lim_xy(ppp_t *self, double xmin, double xmax, double ymin, double ymax)
+{
+  vec_t min, max;
+
+  min = vec_create_list( 2, xmin, ymin );
+  max = vec_create_list( 2, xmax, ymax );
+  ppp_set_lim( self, min, max );
+  vec_destroy( min );
+  vec_destroy( max );
+}
+
 void ppp_set_n_sc(ppp_t *self, int *n_sc)
 {
   register int i;

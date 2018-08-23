@@ -36,6 +36,7 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t 
 void ppp_destroy(ppp_t *self);
 
 void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax);
+void ppp_set_lim_xy(ppp_t *self, double xmin, double xmax, double ymin, double ymax);
 void ppp_set_n_sc(ppp_t *self, int *n_sc);
 vec_t ppp_push_p0(ppp_t *self, vec_t p0);
 
