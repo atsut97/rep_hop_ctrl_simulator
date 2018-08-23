@@ -152,3 +152,12 @@ void ppp_generate_edge_points(ppp_t *self)
     ppp_generate_edge_points_on_each_axis( self, i );
   }
 }
+
+void ppp_run(ppp_t *self, double max_time, double dt)
+{
+  vec_list_node_t *node;
+
+  vec_list_for_each( ppp_p0_list(self), node ){
+    simulator_run( ppp_simulator(self), node->v, max_time, dt, ppp_logger(self), NULL );
+  }
+}

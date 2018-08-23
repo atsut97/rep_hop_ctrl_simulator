@@ -41,4 +41,6 @@ vec_t ppp_push_p0(ppp_t *self, vec_t p0);
 
 void ppp_generate_edge_points(ppp_t *self);
 
+void ppp_run(ppp_t *self, double max_time, double dt);
+
 #endif /* __RHC_PHASE_PORTRAIT_PLOTTER_H__ */
