@@ -53,7 +53,7 @@ char *simulator_set_tag(simulator_t *self, const char* tag)
 char *simulator_update_default_tag(simulator_t *self) {
   char default_tag[BUFSIZ];
 
-  sprintf( default_tag, "%05d", simulator_n_trial(self) );
+  sprintf( default_tag, "sc%05d", simulator_n_trial(self) );
   return simulator_set_tag( self, default_tag );
 }
 

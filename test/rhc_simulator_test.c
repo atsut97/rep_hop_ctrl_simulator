@@ -130,10 +130,10 @@ TEST(test_simulator_set_tag)
 TEST(test_simulator_update_default_tag)
 {
   simulator_update_default_tag( &sim );
-  ASSERT_STREQ( "00000", simulator_tag(&sim) );
+  ASSERT_STREQ( "sc00000", simulator_tag(&sim) );
   simulator_inc_trial( &sim );
   simulator_update_default_tag( &sim );
-  ASSERT_STREQ( "00001", simulator_tag(&sim) );
+  ASSERT_STREQ( "sc00001", simulator_tag(&sim) );
 }
 
 TEST(test_simulator_has_default_tag)
@@ -142,6 +142,8 @@ TEST(test_simulator_has_default_tag)
   ASSERT_TRUE( simulator_has_default_tag( &sim ) );
   sim.n_trial = 1;
   simulator_set_tag( &sim, "00000" );
+  ASSERT_TRUE( simulator_has_default_tag( &sim ) );
+  simulator_set_tag( &sim, "sc00000" );
   ASSERT_TRUE( simulator_has_default_tag( &sim ) );
   simulator_set_tag( &sim, "hoge00000" );
   ASSERT_TRUE( simulator_has_default_tag( &sim ) );
@@ -185,7 +187,7 @@ TEST(test_simulator_run)
   ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
   ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
   ASSERT_EQ( 1, simulator_n_trial( &sim ) );
-  ASSERT_STREQ( "00000", simulator_tag( &sim ) );
+  ASSERT_STREQ( "sc00000", simulator_tag( &sim ) );
 }
 
 TEST(test_simulator_run_multiple_times)
@@ -201,13 +203,13 @@ TEST(test_simulator_run_multiple_times)
   ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
   ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
   ASSERT_EQ( 1, simulator_n_trial( &sim ) );
-  ASSERT_STREQ( "00000", simulator_tag( &sim ) );
+  ASSERT_STREQ( "sc00000", simulator_tag( &sim ) );
   T = 0.8;
   simulator_run( &sim, z, T, dt, NULL, NULL );
   ASSERT_DOUBLE_EQ( T, simulator_time( &sim ) );
   ASSERT_EQ( (int)(T/dt), simulator_step( &sim ) );
   ASSERT_EQ( 2, simulator_n_trial( &sim ) );
-  ASSERT_STREQ( "00001", simulator_tag( &sim ) );
+  ASSERT_STREQ( "sc00001", simulator_tag( &sim ) );
 }
 
 TEST(test_simulator_run_specify_tag)
