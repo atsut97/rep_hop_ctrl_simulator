@@ -38,6 +38,8 @@ TEST(test_simulator_init)
   ASSERT_PTREQ( simulator_dp, sim.ode.f );
   ASSERT_PTRNE( NULL, sim.ode._ws );
   ASSERT_EQ( 0, simulator_n_trial( &sim ) );
+  ASSERT_PTREQ( simulator_update, sim.update_fp );
+  ASSERT_PTREQ( simulator_dump, sim.dump_fp );
   ASSERT_STREQ("", simulator_tag( &sim ) );
 }
 
@@ -99,6 +101,24 @@ TEST(test_simulator_set_fe)
   }
 }
 
+void update_test(simulator_t *simulator, double dt, double t, void *util)
+{}
+
+TEST(test_simulator_set_update_fp)
+{
+  simulator_set_update_fp( &sim, update_test );
+  ASSERT_PTREQ( update_test, sim.update_fp );
+}
+
+void dump_test(simulator_t *simulator, logger_t *logger, void *util)
+{}
+
+TEST(test_simulator_set_dump_fp)
+{
+  simulator_set_dump_fp( &sim, dump_test );
+  ASSERT_PTREQ( dump_test, sim.dump_fp );
+}
+
 TEST(test_simulator_set_tag)
 {
   char tag[] = "test tag";
@@ -133,7 +153,7 @@ TEST(test_simulator_has_default_tag)
 
 TEST(test_simulator_reset)
 {
-  simulator_update( &sim, 0.0, 0.01 );
+  simulator_update_time( &sim, 0.01 );
   ASSERT_NE( 0.0, simulator_time( &sim ) );
   ASSERT_NE( 0, simulator_step( &sim ) );
   simulator_reset( &sim );
@@ -147,7 +167,7 @@ TEST(test_simulator_update)
 
   vec_set_elem_list( z, 2, 0.28, 0.0 );
   dt = 0.01;
-  simulator_update( &sim, 0.0, dt );
+  simulator_update_time( &sim, dt );
   ASSERT_EQ( 0.01, simulator_time( &sim ) );
   ASSERT_EQ( 1, simulator_step( &sim ) );
 }
@@ -208,6 +228,8 @@ TEST_SUITE(test_simulator)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_simulator_init);
   RUN_TEST(test_simulator_destroy);
+  RUN_TEST(test_simulator_set_update_fp);
+  RUN_TEST(test_simulator_set_dump_fp);
   RUN_TEST(test_simulator_set_state);
   RUN_TEST(test_simulator_inc_step);
   RUN_TEST(test_simulator_set_fe);
