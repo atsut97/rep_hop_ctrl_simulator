@@ -87,6 +87,44 @@ TEST(test_vec_ring_empty)
   ASSERT_TRUE( vec_ring_empty(&ring) );
 }
 
+TEST(test_vec_ring_empty2)
+{
+  ASSERT_TRUE( vec_ring_empty(&ring) );
+
+  vec_ring_push_front( &ring, v[0] );
+  ASSERT_FALSE( vec_ring_empty(&ring) );
+  vec_ring_push_back( &ring, v[1] );
+  ASSERT_FALSE( vec_ring_empty(&ring) );
+  vec_ring_push_front( &ring, v[2] );
+  ASSERT_FALSE( vec_ring_empty(&ring) );
+
+  vec_ring_pop_back( &ring );
+  ASSERT_FALSE( vec_ring_empty(&ring) );
+  vec_ring_pop_front( &ring );
+  ASSERT_FALSE( vec_ring_empty(&ring) );
+  vec_ring_pop_back( &ring );
+  ASSERT_TRUE( vec_ring_empty(&ring) );
+}
+
+TEST(test_vec_ring_full)
+{
+  ASSERT_FALSE( vec_ring_full(&ring) );
+
+  vec_ring_push_back( &ring, v[0] );
+  ASSERT_FALSE( vec_ring_full(&ring) );
+  vec_ring_push_back( &ring, v[1] );
+  ASSERT_FALSE( vec_ring_full(&ring) );
+  vec_ring_push_back( &ring, v[2] );
+  ASSERT_TRUE( vec_ring_full(&ring) );
+
+  vec_ring_pop_front( &ring );
+  ASSERT_FALSE( vec_ring_full(&ring) );
+  vec_ring_pop_front( &ring );
+  ASSERT_FALSE( vec_ring_full(&ring) );
+  vec_ring_pop_front( &ring );
+  ASSERT_FALSE( vec_ring_full(&ring) );
+}
+
 TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -94,6 +132,8 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_capacity);
   RUN_TEST(test_vec_ring_size);
   RUN_TEST(test_vec_ring_empty);
+  RUN_TEST(test_vec_ring_empty2);
+  RUN_TEST(test_vec_ring_full);
 }
 
 int main(int argc, char *argv[])

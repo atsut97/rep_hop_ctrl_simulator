@@ -33,3 +33,8 @@ bool vec_ring_empty(vec_ring_t *self)
 {
   return ( self->head == self->tail );
 }
+
+bool vec_ring_full(vec_ring_t *self)
+{
+  return ( vec_ring_size(self) == vec_ring_capacity(self) );
+}
