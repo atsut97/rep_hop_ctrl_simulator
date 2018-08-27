@@ -34,18 +34,18 @@ TEST(test_vec_ring_capacity)
 {
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
 
-  vec_ring_push_front( &ring, v[0] );
+  vec_ring_push( &ring, v[0] );
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
-  vec_ring_push_back( &ring, v[1] );
+  vec_ring_push( &ring, v[1] );
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
-  vec_ring_push_front( &ring, v[2] );
+  vec_ring_push( &ring, v[2] );
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
 
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
-  vec_ring_pop_front( &ring );
+  vec_ring_pop( &ring );
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
 }
 
@@ -53,18 +53,18 @@ TEST(test_vec_ring_size)
 {
   ASSERT_EQ( 0, vec_ring_size(&ring) );
 
-  vec_ring_push_front( &ring, v[0] );
+  vec_ring_push( &ring, v[0] );
   ASSERT_EQ( 1, vec_ring_size(&ring) );
-  vec_ring_push_back( &ring, v[1] );
+  vec_ring_push( &ring, v[1] );
   ASSERT_EQ( 2, vec_ring_size(&ring) );
-  vec_ring_push_front( &ring, v[2] );
+  vec_ring_push( &ring, v[2] );
   ASSERT_EQ( 3, vec_ring_size(&ring) );
 
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_EQ( 2, vec_ring_size(&ring) );
-  vec_ring_pop_front( &ring );
+  vec_ring_pop( &ring );
   ASSERT_EQ( 1, vec_ring_size(&ring) );
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_EQ( 0, vec_ring_size(&ring) );
 }
 
@@ -72,18 +72,18 @@ TEST(test_vec_ring_empty)
 {
   ASSERT_TRUE( vec_ring_empty(&ring) );
 
-  vec_ring_push_front( &ring, v[0] );
+  vec_ring_push( &ring, v[0] );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push_front( &ring, v[1] );
+  vec_ring_push( &ring, v[1] );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push_front( &ring, v[2] );
+  vec_ring_push( &ring, v[2] );
   ASSERT_FALSE( vec_ring_empty(&ring) );
 
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_TRUE( vec_ring_empty(&ring) );
 }
 
@@ -91,18 +91,18 @@ TEST(test_vec_ring_empty2)
 {
   ASSERT_TRUE( vec_ring_empty(&ring) );
 
-  vec_ring_push_front( &ring, v[0] );
+  vec_ring_push( &ring, v[0] );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push_back( &ring, v[1] );
+  vec_ring_push( &ring, v[1] );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push_front( &ring, v[2] );
+  vec_ring_push( &ring, v[2] );
   ASSERT_FALSE( vec_ring_empty(&ring) );
 
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_pop_front( &ring );
+  vec_ring_pop( &ring );
   ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_pop_back( &ring );
+  vec_ring_pop( &ring );
   ASSERT_TRUE( vec_ring_empty(&ring) );
 }
 
@@ -110,18 +110,18 @@ TEST(test_vec_ring_full)
 {
   ASSERT_FALSE( vec_ring_full(&ring) );
 
-  vec_ring_push_back( &ring, v[0] );
+  vec_ring_push( &ring, v[0] );
   ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_push_back( &ring, v[1] );
+  vec_ring_push( &ring, v[1] );
   ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_push_back( &ring, v[2] );
+  vec_ring_push( &ring, v[2] );
   ASSERT_TRUE( vec_ring_full(&ring) );
 
-  vec_ring_pop_front( &ring );
+  vec_ring_pop( &ring );
   ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_pop_front( &ring );
+  vec_ring_pop( &ring );
   ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_pop_front( &ring );
+  vec_ring_pop( &ring );
   ASSERT_FALSE( vec_ring_full(&ring) );
 }
 
