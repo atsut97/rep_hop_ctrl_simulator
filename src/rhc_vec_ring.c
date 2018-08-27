@@ -28,3 +28,8 @@ void vec_ring_pop_back(vec_ring_t *self)
 {
   self->tail++;
 }
+
+bool vec_ring_empty(vec_ring_t *self)
+{
+  return ( self->head == self->tail );
+}
