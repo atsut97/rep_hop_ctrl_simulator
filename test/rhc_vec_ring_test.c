@@ -30,6 +30,25 @@ TEST(test_vec_ring_init)
   ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
 }
 
+TEST(test_vec_ring_capacity)
+{
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+
+  vec_ring_push_front( &ring, v[0] );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  vec_ring_push_back( &ring, v[1] );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  vec_ring_push_front( &ring, v[2] );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+
+  vec_ring_pop_back( &ring );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  vec_ring_pop_front( &ring );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  vec_ring_pop_back( &ring );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+}
+
 TEST(test_vec_ring_size)
 {
   ASSERT_EQ( 0, vec_ring_size(&ring) );
@@ -53,6 +72,7 @@ TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
   RUN_TEST(test_vec_ring_init);
+  RUN_TEST(test_vec_ring_capacity);
   RUN_TEST(test_vec_ring_size);
 }
 
