@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #ifndef BUFSIZ
 #define BUFSIZ 512
