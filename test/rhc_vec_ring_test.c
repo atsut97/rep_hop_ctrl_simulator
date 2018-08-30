@@ -6,13 +6,25 @@
 vec_ring_t ring;
 vec_t v[SIZE];
 
+double randf(double min, double max)
+{
+  return (double)rand() / RAND_MAX * ( max - min ) + min;
+}
+
 void setup()
 {
-  register int i;
+  register int i, j;
 
   vec_ring_init( &ring, SIZE );
   for( i=0; i<SIZE; i++ )
     v[i] = vec_create( DIM );
+
+  srand( (int)time(NULL) );
+  for( i=0; i<SIZE; i++ ){
+    for( j=0; j<DIM; j++ ){
+      vec_set_elem( v[i], j, randf( -10, 10 ) );
+    }
+  }
 }
 
 void teardown()
@@ -125,6 +137,12 @@ TEST(test_vec_ring_full)
   ASSERT_FALSE( vec_ring_full(&ring) );
 }
 
+TEST(test_vec_ring_push)
+{
+  vec_ring_push( &ring, v[0] );
+  ASSERT_EQ( vec_elem( v[0], 0 ), vec_elem( vec_ring_head(&ring), 0 ) );
+}
+
 TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -134,6 +152,7 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_empty);
   RUN_TEST(test_vec_ring_empty2);
   RUN_TEST(test_vec_ring_full);
+  RUN_TEST(test_vec_ring_push);
 }
 
 int main(int argc, char *argv[])
