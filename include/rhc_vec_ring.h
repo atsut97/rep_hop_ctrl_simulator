@@ -4,16 +4,16 @@
 #include "rhc_vec.h"
 
 typedef struct {
-  vec_t *buffer;
+  vec_t *buf;
   int head;
   int max;
 } vec_ring_t;
 
-#define vec_ring_buffer(self)   (self)->buffer
+#define vec_ring_buf(self)   (self)->buf
 #define vec_ring_capacity(self) (self)->max
 #define vec_ring_size(self)     (self)->head
 
-#define vec_ring_head(self)     vec_ring_buffer(self)[(self)->head]
+#define vec_ring_head(self)     vec_ring_buf(self)[(self)->head]
 
 void vec_ring_init(vec_ring_t *self, int size);
 void vec_ring_destroy(vec_ring_t *self);

@@ -6,12 +6,12 @@ void vec_ring_init(vec_ring_t *self, int size)
 
   self->head = -1;
   self->max = size;
-  if( ( vec_ring_buffer(self) = nalloc( vec_t, size ) ) == NULL ){
+  if( ( vec_ring_buf(self) = nalloc( vec_t, size ) ) == NULL ){
     ALLOC_ERR();
     return;
   }
   for( i=0; i<size; i++ ){
-    vec_ring_buffer(self)[i] = vec_create( 2 );
+    vec_ring_buf(self)[i] = vec_create( 2 );
   }
 }
 
