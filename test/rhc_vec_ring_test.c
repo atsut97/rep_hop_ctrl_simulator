@@ -182,8 +182,8 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_init2);
   RUN_TEST(test_vec_ring_push_one);
   RUN_TEST(test_vec_ring_pop_one);
-  /* RUN_TEST(test_vec_ring_capacity); */
-  /* RUN_TEST(test_vec_ring_size); */
+  RUN_TEST(test_vec_ring_capacity);
+  RUN_TEST(test_vec_ring_size);
   RUN_TEST(test_vec_ring_empty);
   RUN_TEST(test_vec_ring_full);
   /* RUN_TEST(test_vec_ring_push); */
