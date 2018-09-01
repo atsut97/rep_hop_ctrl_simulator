@@ -4,18 +4,21 @@
 #include "rhc_vec.h"
 
 typedef struct {
-  vec_t *buf;
-  int head;
-  int max;
+  vec_t *buf;     /* pointer to array */
+  int dim;        /* dimension of vector */
+  int head;       /* head position */
+  int size;       /* current size */
+  int max;        /* maximum size (capacity) */
 } vec_ring_t;
 
-#define vec_ring_buf(self)   (self)->buf
+#define vec_ring_buf(self)      (self)->buf
+#define vec_ring_dim(self)      (self)->dim
 #define vec_ring_capacity(self) (self)->max
-#define vec_ring_size(self)     (self)->head
+#define vec_ring_size(self)     (self)->size
 
 #define vec_ring_head(self)     vec_ring_buf(self)[(self)->head]
 
-void vec_ring_init(vec_ring_t *self, int size);
+void vec_ring_init(vec_ring_t *self, int dim, int size);
 void vec_ring_destroy(vec_ring_t *self);
 
 bool vec_ring_empty(vec_ring_t *self);

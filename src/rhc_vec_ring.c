@@ -1,22 +1,31 @@
 #include "rhc_vec_ring.h"
 
-void vec_ring_init(vec_ring_t *self, int size)
+void vec_ring_init(vec_ring_t *self, int dim, int size)
 {
   register int i;
 
-  self->head = -1;
+  self->head = 0;
+  self->size = 0;
+  self->dim = dim;
   self->max = size;
   if( ( vec_ring_buf(self) = nalloc( vec_t, size ) ) == NULL ){
     ALLOC_ERR();
     return;
   }
-  for( i=0; i<size; i++ ){
-    vec_ring_buf(self)[i] = vec_create( 2 );
+  for( i=0; i<vec_ring_capacity(self); i++ ){
+    vec_ring_buf(self)[i] = vec_create( vec_ring_dim(self) );
   }
 }
 
 void vec_ring_destroy(vec_ring_t *self)
-{}
+{
+  register int i;
+
+  for( i=0; i<vec_ring_capacity(self); i++ ){
+    vec_destroy( vec_ring_buf(self)[i] );
+  }
+  sfree( vec_ring_buf(self) );
+}
 
 void vec_ring_push(vec_ring_t *self, vec_t v)
 {
