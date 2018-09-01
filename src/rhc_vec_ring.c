@@ -15,7 +15,7 @@ int vec_ring_head_reset(vec_ring_t *self)
 
 int vec_ring_head_advance(vec_ring_t *self)
 {
-  if( ++self->head > vec_ring_capacity(self) )
+  if( ++self->head >= vec_ring_capacity(self) )
     vec_ring_head_reset( self );
   return vec_ring_head_index(self);
 }

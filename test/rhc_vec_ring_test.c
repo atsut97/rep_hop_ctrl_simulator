@@ -2,9 +2,10 @@
 #include "rhc_test.h"
 
 #define SIZE 7
+#define NUM_VEC ( SIZE + 3 )
 #define DIM  3
 vec_ring_t ring;
-vec_t v[SIZE];
+vec_t v[NUM_VEC];
 
 double randf(double min, double max)
 {
@@ -25,11 +26,11 @@ void setup()
   register int i, j;
 
   vec_ring_init( &ring, DIM, SIZE );
-  for( i=0; i<SIZE; i++ )
+  for( i=0; i<NUM_VEC; i++ )
     v[i] = vec_create( DIM );
 
   srand( (int)time(NULL) );
-  for( i=0; i<SIZE; i++ ){
+  for( i=0; i<NUM_VEC; i++ ){
     for( j=0; j<DIM; j++ ){
       vec_set_elem( v[i], j, randf( -10, 10 ) );
     }
@@ -41,7 +42,7 @@ void teardown()
   register int i;
 
   vec_ring_destroy( &ring );
-  for( i=0; i<SIZE; i++ )
+  for( i=0; i<NUM_VEC; i++ )
     vec_destroy( v[i] );
 }
 
@@ -196,6 +197,32 @@ TEST(test_vec_ring_push_until_full)
   ASSERT_TRUE( vec_ring_full(&ring) );
 }
 
+void push_until_full(vec_ring_t *vr)
+{
+  register int i;
+
+  for( i=vec_ring_size(vr); i<vec_ring_capacity(vr); i++ ){
+    vec_ring_push( vr, v[i] );
+  }
+}
+
+TEST(test_vec_ring_push_over_capacity)
+{
+  push_until_full( &ring );
+  ASSERT_TRUE( vec_ring_full(&ring) );
+
+  /* push one vector */
+  vec_ring_push( &ring, v[SIZE] );
+  ASSERT_EQ( SIZE, vec_ring_size(&ring) );
+  assert_vec( v[SIZE], vec_ring_head(&ring) );
+  ASSERT_TRUE( vec_ring_full(&ring) );
+  /* push one more vector */
+  vec_ring_push( &ring, v[SIZE+1] );
+  ASSERT_EQ( SIZE, vec_ring_size(&ring) );
+  assert_vec( v[SIZE+1], vec_ring_head(&ring) );
+  ASSERT_TRUE( vec_ring_full(&ring) );
+}
+
 TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -209,6 +236,7 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_pop_nothing);
   RUN_TEST(test_vec_ring_pop_one);
   RUN_TEST(test_vec_ring_push_until_full);
+  RUN_TEST(test_vec_ring_push_over_capacity);
 }
 
 int main(int argc, char *argv[])
