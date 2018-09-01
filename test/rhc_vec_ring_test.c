@@ -150,25 +150,6 @@ TEST(test_vec_ring_empty)
   ASSERT_TRUE( vec_ring_empty(&ring) );
 }
 
-TEST(test_vec_ring_empty2)
-{
-  ASSERT_TRUE( vec_ring_empty(&ring) );
-
-  vec_ring_push( &ring, v[0] );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push( &ring, v[1] );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push( &ring, v[2] );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-
-  vec_ring_pop( &ring );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_pop( &ring );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_pop( &ring );
-  ASSERT_TRUE( vec_ring_empty(&ring) );
-}
-
 TEST(test_vec_ring_full)
 {
   ASSERT_FALSE( vec_ring_full(&ring) );
@@ -203,9 +184,8 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_pop_one);
   /* RUN_TEST(test_vec_ring_capacity); */
   /* RUN_TEST(test_vec_ring_size); */
-  /* RUN_TEST(test_vec_ring_empty); */
-  /* RUN_TEST(test_vec_ring_empty2); */
-  /* RUN_TEST(test_vec_ring_full); */
+  RUN_TEST(test_vec_ring_empty);
+  RUN_TEST(test_vec_ring_full);
   /* RUN_TEST(test_vec_ring_push); */
 }
 
