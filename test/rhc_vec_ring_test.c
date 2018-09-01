@@ -188,13 +188,13 @@ TEST_SUITE(test_vec_ring)
   CONFIGURE_SUITE(setup, teardown);
   RUN_TEST(test_vec_ring_init);
   RUN_TEST(test_vec_ring_init2);
-  RUN_TEST(test_vec_ring_push_one);
-  RUN_TEST(test_vec_ring_pop_nothing);
-  RUN_TEST(test_vec_ring_pop_one);
   RUN_TEST(test_vec_ring_capacity);
   RUN_TEST(test_vec_ring_size);
   RUN_TEST(test_vec_ring_empty);
   RUN_TEST(test_vec_ring_full);
+  RUN_TEST(test_vec_ring_push_one);
+  RUN_TEST(test_vec_ring_pop_nothing);
+  RUN_TEST(test_vec_ring_pop_one);
 }
 
 int main(int argc, char *argv[])
