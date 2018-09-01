@@ -183,6 +183,19 @@ TEST(test_vec_ring_pop_one)
   ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
 }
 
+TEST(test_vec_ring_push_until_full)
+{
+  register int i;
+
+  ASSERT_TRUE( vec_ring_empty(&ring) );
+  for( i=0; i<SIZE; i++ ){
+    vec_ring_push( &ring, v[i] );
+    ASSERT_EQ( i+1, vec_ring_size(&ring) );
+    assert_vec( v[i], vec_ring_head(&ring) );
+  }
+  ASSERT_TRUE( vec_ring_full(&ring) );
+}
+
 TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -195,6 +208,7 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_push_one);
   RUN_TEST(test_vec_ring_pop_nothing);
   RUN_TEST(test_vec_ring_pop_one);
+  RUN_TEST(test_vec_ring_push_until_full);
 }
 
 int main(int argc, char *argv[])
