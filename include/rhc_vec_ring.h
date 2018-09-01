@@ -28,6 +28,6 @@ bool vec_ring_full(vec_ring_t *self);
 void vec_ring_reset(vec_ring_t *self);
 
 void vec_ring_push(vec_ring_t *self, vec_t v);
-void vec_ring_pop(vec_ring_t *self);
+vec_t vec_ring_pop(vec_ring_t *self);
 
 #endif /* __RHC_VEC_RING_H__ */

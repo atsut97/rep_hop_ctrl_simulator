@@ -36,14 +36,21 @@ void vec_ring_push(vec_ring_t *self, vec_t v)
   vec_copy( v, vec_ring_head(self) );
 }
 
-void vec_ring_pop(vec_ring_t *self)
+vec_t vec_ring_pop(vec_ring_t *self)
 {
-  self->head--;
+  vec_t ret;
+
+  ret = vec_ring_head(self);
+  if( vec_ring_size(self) > 0 )
+    self->size--;
+  if( vec_ring_size(self) > 0 )
+    self->head--;
+  return ret;
 }
 
 bool vec_ring_empty(vec_ring_t *self)
 {
-  return ( self->head == 0 );
+  return ( vec_ring_size(self) == 0 );
 }
 
 bool vec_ring_full(vec_ring_t *self)

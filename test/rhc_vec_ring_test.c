@@ -11,6 +11,15 @@ double randf(double min, double max)
   return (double)rand() / RAND_MAX * ( max - min ) + min;
 }
 
+void assert_vec(vec_t v1, vec_t v2)
+{
+  register int i;
+
+  ASSERT_EQ( vec_size(v1), vec_size(v2) );
+  for( i=0; i< vec_size(v1); i++ )
+    ASSERT_DOUBLE_EQ( vec_elem( v1, i ), vec_elem( v2, i ) );
+}
+
 void setup()
 {
   register int i, j;
@@ -64,16 +73,24 @@ TEST(test_vec_ring_init2)
 
 TEST(test_vec_ring_push_one)
 {
-  register int i;
-
-  /* push one vector */
   vec_ring_push( &ring, v[0] );
-  for( i=0; i<DIM; i++ ){
-    ASSERT_EQ( vec_elem( v[0], i ), vec_elem( vec_ring_head(&ring), i ) );
-  }
+  assert_vec( v[0], vec_ring_head(&ring) );
   ASSERT_EQ( 0, vec_ring_head_index(&ring) );
   ASSERT_EQ( 1, vec_ring_size(&ring) );
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+}
+
+TEST(test_vec_ring_pop_one)
+{
+  vec_t tmp = vec_create( DIM );
+
+  vec_ring_push( &ring, v[0] );
+  vec_copy( vec_ring_pop( &ring ), tmp );
+  assert_vec( v[0], tmp );
+  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 0, vec_ring_size(&ring) );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  vec_destroy( tmp );
 }
 
 TEST(test_vec_ring_capacity)
@@ -183,6 +200,7 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_init);
   RUN_TEST(test_vec_ring_init2);
   RUN_TEST(test_vec_ring_push_one);
+  RUN_TEST(test_vec_ring_pop_one);
   /* RUN_TEST(test_vec_ring_capacity); */
   /* RUN_TEST(test_vec_ring_size); */
   /* RUN_TEST(test_vec_ring_empty); */
