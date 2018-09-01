@@ -1,11 +1,59 @@
 #include "rhc_vec_ring.h"
 
+static int vec_ring_head_reset(vec_ring_t *self);
+static int vec_ring_head_advance(vec_ring_t *self);
+static int vec_ring_head_recede(vec_ring_t *self);
+static int vec_ring_size_reset(vec_ring_t *self);
+static int vec_ring_size_increase(vec_ring_t *self);
+static int vec_ring_size_decrease(vec_ring_t *self);
+
+int vec_ring_head_reset(vec_ring_t *self)
+{
+  self->head = 0;
+  return vec_ring_head_index(self);
+}
+
+int vec_ring_head_advance(vec_ring_t *self)
+{
+  if( ++self->head > vec_ring_capacity(self) )
+    vec_ring_head_reset( self );
+  return vec_ring_head_index(self);
+}
+
+int vec_ring_head_recede(vec_ring_t *self)
+{
+  if( --self->head < 0 )
+    self->head = vec_ring_capacity(self) - 1;
+  return vec_ring_head_index(self);
+}
+
+int vec_ring_size_reset(vec_ring_t *self)
+{
+  self->size = 0;
+  return vec_ring_size(self);
+}
+
+int vec_ring_size_increase(vec_ring_t *self)
+{
+  if( !vec_ring_full(self) )
+    self->size++;
+  return vec_ring_size(self);
+}
+
+int vec_ring_size_decrease(vec_ring_t *self)
+{
+  if( !vec_ring_empty(self) )
+    self->size--;
+  return vec_ring_size(self);
+}
+
+
 void vec_ring_init(vec_ring_t *self, int dim, int size)
 {
   register int i;
 
-  self->head = 0;
-  self->size = 0;
+  vec_ring_head_reset( self );
+  vec_ring_size_reset( self );
   self->dim = dim;
   self->max = size;
   if( ( vec_ring_buf(self) = nalloc( vec_t, size ) ) == NULL ){
@@ -30,9 +78,8 @@ void vec_ring_destroy(vec_ring_t *self)
 void vec_ring_push(vec_ring_t *self, vec_t v)
 {
   if( !vec_ring_empty(self) )
-    self->head++;
-  if( !vec_ring_full(self) )
-    self->size++;
+    vec_ring_head_advance( self );
+  vec_ring_size_increase( self );
   vec_copy( v, vec_ring_head(self) );
 }
 
@@ -40,11 +87,12 @@ vec_t vec_ring_pop(vec_ring_t *self)
 {
   vec_t ret;
 
+  if( vec_ring_empty(self) )
+    return NULL;
   ret = vec_ring_head(self);
+  vec_ring_size_decrease( self );
   if( !vec_ring_empty(self) )
-    self->size--;
-  if( !vec_ring_empty(self) )
-    self->head--;
+    vec_ring_head_recede( self );
   return ret;
 }
 

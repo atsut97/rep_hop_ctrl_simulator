@@ -153,20 +153,34 @@ TEST(test_vec_ring_push_one)
   assert_vec( v[0], vec_ring_head(&ring) );
   ASSERT_EQ( 0, vec_ring_head_index(&ring) );
   ASSERT_EQ( 1, vec_ring_size(&ring) );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
+}
+
+TEST(test_vec_ring_pop_nothing)
+{
+  /* if size of ring buffer equals to 0 */
+  ASSERT_EQ( 0, vec_ring_size(&ring) );
+  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
+  /* then pop returns NULL pointer */
+  ASSERT_PTREQ( NULL, vec_ring_pop(&ring) );
+  ASSERT_EQ( 0, vec_ring_size(&ring) );
+  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
 }
 
 TEST(test_vec_ring_pop_one)
 {
-  vec_t tmp = vec_create( DIM );
+  vec_t tmp;
 
   vec_ring_push( &ring, v[0] );
-  vec_copy( vec_ring_pop( &ring ), tmp );
+  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 1, vec_ring_size(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
+
+  tmp = vec_ring_pop( &ring );
   assert_vec( v[0], tmp );
   ASSERT_EQ( 0, vec_ring_head_index(&ring) );
   ASSERT_EQ( 0, vec_ring_size(&ring) );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
-  vec_destroy( tmp );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
 }
 
 TEST_SUITE(test_vec_ring)
@@ -175,6 +189,7 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_init);
   RUN_TEST(test_vec_ring_init2);
   RUN_TEST(test_vec_ring_push_one);
+  RUN_TEST(test_vec_ring_pop_nothing);
   RUN_TEST(test_vec_ring_pop_one);
   RUN_TEST(test_vec_ring_capacity);
   RUN_TEST(test_vec_ring_size);
