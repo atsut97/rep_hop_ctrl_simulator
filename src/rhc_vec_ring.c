@@ -29,9 +29,9 @@ void vec_ring_destroy(vec_ring_t *self)
 
 void vec_ring_push(vec_ring_t *self, vec_t v)
 {
-  if( vec_ring_size(self) > 0 )
+  if( !vec_ring_empty(self) )
     self->head++;
-  if( vec_ring_size(self) < vec_ring_capacity(self) )
+  if( !vec_ring_full(self) )
     self->size++;
   vec_copy( v, vec_ring_head(self) );
 }
@@ -41,9 +41,9 @@ vec_t vec_ring_pop(vec_ring_t *self)
   vec_t ret;
 
   ret = vec_ring_head(self);
-  if( vec_ring_size(self) > 0 )
+  if( !vec_ring_empty(self) )
     self->size--;
-  if( vec_ring_size(self) > 0 )
+  if( !vec_ring_empty(self) )
     self->head--;
   return ret;
 }
