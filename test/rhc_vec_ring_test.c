@@ -71,28 +71,6 @@ TEST(test_vec_ring_init2)
   vec_ring_destroy( &vr );
 }
 
-TEST(test_vec_ring_push_one)
-{
-  vec_ring_push( &ring, v[0] );
-  assert_vec( v[0], vec_ring_head(&ring) );
-  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
-  ASSERT_EQ( 1, vec_ring_size(&ring) );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
-}
-
-TEST(test_vec_ring_pop_one)
-{
-  vec_t tmp = vec_create( DIM );
-
-  vec_ring_push( &ring, v[0] );
-  vec_copy( vec_ring_pop( &ring ), tmp );
-  assert_vec( v[0], tmp );
-  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
-  ASSERT_EQ( 0, vec_ring_size(&ring) );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
-  vec_destroy( tmp );
-}
-
 TEST(test_vec_ring_capacity)
 {
   ASSERT_EQ( 3, vec_ring_capacity(&ring) );
@@ -169,10 +147,26 @@ TEST(test_vec_ring_full)
   ASSERT_FALSE( vec_ring_full(&ring) );
 }
 
-TEST(test_vec_ring_push)
+TEST(test_vec_ring_push_one)
 {
   vec_ring_push( &ring, v[0] );
-  ASSERT_EQ( vec_elem( v[0], 0 ), vec_elem( vec_ring_head(&ring), 0 ) );
+  assert_vec( v[0], vec_ring_head(&ring) );
+  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 1, vec_ring_size(&ring) );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+}
+
+TEST(test_vec_ring_pop_one)
+{
+  vec_t tmp = vec_create( DIM );
+
+  vec_ring_push( &ring, v[0] );
+  vec_copy( vec_ring_pop( &ring ), tmp );
+  assert_vec( v[0], tmp );
+  ASSERT_EQ( 0, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 0, vec_ring_size(&ring) );
+  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  vec_destroy( tmp );
 }
 
 TEST_SUITE(test_vec_ring)
@@ -186,7 +180,6 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_size);
   RUN_TEST(test_vec_ring_empty);
   RUN_TEST(test_vec_ring_full);
-  /* RUN_TEST(test_vec_ring_push); */
 }
 
 int main(int argc, char *argv[])
