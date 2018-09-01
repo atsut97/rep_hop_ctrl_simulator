@@ -1,8 +1,8 @@
 #include "rhc_vec_ring.h"
 #include "rhc_test.h"
 
-#define SIZE 3
-#define DIM  2
+#define SIZE 7
+#define DIM  3
 vec_ring_t ring;
 vec_t v[SIZE];
 
@@ -73,21 +73,21 @@ TEST(test_vec_ring_init2)
 
 TEST(test_vec_ring_capacity)
 {
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
 
   vec_ring_push( &ring, v[0] );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
   vec_ring_push( &ring, v[1] );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
   vec_ring_push( &ring, v[2] );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
 
   vec_ring_pop( &ring );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
   vec_ring_pop( &ring );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
   vec_ring_pop( &ring );
-  ASSERT_EQ( 3, vec_ring_capacity(&ring) );
+  ASSERT_EQ( SIZE, vec_ring_capacity(&ring) );
 }
 
 TEST(test_vec_ring_size)
@@ -111,40 +111,40 @@ TEST(test_vec_ring_size)
 
 TEST(test_vec_ring_empty)
 {
+  register int i;
+
   ASSERT_TRUE( vec_ring_empty(&ring) );
 
-  vec_ring_push( &ring, v[0] );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push( &ring, v[1] );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_push( &ring, v[2] );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
+  for( i=0; i<SIZE; i++ ){
+    vec_ring_push( &ring, v[i] );
+    ASSERT_FALSE( vec_ring_empty(&ring) );
+  }
 
-  vec_ring_pop( &ring );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
-  vec_ring_pop( &ring );
-  ASSERT_FALSE( vec_ring_empty(&ring) );
+  for( i=0; i<SIZE-1; i++ ){
+    vec_ring_pop( &ring );
+    ASSERT_FALSE( vec_ring_empty(&ring) );
+  }
   vec_ring_pop( &ring );
   ASSERT_TRUE( vec_ring_empty(&ring) );
 }
 
 TEST(test_vec_ring_full)
 {
+  register int i;
+
   ASSERT_FALSE( vec_ring_full(&ring) );
 
-  vec_ring_push( &ring, v[0] );
-  ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_push( &ring, v[1] );
-  ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_push( &ring, v[2] );
+  for( i=0; i<SIZE-1; i++ ){
+    vec_ring_push( &ring, v[i] );
+    ASSERT_FALSE( vec_ring_full(&ring) );
+  }
+  vec_ring_push( &ring, v[SIZE-1] );
   ASSERT_TRUE( vec_ring_full(&ring) );
 
-  vec_ring_pop( &ring );
-  ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_pop( &ring );
-  ASSERT_FALSE( vec_ring_full(&ring) );
-  vec_ring_pop( &ring );
-  ASSERT_FALSE( vec_ring_full(&ring) );
+  for( i=0; i<SIZE; i++ ){
+    vec_ring_pop( &ring );
+    ASSERT_FALSE( vec_ring_full(&ring) );
+  }
 }
 
 TEST(test_vec_ring_push_one)
