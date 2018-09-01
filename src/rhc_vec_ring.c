@@ -29,7 +29,10 @@ void vec_ring_destroy(vec_ring_t *self)
 
 void vec_ring_push(vec_ring_t *self, vec_t v)
 {
-  self->head++;
+  if( vec_ring_size(self) > 0 )
+    self->head++;
+  if( vec_ring_size(self) < vec_ring_capacity(self) )
+    self->size++;
   vec_copy( v, vec_ring_head(self) );
 }
 
