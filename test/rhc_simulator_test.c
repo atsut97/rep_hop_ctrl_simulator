@@ -101,8 +101,10 @@ TEST(test_simulator_set_fe)
   }
 }
 
-void update_test(simulator_t *simulator, double dt, double t, void *util)
-{}
+bool update_test(simulator_t *simulator, double dt, double t, void *util)
+{
+  return true;
+}
 
 TEST(test_simulator_set_update_fp)
 {

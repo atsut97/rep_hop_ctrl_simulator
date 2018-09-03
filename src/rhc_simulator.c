@@ -34,7 +34,7 @@ void simulator_destroy(simulator_t *self)
   simulator_set_tag( self, "" );
 }
 
-void simulator_set_update_fp(simulator_t *self, void (*update_fp)(simulator_t*, double, double, void*))
+void simulator_set_update_fp(simulator_t *self, bool (*update_fp)(simulator_t*, double, double, void*))
 {
   self->update_fp = update_fp;
 }
@@ -87,9 +87,10 @@ void simulator_reset(simulator_t *self)
   simulator_step( self ) = 0;
 }
 
-void simulator_update(simulator_t *self, double fe, double dt, void *util)
+bool simulator_update(simulator_t *self, double fe, double dt, void *util)
 {
   ode_update( &self->ode, simulator_time(self), simulator_state(self), dt, self );
+  return true;
 }
 
 void simulator_update_time(simulator_t *self, double dt)
