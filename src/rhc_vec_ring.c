@@ -14,8 +14,7 @@ int vec_ring_head_reset(vec_ring_t *self)
 
 int vec_ring_head_advance(vec_ring_t *self)
 {
-  if( ++self->head >= vec_ring_capacity(self) )
-    vec_ring_head_reset( self );
+  self->head = vec_ring_index( self, ++self->head );
   return vec_ring_head_index(self);
 }
 
@@ -72,7 +71,6 @@ void vec_ring_push(vec_ring_t *self, vec_t v)
   if( !vec_ring_empty(self) )
     vec_ring_head_advance( self );
   vec_ring_size_increase( self );
-  /* fprintf( stderr, "capa: %d, size: %d index: %d\n", vec_ring_capacity(self), vec_ring_size(self), vec_ring_head_index(self) ); */
   vec_copy( v, vec_ring_head(self) );
 }
 
