@@ -183,6 +183,60 @@ TEST(test_vec_ring_tail_index)
   ASSERT_EQ( 1, vec_ring_tail_index(&ring) );
 }
 
+void print_index(vec_ring_t *vr, int line)
+{
+  fprintf( stderr, "tail: %d ---- head: %d <size: %d> (LINE: %d)\n",
+           vec_ring_tail_index(&ring), vec_ring_head_index(&ring),
+           vec_ring_size(&ring), line );
+}
+
+TEST(test_vec_ring_head_and_tail_indices)
+{
+  /* max size is set to 7 */
+  ASSERT_EQ( 7, vec_ring_capacity(&ring) );
+
+  /* push 5 vectors */
+  vec_ring_push( &ring, v[0] );
+  vec_ring_push( &ring, v[1] );
+  vec_ring_push( &ring, v[2] );
+  vec_ring_push( &ring, v[3] );
+  vec_ring_push( &ring, v[4] );
+  ASSERT_EQ( 5, vec_ring_size(&ring) );
+  ASSERT_EQ( 4, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 0, vec_ring_tail_index(&ring) );
+
+  /* pop 2 vectors */
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  ASSERT_EQ( 3, vec_ring_size(&ring) );
+  ASSERT_EQ( 4, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 2, vec_ring_tail_index(&ring) );
+
+  /* push 4 vectors */
+  vec_ring_push( &ring, v[5] );
+  vec_ring_push( &ring, v[6] );
+  vec_ring_push( &ring, v[7] );
+  vec_ring_push( &ring, v[8] );
+  ASSERT_EQ( 7, vec_ring_size(&ring) );
+  ASSERT_EQ( 1, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 2, vec_ring_tail_index(&ring) );
+
+  /* push more 2 vectors */
+  vec_ring_push( &ring, v[9] );
+  vec_ring_push( &ring, v[0] );
+  ASSERT_EQ( 7, vec_ring_size(&ring) );
+  ASSERT_EQ( 3, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 4, vec_ring_tail_index(&ring) );
+
+  /* pop 3 vectors */
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  ASSERT_EQ( 4, vec_ring_size(&ring) );
+  ASSERT_EQ( 3, vec_ring_head_index(&ring) );
+  ASSERT_EQ( 0, vec_ring_tail_index(&ring) );
+}
+
 TEST(test_vec_ring_push_one)
 {
   vec_ring_push( &ring, v[0] );
@@ -282,6 +336,31 @@ TEST(test_vec_ring_push_some_then_pop_them)
   ASSERT_EQ( 0, vec_ring_size(&ring) );
 }
 
+TEST(test_vec_ring_push_much_pop_some_then_push_again)
+{
+  /* push until full and much more */
+  push_until_full( &ring );
+  vec_ring_push( &ring, v[SIZE] );
+  vec_ring_push( &ring, v[SIZE+1] );
+  vec_ring_push( &ring, v[SIZE+2] );
+  ASSERT_EQ( SIZE, vec_ring_size(&ring) );
+  ASSERT_TRUE( vec_ring_full(&ring) );
+
+  /* pop some */
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  ASSERT_EQ( SIZE-4, vec_ring_size(&ring) );
+  ASSERT_FALSE( vec_ring_full(&ring) );
+
+  /* push again */
+  vec_ring_push( &ring, v[SIZE-1] );
+  vec_ring_push( &ring, v[SIZE-2] );
+  ASSERT_EQ( SIZE-2, vec_ring_size(&ring) );
+  ASSERT_FALSE( vec_ring_full(&ring) );
+}
+
 TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -293,12 +372,14 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_full);
   RUN_TEST(test_vec_ring_head_index);
   RUN_TEST(test_vec_ring_tail_index);
+  RUN_TEST(test_vec_ring_head_and_tail_indices);
   RUN_TEST(test_vec_ring_push_one);
   RUN_TEST(test_vec_ring_pop_nothing);
   RUN_TEST(test_vec_ring_pop_one);
   RUN_TEST(test_vec_ring_push_until_full);
   RUN_TEST(test_vec_ring_push_over_capacity);
   RUN_TEST(test_vec_ring_push_some_then_pop_them);
+  RUN_TEST(test_vec_ring_push_much_pop_some_then_push_again);
 }
 
 int main(int argc, char *argv[])
