@@ -108,7 +108,8 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
   }
   while( simulator_time(self) < time ){
     self->dump_fp( self, logger, util );
-    self->update_fp( self, 0.0, dt, util );
+    if( !self->update_fp( self, 0.0, dt, util ) )
+      break;
     simulator_update_time( self, dt );
   }
   simulator_inc_trial( self );
