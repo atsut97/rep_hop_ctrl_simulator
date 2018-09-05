@@ -361,6 +361,26 @@ TEST(test_vec_ring_push_much_pop_some_then_push_again)
   ASSERT_FALSE( vec_ring_full(&ring) );
 }
 
+TEST(test_vec_ring_reset)
+{
+  vec_ring_push( &ring, v[0] );
+  vec_ring_push( &ring, v[1] );
+  vec_ring_push( &ring, v[2] );
+  vec_ring_push( &ring, v[3] );
+  ASSERT_FALSE( vec_ring_empty(&ring) );
+
+  vec_ring_reset( &ring );
+  ASSERT_TRUE( vec_ring_empty(&ring) );
+  ASSERT_PTREQ( NULL, vec_ring_pop(&ring) );
+
+  push_until_full( &ring );
+  ASSERT_TRUE( vec_ring_full(&ring) );
+
+  vec_ring_reset( &ring );
+  ASSERT_TRUE( vec_ring_empty(&ring) );
+  ASSERT_PTREQ( NULL, vec_ring_pop(&ring) );
+}
+
 TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -380,6 +400,7 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_push_over_capacity);
   RUN_TEST(test_vec_ring_push_some_then_pop_them);
   RUN_TEST(test_vec_ring_push_much_pop_some_then_push_again);
+  RUN_TEST(test_vec_ring_reset);
 }
 
 int main(int argc, char *argv[])

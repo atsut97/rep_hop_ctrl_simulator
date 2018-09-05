@@ -95,3 +95,8 @@ bool vec_ring_full(vec_ring_t *self)
 {
   return ( vec_ring_size(self) == vec_ring_capacity(self) );
 }
+
+void vec_ring_reset(vec_ring_t *self)
+{
+  vec_ring_size_reset( self );
+}
