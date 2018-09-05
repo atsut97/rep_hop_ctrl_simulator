@@ -569,6 +569,8 @@ void check_vec_match(size_t n1, size_t n2, double *val1, double *val2, bool expe
     ASSERT_TRUE( vec_match( v1, v2 ) );
   else
     ASSERT_FALSE( vec_match( v1, v2 ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
 }
 
 TEST(test_vec_match)
@@ -604,6 +606,8 @@ void check_vec_equal(size_t n1, size_t n2, double *val1, double *val2, bool expe
     ASSERT_TRUE( vec_equal( v1, v2 ) );
   else
     ASSERT_FALSE( vec_equal( v1, v2 ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
 }
 
 TEST(test_vec_equal)
@@ -639,6 +643,8 @@ void check_vec_near(size_t n1, size_t n2, double *val1, double *val2, double tol
     ASSERT_TRUE( vec_near( v1, v2, tol ) );
   else
     ASSERT_FALSE( vec_near( v1, v2, tol ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
 }
 
 TEST(test_vec_near)
