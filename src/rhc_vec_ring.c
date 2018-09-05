@@ -14,7 +14,8 @@ int vec_ring_head_reset(vec_ring_t *self)
 
 int vec_ring_head_advance(vec_ring_t *self)
 {
-  self->head = vec_ring_index( self, ++self->head );
+  self->head++;
+  self->head = vec_ring_index( self, self->head );
   return vec_ring_head_index(self);
 }
 
