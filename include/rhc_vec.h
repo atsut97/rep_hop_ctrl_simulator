@@ -40,6 +40,11 @@ vec_t vec_mul(vec_t v1, double k, vec_t v);
 vec_t vec_div(vec_t v1, double k, vec_t v);
 vec_t vec_cat(vec_t v1, double k, vec_t v2, vec_t v);
 
+/* check equality */
+bool vec_match(vec_t v1, vec_t v2);
+bool vec_equal(vec_t v1, vec_t v2);
+bool vec_near(vec_t v1, vec_t v2, double tol);
+
 /* output */
 void vec_f_write(FILE *fp, vec_t v);
 #define vec_write(v) vec_f_write( stdout, v )

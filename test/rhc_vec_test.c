@@ -559,6 +559,112 @@ TEST(test_vec_clone)
     check_vec_clone( (*c).n, (*c).val, (*c).expected );
 }
 
+void check_vec_match(size_t n1, size_t n2, double *val1, double *val2, bool expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n1, val1 );
+  v2 = vec_create_array( n2, val2 );
+  if( expected )
+    ASSERT_TRUE( vec_match( v1, v2 ) );
+  else
+    ASSERT_FALSE( vec_match( v1, v2 ) );
+}
+
+TEST(test_vec_match)
+{
+  struct case_t {
+    size_t n1, n2;
+    double val1[10];
+    double val2[10];
+    bool expected;
+  } cases[] = {
+    { 2, 2, { 1.0, 1.0 }, { 1.0, 1.0 }, true },
+    { 2, 2, { 1.0, 1.0 }, { 2.0, 1.0 }, false },
+    { 2, 2, { 1.0, 1.0 }, { 1.0, 2.0 }, false },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 1.0, 2.0, 3.0 }, true },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 3.0, 2.0, 1.0 }, false },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 1.0, sqrt(2)*sqrt(2), 3.0 }, false },
+    { 2, 4, { 1.0, 2.0 }, { 1.0, 2.0, 3.0, 4.0 }, false },
+    { 0, 0, {}, {}, false },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n1>0; c++ )
+    check_vec_match( c->n1, c->n2, c->val1, c->val2, c->expected );
+}
+
+void check_vec_equal(size_t n1, size_t n2, double *val1, double *val2, bool expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n1, val1 );
+  v2 = vec_create_array( n2, val2 );
+  if( expected )
+    ASSERT_TRUE( vec_equal( v1, v2 ) );
+  else
+    ASSERT_FALSE( vec_equal( v1, v2 ) );
+}
+
+TEST(test_vec_equal)
+{
+  struct case_t {
+    size_t n1, n2;
+    double val1[10];
+    double val2[10];
+    bool expected;
+  } cases[] = {
+    { 2, 2, { 1.0, 1.0 }, { 1.0, 1.0 }, true },
+    { 2, 2, { 1.0, 1.0 }, { 2.0, 1.0 }, false },
+    { 2, 2, { 1.0, 1.0 }, { 1.0, 2.0 }, false },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 1.0, 2.0, 3.0 }, true },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 3.0, 2.0, 1.0 }, false },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 1.0, sqrt(2)*sqrt(2), 3.0 }, true },
+    { 2, 4, { 1.0, 2.0 }, { 1.0, 2.0, 3.0, 4.0 }, false },
+    { 0, 0, {}, {}, false },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n1>0; c++ )
+    check_vec_equal( c->n1, c->n2, c->val1, c->val2, c->expected );
+}
+
+void check_vec_near(size_t n1, size_t n2, double *val1, double *val2, double tol, bool expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n1, val1 );
+  v2 = vec_create_array( n2, val2 );
+  if( expected )
+    ASSERT_TRUE( vec_near( v1, v2, tol ) );
+  else
+    ASSERT_FALSE( vec_near( v1, v2, tol ) );
+}
+
+TEST(test_vec_near)
+{
+  struct case_t {
+    size_t n1, n2;
+    double val1[10];
+    double val2[10];
+    double tol;
+    bool expected;
+  } cases[] = {
+    { 2, 2, { 1.0, 1.0 }, { 1.0, 1.0 }, 1e-4, true },
+    { 2, 2, { 1.0, 1.0 }, { 2.0, 1.0 }, 1e-4, false },
+    { 2, 2, { 1.0, 1.0 }, { 1.0, 1.0+1e-4 }, 1e-6, false },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 1.0, 2.0, 3.0 }, 1e-4, true },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 1.0, sqrt(2)*sqrt(2), 3.0 }, 1e-25, false },
+    { 3, 3, { 1.0, 2.0, 3.0 }, { 1.0, sqrt(2)*sqrt(2), 3.0 }, 1e-6, true },
+    { 2, 4, { 1.0, 2.0 }, { 1.0, 2.0, 3.0, 4.0 }, 1e-4, false },
+    { 0, 0, {}, {}, false },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n1>0; c++ )
+    check_vec_near( c->n1, c->n2, c->val1, c->val2, c->tol, c->expected );
+}
+
 void check_vec_f_write(size_t n, double *val)
 {
   vec_t v;
@@ -636,6 +742,9 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_copy);
   RUN_TEST(test_vec_copy_size_mismatch);
   RUN_TEST(test_vec_clone);
+  RUN_TEST(test_vec_match);
+  RUN_TEST(test_vec_equal);
+  RUN_TEST(test_vec_near);
   RUN_TEST(test_vec_f_write);
   RUN_TEST(test_vec_f_write_given_null);
 }

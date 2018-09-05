@@ -168,6 +168,33 @@ vec_t vec_cat(vec_t v1, double k, vec_t v2, vec_t v)
   return v;
 }
 
+bool vec_match(vec_t v1, vec_t v2)
+{
+  register int i;
+
+  if( vec_size(v1) != vec_size(v2) ) return false;
+  for( i=0; i<vec_size(v1); i++ )
+    if( vec_elem( v1, i ) != vec_elem( v2, i ) )
+      return false;
+  return true;
+}
+
+bool vec_equal(vec_t v1, vec_t v2)
+{
+  return vec_near( v1, v2, TOL );
+}
+
+bool vec_near(vec_t v1, vec_t v2, double tol)
+{
+  register int i;
+
+  if( vec_size(v1) != vec_size(v2) ) return false;
+  for( i=0; i<vec_size(v1); i++ )
+    if( !istol( vec_elem(v1,i) - vec_elem(v2,i), tol ) )
+      return false;
+  return true;
+}
+
 void vec_f_write(FILE *fp, vec_t v)
 {
   register size_t i;
