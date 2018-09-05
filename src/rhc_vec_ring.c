@@ -61,6 +61,7 @@ void vec_ring_destroy(vec_ring_t *self)
 {
   register int i;
 
+  if( !vec_ring_buf(self) ) return;
   for( i=0; i<vec_ring_capacity(self); i++ ){
     vec_destroy( vec_ring_buf(self)[i] );
   }
