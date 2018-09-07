@@ -3,6 +3,7 @@
 
 #include "rhc_simulator.h"
 #include "rhc_vec_list.h"
+#include "rhc_vec_ring.h"
 
 typedef struct {
   int dim;
@@ -10,6 +11,7 @@ typedef struct {
   vec_t pmax;
   int *n_sc;
   vec_list_t p0_list;
+  vec_ring_t point_buf; /* circular buffer of points */
 
   cmd_t *cmd;
   ctrl_t *ctrl;
@@ -26,6 +28,7 @@ typedef struct {
 #define ppp_max(self)       (self)->pmax
 #define ppp_n_sc(self,ax)   (self)->n_sc[ax]
 #define ppp_p0_list(self)   ( &(self)->p0_list )
+#define ppp_point_buf(self) ( &(self)->point_buf )
 #define ppp_logger(self)    (self)->logger
 #define ppp_simulator(self) ( &(self)->simulator )
 
@@ -43,6 +46,7 @@ vec_t ppp_push_p0(ppp_t *self, vec_t p0);
 
 void ppp_generate_edge_points(ppp_t *self);
 
+bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util);
 void ppp_run(ppp_t *self, double max_time, double dt);
 
 #endif /* __RHC_PHASE_PORTRAIT_PLOTTER_H__ */

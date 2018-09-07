@@ -1,6 +1,7 @@
 #include "rhc_phase_portrait_plotter.h"
 
 #define PHASE_PORTRAIT_PLOTTER_DEFAULT_NUM_SC 10
+#define PHASE_PORTRAIT_PLOTTER_BUFFER_SIZE 10
 ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t *logger)
 {
   register int i;
@@ -23,9 +24,14 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t 
 
   simulator_init( ppp_simulator(self), ppp_cmd(self), ppp_ctrl(self), ppp_model(self ) );
   simulator_set_default_logger( ppp_simulator(self), ppp_logger(self) );
+  simulator_set_update_fp( ppp_simulator(self), ppp_simulator_update );
 
   /* prepare initial points list */
   vec_list_init( ppp_p0_list(self) );
+
+  /* prepare circular buffer of points */
+  vec_ring_init( ppp_point_buf(self), ppp_dim(self),
+                 PHASE_PORTRAIT_PLOTTER_BUFFER_SIZE );
   return self;
 }
 
@@ -40,8 +46,9 @@ void ppp_destroy(ppp_t *self)
   ppp_max( self ) = NULL;
   sfree( self->n_sc );
 
-  simulator_destroy( ppp_simulator(self) );
   vec_list_destroy( ppp_p0_list(self) );
+  vec_ring_destroy( ppp_point_buf(self) );
+  simulator_destroy( ppp_simulator(self) );
 }
 
 void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax)
@@ -169,6 +176,44 @@ void ppp_generate_edge_points(ppp_t *self)
   for( i=0; i<ppp_dim(self); i++ ){
     ppp_generate_edge_points_on_each_axis( self, i );
   }
+}
+
+bool ppp_simulator_is_converged(ppp_t *self, vec_t p, double tol)
+{
+  if( vec_ring_empty( ppp_point_buf(self) ) )
+    return false;
+  return vec_near( p, vec_ring_head( ppp_point_buf(self) ), tol );
+}
+
+bool ppp_simulator_is_on_limit_cycle(ppp_t *self, vec_t p, double tol)
+{
+  return false;
+}
+
+#define PHASE_PORTRAIT_PLOTTER_STABLE_TOL ( 1.0e-4 )
+bool ppp_simulator_is_stable(ppp_t *self, vec_t p)
+{
+  if( ppp_simulator_is_converged( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
+    return true;
+  return false;
+}
+
+bool ppp_simulator_is_out_of_region(ppp_t *self, vec_t p)
+{
+  return false;
+}
+
+bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util)
+{
+  ppp_t *ppp = util;
+
+  if( ppp_simulator_is_stable( ppp, simulator_state(self) ) )
+    return false;
+  if( ppp_simulator_is_out_of_region( ppp, simulator_state(self) ) )
+    return false;
+  vec_ring_push( ppp_point_buf(ppp), simulator_state(self) );
+  ode_update( &self->ode, simulator_time(self), simulator_state(self), dt, self );
+  return true;
 }
 
 void ppp_run(ppp_t *self, double max_time, double dt)
