@@ -76,13 +76,14 @@ void make_initial_points(ppp_t *ppp)
 
 void make_edge_points(ppp_t *ppp)
 {
-  ppp_set_lim_xy( ppp, 0.23, 0.29, -0.8, 0.8 );
+  /* ppp_set_lim_xy( ppp, 0.23, 0.29, -0.8, 0.8 ); */
   ppp_set_n_sc_xy( ppp, 10, 10 );
   ppp_generate_edge_points( ppp );
 }
 
 void init_slip()
 {
+  /* make_edge_points( &plotter ); */
   make_initial_points( &plotter );
   ctrl_slip_create( &ctrl, &cmd, &model );
 }
@@ -101,6 +102,7 @@ void init_regulator()
 
 void setup_ctrl()
 {
+  ppp_set_lim_xy( &plotter, 0.23, 0.29, -0.8, 0.8 );
   switch( ctrl_id ){
     case SLIP:
       init_slip();
