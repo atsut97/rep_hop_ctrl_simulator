@@ -671,6 +671,54 @@ TEST(test_vec_near)
     check_vec_near( c->n1, c->n2, c->val1, c->val2, c->tol, c->expected );
 }
 
+void check_vec_dot(int n, double *val1, double *val2, double expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n, val1 );
+  v2 = vec_create_array( n, val2 );
+  ASSERT_DOUBLE_EQ( expected, vec_dot( v1, v2 ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+}
+
+TEST(test_vec_dot)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double val2[10];
+    double expected;
+  } cases[] = {
+    { 2, { 0, 0 }, { 0, 0 }, 0 },
+    { 2, { 1, 0 }, { 0, 1 }, 0 },
+    { 2, { 1, 0 }, { 1, 0 }, 1 },
+    { 3, { 1, 2, 1 }, { 2, 0, 1 }, 3 },
+    { 3, { -1, 3, -1 }, { 1, -1, 1 }, -5 },
+    { 0, {}, {}, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n>0; c++ )
+    check_vec_dot( c->n, c->val1, c->val2, c->expected );
+}
+
+TEST(test_vec_dot_size_mismatch)
+{
+  vec_t v1 = vec_create_list( 2, 1, 1 );
+  vec_t v2 = vec_create_list( 3, 1, 1, 1 );
+  double ret;
+
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  ret = vec_dot( v1, v2 );
+  ASSERT_STREQ( ERR_SIZMIS, __err_last_msg );
+  ASSERT_EQ( 0, ret );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+  ECHO_ON();
+}
+
 void check_vec_f_write(size_t n, double *val)
 {
   vec_t v;
@@ -751,6 +799,8 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_match);
   RUN_TEST(test_vec_equal);
   RUN_TEST(test_vec_near);
+  RUN_TEST(test_vec_dot);
+  RUN_TEST(test_vec_dot_size_mismatch);
   RUN_TEST(test_vec_f_write);
   RUN_TEST(test_vec_f_write_given_null);
 }

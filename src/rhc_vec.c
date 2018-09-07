@@ -172,7 +172,10 @@ bool vec_match(vec_t v1, vec_t v2)
 {
   register int i;
 
-  if( vec_size(v1) != vec_size(v2) ) return false;
+  if( vec_size(v1) != vec_size(v2) ) {
+    RUNTIME_ERR( ERR_SIZMIS );
+    return false;
+  }
   for( i=0; i<vec_size(v1); i++ )
     if( vec_elem( v1, i ) != vec_elem( v2, i ) )
       return false;
@@ -193,6 +196,20 @@ bool vec_near(vec_t v1, vec_t v2, double tol)
     if( !istol( vec_elem(v1,i) - vec_elem(v2,i), tol ) )
       return false;
   return true;
+}
+
+double vec_dot(vec_t v1, vec_t v2)
+{
+  double s = 0;
+  register int i;
+
+  if( vec_size(v1) != vec_size(v2) ){
+    RUNTIME_ERR( ERR_SIZMIS );
+    return 0;
+  }
+  for( i=0; i<vec_size(v1); i++ )
+    s += vec_elem(v1,i) * vec_elem(v2,i);
+  return s;
 }
 
 void vec_f_write(FILE *fp, vec_t v)

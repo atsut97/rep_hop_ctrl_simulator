@@ -45,6 +45,9 @@ bool vec_match(vec_t v1, vec_t v2);
 bool vec_equal(vec_t v1, vec_t v2);
 bool vec_near(vec_t v1, vec_t v2, double tol);
 
+/* inner product */
+double vec_dot(vec_t v1, vec_t v2);
+
 /* output */
 void vec_f_write(FILE *fp, vec_t v);
 #define vec_write(v) vec_f_write( stdout, v )
