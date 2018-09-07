@@ -1,7 +1,7 @@
 #include "rhc_phase_portrait_plotter.h"
 
 #define PHASE_PORTRAIT_PLOTTER_DEFAULT_NUM_SC 10
-#define PHASE_PORTRAIT_PLOTTER_BUFFER_SIZE 10
+#define PHASE_PORTRAIT_PLOTTER_BUFFER_SIZE 300
 ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t *logger)
 {
   register int i;
@@ -32,6 +32,9 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t 
   /* prepare circular buffer of points */
   vec_ring_init( ppp_point_buf(self), ppp_dim(self),
                  PHASE_PORTRAIT_PLOTTER_BUFFER_SIZE );
+
+  self->_a = vec_create( ppp_dim(self) );
+  self->_b = vec_create( ppp_dim(self) );
   return self;
 }
 
@@ -49,6 +52,9 @@ void ppp_destroy(ppp_t *self)
   vec_list_destroy( ppp_p0_list(self) );
   vec_ring_destroy( ppp_point_buf(self) );
   simulator_destroy( ppp_simulator(self) );
+
+  vec_destroy( self->_a );
+  vec_destroy( self->_b );
 }
 
 void ppp_set_lim(ppp_t *self, vec_t pmin, vec_t pmax)
@@ -185,8 +191,29 @@ bool ppp_simulator_is_converged(ppp_t *self, vec_t p, double tol)
   return vec_near( p, vec_ring_head( ppp_point_buf(self) ), tol );
 }
 
+double __internally_divisional_proportion(ppp_t *self, vec_t p, vec_t v1, vec_t v2)
+{
+  vec_sub( p, v1, self->_a );
+  vec_sub( v2, v1, self->_b );
+  return vec_dot( self->_a, self->_b ) / vec_sqr_norm( self->_b );
+}
+
 bool ppp_simulator_is_on_limit_cycle(ppp_t *self, vec_t p, double tol)
 {
+  double k;
+  vec_t v1, v2;
+  register int i;
+
+  for( i=vec_ring_size( ppp_point_buf(self) )-1; i>0; i-- ){
+    v1 = vec_ring_item( ppp_point_buf(self), i );
+    v2 = vec_ring_item( ppp_point_buf(self), i-1 );
+    k = __internally_divisional_proportion( self, p, v1, v2 );
+    if( k < 0.0 || k > 1.0 ) continue;
+    vec_cat( v1, k, self->_b, self->_a );
+    vec_sub( p, self->_a, self->_b );
+    if( istol( vec_norm( self->_b ), tol ) )
+      return true;
+  }
   return false;
 }
 
@@ -195,12 +222,33 @@ bool ppp_simulator_is_stable(ppp_t *self, vec_t p)
 {
   if( ppp_simulator_is_converged( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
     return true;
+  if( ppp_simulator_is_on_limit_cycle( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
+    return true;
+  return false;
+}
+
+bool __is_lower_any(vec_t v1, vec_t v2)
+{
+  register int i;
+
+  for( i=0; i<vec_size(v1); i++ )
+    if( vec_elem(v1,i) < vec_elem(v2,i) ) return true;
+  return false;
+}
+
+bool __is_greater_any(vec_t v1, vec_t v2)
+{
+  register int i;
+
+  for( i=0; i<vec_size(v1); i++ )
+    if( vec_elem(v1,i) > vec_elem(v2,i) ) return true;
   return false;
 }
 
 bool ppp_simulator_is_out_of_region(ppp_t *self, vec_t p)
 {
-  return false;
+  return ( __is_lower_any( p, self->pmin ) ||
+           __is_greater_any( p, self->pmax ) );
 }
 
 bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util)
@@ -221,6 +269,6 @@ void ppp_run(ppp_t *self, double max_time, double dt)
   vec_list_node_t *node;
 
   vec_list_for_each( ppp_p0_list(self), node ){
-    simulator_run( ppp_simulator(self), node->v, max_time, dt, ppp_logger(self), NULL );
+    simulator_run( ppp_simulator(self), node->v, max_time, dt, ppp_logger(self), self );
   }
 }

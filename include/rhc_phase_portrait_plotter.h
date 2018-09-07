@@ -18,6 +18,8 @@ typedef struct {
   model_t *model;
   logger_t *logger;
   simulator_t simulator;
+
+  vec_t _a, _b;  /* workspace */
 } ppp_t;
 
 #define ppp_dim(self)       (self)->dim
