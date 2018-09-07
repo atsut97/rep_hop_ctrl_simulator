@@ -220,6 +220,20 @@ double vec_sqr_norm(vec_t v)
   return vec_dot( v, v );
 }
 
+double vec_sqr_dist(vec_t v1, vec_t v2)
+{
+  double d = 0;
+  register int i;
+
+  if( vec_size(v1) != vec_size(v2) ){
+    RUNTIME_ERR( ERR_SIZMIS );
+    return 0;
+  }
+  for( i=0; i<vec_size(v1); i++ )
+    d += sqr( vec_elem(v1,i) - vec_elem(v2,i) );
+  return d;
+}
+
 void vec_f_write(FILE *fp, vec_t v)
 {
   register size_t i;

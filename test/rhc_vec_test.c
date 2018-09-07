@@ -783,6 +783,84 @@ TEST(test_vec_norm)
     check_vec_norm( c->n, c->val, c->expected );
 }
 
+void check_vec_sqr_dist(size_t n, double *val1, double *val2, double expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n, val1 );
+  v2 = vec_create_array( n, val2 );
+  ASSERT_DOUBLE_EQ( expected, vec_sqr_dist( v1, v2 ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+}
+
+TEST(test_vec_sqr_dist)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double val2[10];
+    double expected;
+  } cases[] = {
+    { 2, { 0, 0 }, { 1, 1 }, 2 },
+    { 2, { -1, -1 }, { 1, 1 }, 8 },
+    { 3, { 1, 2, 3 }, { 4, 5, 6 }, 27 },
+    { 3, { 4, 5, 6 }, { 1, 2, 3 }, 27 },
+    { 0, {}, {}, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n>0; c++ )
+    check_vec_sqr_dist( c->n, c->val1, c->val2, c->expected );
+}
+
+TEST(test_vec_sqr_dist_size_mismatch)
+{
+  vec_t v1 = vec_create_list( 2, 1, 1 );
+  vec_t v2 = vec_create_list( 3, 1, 1, 1 );
+  double ret;
+
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  ret = vec_sqr_dist( v1, v2 );
+  ASSERT_STREQ( ERR_SIZMIS, __err_last_msg );
+  ASSERT_EQ( 0, ret );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+  ECHO_ON();
+}
+
+void check_vec_dist(size_t n, double *val1, double *val2, double expected)
+{
+  vec_t v1, v2;
+
+  v1 = vec_create_array( n, val1 );
+  v2 = vec_create_array( n, val2 );
+  ASSERT_DOUBLE_EQ( expected, vec_dist( v1, v2 ) );
+  vec_destroy( v1 );
+  vec_destroy( v2 );
+}
+
+TEST(test_vec_dist)
+{
+  struct case_t {
+    size_t n;
+    double val1[10];
+    double val2[10];
+    double expected;
+  } cases[] = {
+    { 2, { 0, 0 }, { 1, 1 }, sqrt(2) },
+    { 2, { -1, -1 }, { 1, 1 }, 2*sqrt(2) },
+    { 3, { 1, 2, 3 }, { 4, 5, 6 }, 3*sqrt(3) },
+    { 3, { 4, 5, 6 }, { 1, 2, 3 }, 3*sqrt(3) },
+    { 0, {}, {}, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n>0; c++ )
+    check_vec_dist( c->n, c->val1, c->val2, c->expected );
+}
+
 void check_vec_f_write(size_t n, double *val)
 {
   vec_t v;
@@ -867,6 +945,9 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_dot_size_mismatch);
   RUN_TEST(test_vec_sqr_norm);
   RUN_TEST(test_vec_norm);
+  RUN_TEST(test_vec_sqr_dist);
+  RUN_TEST(test_vec_sqr_dist_size_mismatch);
+  RUN_TEST(test_vec_dist);
   RUN_TEST(test_vec_f_write);
   RUN_TEST(test_vec_f_write_given_null);
 }
