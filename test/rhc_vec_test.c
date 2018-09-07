@@ -592,8 +592,10 @@ TEST(test_vec_match)
   };
   struct case_t *c;
 
+  ECHO_OFF();
   for( c=cases; c->n1>0; c++ )
     check_vec_match( c->n1, c->n2, c->val1, c->val2, c->expected );
+  ECHO_ON();
 }
 
 void check_vec_equal(size_t n1, size_t n2, double *val1, double *val2, bool expected)
@@ -629,8 +631,10 @@ TEST(test_vec_equal)
   };
   struct case_t *c;
 
+  ECHO_OFF();
   for( c=cases; c->n1>0; c++ )
     check_vec_equal( c->n1, c->n2, c->val1, c->val2, c->expected );
+  ECHO_ON();
 }
 
 void check_vec_near(size_t n1, size_t n2, double *val1, double *val2, double tol, bool expected)
@@ -667,8 +671,10 @@ TEST(test_vec_near)
   };
   struct case_t *c;
 
+  ECHO_OFF();
   for( c=cases; c->n1>0; c++ )
     check_vec_near( c->n1, c->n2, c->val1, c->val2, c->tol, c->expected );
+  ECHO_ON();
 }
 
 void check_vec_dot(int n, double *val1, double *val2, double expected)
@@ -717,6 +723,64 @@ TEST(test_vec_dot_size_mismatch)
   vec_destroy( v1 );
   vec_destroy( v2 );
   ECHO_ON();
+}
+
+void check_vec_sqr_norm(size_t n, double *val, double expected)
+{
+  vec_t v;
+
+  v = vec_create_array( n, val );
+  ASSERT_DOUBLE_EQ( expected, vec_sqr_norm( v ) );
+  vec_destroy( v );
+}
+
+TEST(test_vec_sqr_norm)
+{
+  struct case_t {
+    size_t n;
+    double val[10];
+    double expected;
+  } cases[] = {
+    { 2, { 0, 0 }, 0 },
+    { 2, { 1, 0 }, 1 },
+    { 2, { 1, 1 }, 2 },
+    { 3, { 2, 1, 0 }, 5 },
+    { 4, { 1, -1, 1, -1 }, 4 },
+    { 0, {}, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n>0; c++ )
+    check_vec_sqr_norm( c->n, c->val, c->expected );
+}
+
+void check_vec_norm(size_t n, double *val, double expected)
+{
+  vec_t v;
+
+  v = vec_create_array( n, val );
+  ASSERT_DOUBLE_EQ( expected, vec_norm( v ) );
+  vec_destroy( v );
+}
+
+TEST(test_vec_norm)
+{
+  struct case_t {
+    size_t n;
+    double val[10];
+    double expected;
+  } cases[] = {
+    { 2, { 0, 0 }, 0 },
+    { 2, { 1, 0 }, 1 },
+    { 2, { 1, 1 }, sqrt(2) },
+    { 3, { 2, 1, 0 }, sqrt(5) },
+    { 4, { 1, -1, 1, -1 }, 2 },
+    { 0, {}, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->n>0; c++ )
+    check_vec_norm( c->n, c->val, c->expected );
 }
 
 void check_vec_f_write(size_t n, double *val)
@@ -801,6 +865,8 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_near);
   RUN_TEST(test_vec_dot);
   RUN_TEST(test_vec_dot_size_mismatch);
+  RUN_TEST(test_vec_sqr_norm);
+  RUN_TEST(test_vec_norm);
   RUN_TEST(test_vec_f_write);
   RUN_TEST(test_vec_f_write_given_null);
 }

@@ -48,6 +48,10 @@ bool vec_near(vec_t v1, vec_t v2, double tol);
 /* inner product */
 double vec_dot(vec_t v1, vec_t v2);
 
+/* norm calculation */
+double vec_sqr_norm(vec_t v);
+#define vec_norm(v) sqrt( vec_sqr_norm(v) )
+
 /* output */
 void vec_f_write(FILE *fp, vec_t v);
 #define vec_write(v) vec_f_write( stdout, v )
