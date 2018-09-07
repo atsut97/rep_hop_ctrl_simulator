@@ -16,11 +16,13 @@ typedef struct {
 #define vec_ring_capacity(self) (self)->max
 #define vec_ring_size(self)     (self)->size
 
-#define vec_ring_index(self,index) ( (index) % vec_ring_capacity(self) )
-#define vec_ring_head_index(self)  (self)->head
-#define vec_ring_tail_index(self)  vec_ring_index(self, (self)->head - (self)->size + (self)->max + 1)
-#define vec_ring_head(self)        vec_ring_buf(self)[vec_ring_head_index(self)]
-#define vec_ring_tail(self)        vec_ring_buf(self)[vec_ring_tail_index(self)]
+#define vec_ring_index(self,index)  ( (index) % vec_ring_capacity(self) )
+#define vec_ring_head_index(self)   (self)->head
+#define vec_ring_tail_index(self)   vec_ring_index(self, (self)->head - (self)->size + (self)->max + 1)
+#define vec_ring_item_index(self,i) vec_ring_index(self, (self)->head - (self)->size + (self)->max + (i) + 1)
+#define vec_ring_head(self)         vec_ring_buf(self)[vec_ring_head_index(self)]
+#define vec_ring_tail(self)         vec_ring_buf(self)[vec_ring_tail_index(self)]
+#define vec_ring_item(self,i)       vec_ring_buf(self)[vec_ring_item_index(self,i)]
 
 void vec_ring_init(vec_ring_t *self, int dim, int size);
 void vec_ring_destroy(vec_ring_t *self);

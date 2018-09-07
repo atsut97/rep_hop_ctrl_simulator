@@ -183,6 +183,33 @@ TEST(test_vec_ring_tail_index)
   ASSERT_EQ( 1, vec_ring_tail_index(&ring) );
 }
 
+TEST(test_vec_ring_item_index)
+{
+  /* push 4 vectors */
+  vec_ring_push( &ring, v[0] );  /* <-tail */
+  vec_ring_push( &ring, v[1] );
+  vec_ring_push( &ring, v[2] );
+  vec_ring_push( &ring, v[3] );  /* <-head */
+
+  /* check item */
+  ASSERT_EQ( 0, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 1, vec_ring_item_index(&ring, 1) );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 2) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 3) );
+  /* pop one then check item */
+  vec_ring_pop( &ring );
+  ASSERT_EQ( 1, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 1) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 2) );
+  /* pop one then check item */
+  vec_ring_pop( &ring );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 1) );
+  /* pop one then check item */
+  vec_ring_pop( &ring );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 0) );
+}
+
 void print_index(vec_ring_t *vr, int line)
 {
   fprintf( stderr, "tail: %d ---- head: %d <size: %d> (LINE: %d)\n",
@@ -235,6 +262,64 @@ TEST(test_vec_ring_head_and_tail_indices)
   ASSERT_EQ( 4, vec_ring_size(&ring) );
   ASSERT_EQ( 3, vec_ring_head_index(&ring) );
   ASSERT_EQ( 0, vec_ring_tail_index(&ring) );
+}
+
+TEST(test_vec_ring_item_index2)
+{
+  /* max size is set to 7 */
+  ASSERT_EQ( 7, vec_ring_capacity(&ring) );
+
+  /* push 5 vectors */
+  vec_ring_push( &ring, v[0] );
+  vec_ring_push( &ring, v[1] );
+  vec_ring_push( &ring, v[2] );
+  vec_ring_push( &ring, v[3] );
+  vec_ring_push( &ring, v[4] );
+  ASSERT_EQ( 0, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 1, vec_ring_item_index(&ring, 1) );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 2) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 3) );
+  ASSERT_EQ( 4, vec_ring_item_index(&ring, 4) );
+
+  /* pop 2 vectors */
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 1) );
+  ASSERT_EQ( 4, vec_ring_item_index(&ring, 2) );
+
+  /* push 4 vectors */
+  vec_ring_push( &ring, v[5] );
+  vec_ring_push( &ring, v[6] );
+  vec_ring_push( &ring, v[7] );
+  vec_ring_push( &ring, v[8] );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 1) );
+  ASSERT_EQ( 4, vec_ring_item_index(&ring, 2) );
+  ASSERT_EQ( 5, vec_ring_item_index(&ring, 3) );
+  ASSERT_EQ( 6, vec_ring_item_index(&ring, 4) );
+  ASSERT_EQ( 0, vec_ring_item_index(&ring, 5) );
+  ASSERT_EQ( 1, vec_ring_item_index(&ring, 6) );
+
+  /* push more 2 vectors */
+  vec_ring_push( &ring, v[9] );
+  vec_ring_push( &ring, v[0] );
+  ASSERT_EQ( 4, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 5, vec_ring_item_index(&ring, 1) );
+  ASSERT_EQ( 6, vec_ring_item_index(&ring, 2) );
+  ASSERT_EQ( 0, vec_ring_item_index(&ring, 3) );
+  ASSERT_EQ( 1, vec_ring_item_index(&ring, 4) );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 5) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 6) );
+
+  /* pop 3 vectors */
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  ASSERT_EQ( 0, vec_ring_item_index(&ring, 0) );
+  ASSERT_EQ( 1, vec_ring_item_index(&ring, 1) );
+  ASSERT_EQ( 2, vec_ring_item_index(&ring, 2) );
+  ASSERT_EQ( 3, vec_ring_item_index(&ring, 3) );
 }
 
 TEST(test_vec_ring_push_one)
@@ -381,6 +466,30 @@ TEST(test_vec_ring_reset)
   ASSERT_PTREQ( NULL, vec_ring_pop(&ring) );
 }
 
+TEST(test_vec_ring_item)
+{
+  vec_ring_push( &ring, v[0] );
+  vec_ring_push( &ring, v[1] );
+  vec_ring_push( &ring, v[2] );
+
+  assert_vec( v[0], vec_ring_item( &ring, 0 ) );
+  assert_vec( v[1], vec_ring_item( &ring, 1 ) );
+  assert_vec( v[2], vec_ring_item( &ring, 2 ) );
+
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  vec_ring_pop( &ring );
+  push_until_full( &ring );
+
+  assert_vec( v[0], vec_ring_item( &ring, 0 ) );
+  assert_vec( v[1], vec_ring_item( &ring, 1 ) );
+  assert_vec( v[2], vec_ring_item( &ring, 2 ) );
+  assert_vec( v[3], vec_ring_item( &ring, 3 ) );
+  assert_vec( v[4], vec_ring_item( &ring, 4 ) );
+  assert_vec( v[5], vec_ring_item( &ring, 5 ) );
+  assert_vec( v[6], vec_ring_item( &ring, 6 ) );
+}
+
 TEST_SUITE(test_vec_ring)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -392,7 +501,9 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_full);
   RUN_TEST(test_vec_ring_head_index);
   RUN_TEST(test_vec_ring_tail_index);
+  RUN_TEST(test_vec_ring_item_index);
   RUN_TEST(test_vec_ring_head_and_tail_indices);
+  RUN_TEST(test_vec_ring_item_index2);
   RUN_TEST(test_vec_ring_push_one);
   RUN_TEST(test_vec_ring_pop_nothing);
   RUN_TEST(test_vec_ring_pop_one);
@@ -401,6 +512,7 @@ TEST_SUITE(test_vec_ring)
   RUN_TEST(test_vec_ring_push_some_then_pop_them);
   RUN_TEST(test_vec_ring_push_much_pop_some_then_push_again);
   RUN_TEST(test_vec_ring_reset);
+  RUN_TEST(test_vec_ring_item);
 }
 
 int main(int argc, char *argv[])
