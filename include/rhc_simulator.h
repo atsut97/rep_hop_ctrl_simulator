@@ -8,6 +8,8 @@
 #include "rhc_logger.h"
 #include "rhc_string.h"
 
+#define ERR_RESET_FAIL "user-given reset function faild"
+
 typedef struct _simulator_t{
   double t;
   int step;
@@ -18,6 +20,7 @@ typedef struct _simulator_t{
   ctrl_t *ctrl;
   model_t *model;
   int n_trial;
+  bool (*reset_fp)(struct _simulator_t*, void*);
   bool (*update_fp)(struct _simulator_t*, double, double, void*);
   void (*dump_fp)(struct _simulator_t*, logger_t*, void*);
   char tag[BUFSIZ];
@@ -42,6 +45,7 @@ typedef struct _simulator_t{
 simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model);
 void simulator_destroy(simulator_t *self);
 
+void simulator_set_reset_fp(simulator_t *self, bool (*reset_fp)(simulator_t*, void*));
 void simulator_set_update_fp(simulator_t *self, bool (*update_fp)(simulator_t*, double, double, void*));
 void simulator_set_dump_fp(simulator_t *self, void (*dump_fp)(simulator_t*, logger_t*, void*));
 
@@ -49,7 +53,7 @@ char *simulator_set_tag(simulator_t *self, const char* tag);
 char *simulator_update_default_tag(simulator_t *self);
 bool simulator_has_default_tag(simulator_t *self);
 vec_t simulator_dp(double t, vec_t x, void *util, vec_t v);
-void simulator_reset(simulator_t *self);
+void simulator_reset(simulator_t *self, void *util);
 bool simulator_update(simulator_t *self, double fe, double dt, void *util);
 void simulator_update_time(simulator_t *self, double dt);
 void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger, void *util);

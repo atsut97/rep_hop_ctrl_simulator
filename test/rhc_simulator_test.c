@@ -38,6 +38,7 @@ TEST(test_simulator_init)
   ASSERT_PTREQ( simulator_dp, sim.ode.f );
   ASSERT_PTRNE( NULL, sim.ode._ws );
   ASSERT_EQ( 0, simulator_n_trial( &sim ) );
+  ASSERT_PTREQ( NULL, sim.reset_fp );
   ASSERT_PTREQ( simulator_update, sim.update_fp );
   ASSERT_PTREQ( simulator_dump, sim.dump_fp );
   ASSERT_STREQ("", simulator_tag( &sim ) );
@@ -101,6 +102,22 @@ TEST(test_simulator_set_fe)
   }
 }
 
+struct reset_fp_prp{
+  bool ret_val;
+};
+
+bool reset_test(simulator_t *simulator, void *util)
+{
+  struct reset_fp_prp *prp = util;
+  return prp->ret_val;
+}
+
+TEST(test_simulator_set_reset_fp)
+{
+  simulator_set_reset_fp( &sim, reset_test );
+  ASSERT_PTREQ( reset_test, sim.reset_fp );
+}
+
 bool update_test(simulator_t *simulator, double dt, double t, void *util)
 {
   return true;
@@ -160,9 +177,21 @@ TEST(test_simulator_reset)
   simulator_update_time( &sim, 0.01 );
   ASSERT_NE( 0.0, simulator_time( &sim ) );
   ASSERT_NE( 0, simulator_step( &sim ) );
-  simulator_reset( &sim );
+  simulator_reset( &sim, NULL );
   ASSERT_EQ( 0.0, simulator_time( &sim ) );
   ASSERT_EQ( 0, simulator_step( &sim ) );
+}
+
+TEST(test_simulator_reset_check_fail)
+{
+  struct reset_fp_prp prp = { false };
+
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  simulator_set_reset_fp( &sim, reset_test );
+  simulator_reset( &sim, &prp );
+  ASSERT_STREQ( ERR_RESET_FAIL, __err_last_msg );
+  ECHO_ON();
 }
 
 TEST(test_simulator_update)
@@ -232,6 +261,7 @@ TEST_SUITE(test_simulator)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_simulator_init);
   RUN_TEST(test_simulator_destroy);
+  RUN_TEST(test_simulator_set_reset_fp);
   RUN_TEST(test_simulator_set_update_fp);
   RUN_TEST(test_simulator_set_dump_fp);
   RUN_TEST(test_simulator_set_state);
@@ -241,6 +271,7 @@ TEST_SUITE(test_simulator)
   RUN_TEST(test_simulator_update_default_tag);
   RUN_TEST(test_simulator_has_default_tag);
   RUN_TEST(test_simulator_reset);
+  RUN_TEST(test_simulator_reset_check_fail);
   RUN_TEST(test_simulator_update);
   RUN_TEST(test_simulator_run);
   RUN_TEST(test_simulator_run_multiple_times);

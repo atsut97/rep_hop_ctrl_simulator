@@ -12,6 +12,7 @@ simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t
   ode_assign( &self->ode, rk4 );
   ode_init( &self->ode, 2, simulator_dp );
   self->n_trial = 0;
+  simulator_set_reset_fp( self, NULL );
   simulator_set_update_fp( self, simulator_update );
   simulator_set_dump_fp( self, simulator_dump );
   simulator_set_tag( self, "" );
@@ -32,6 +33,11 @@ void simulator_destroy(simulator_t *self)
     ode_destroy( &self->ode );
   self->n_trial = 0;
   simulator_set_tag( self, "" );
+}
+
+void simulator_set_reset_fp(simulator_t *self, bool (*reset_fp)(simulator_t*, void*))
+{
+  self->reset_fp = reset_fp;
 }
 
 void simulator_set_update_fp(simulator_t *self, bool (*update_fp)(simulator_t*, double, double, void*))
@@ -81,10 +87,13 @@ vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
   return v;
 }
 
-void simulator_reset(simulator_t *self)
+void simulator_reset(simulator_t *self, void *util)
 {
   simulator_time( self ) = 0;
   simulator_step( self ) = 0;
+  if( self->reset_fp )
+    if( !self->reset_fp( self, util ) )
+      RUNTIME_ERR( ERR_RESET_FAIL );
 }
 
 bool simulator_update(simulator_t *self, double fe, double dt, void *util)
@@ -101,7 +110,7 @@ void simulator_update_time(simulator_t *self, double dt)
 
 void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger, void *util)
 {
-  simulator_reset( self );
+  simulator_reset( self, util );
   simulator_set_state( self, p0 );
   if( simulator_has_default_tag( self ) ){
     simulator_update_default_tag( self );
