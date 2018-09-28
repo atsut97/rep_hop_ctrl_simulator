@@ -32,10 +32,10 @@ TEST(test_phase_portrait_plotter_init)
   ASSERT_PTREQ( &model, ppp_model( &ppp ) );
   ASSERT_PTREQ( &ctrl, ppp_ctrl( &ppp ) );
   ASSERT_PTREQ( &logger, ppp_logger( &ppp ) );
-  ASSERT_EQ( 0, vec_elem( ppp_min( &ppp ), 0 ) );
-  ASSERT_EQ( 0, vec_elem( ppp_min( &ppp ), 1 ) );
-  ASSERT_EQ( 0, vec_elem( ppp_max( &ppp ), 0 ) );
-  ASSERT_EQ( 0, vec_elem( ppp_max( &ppp ), 1 ) );
+  ASSERT_EQ( -HUGE_VAL, vec_elem( ppp_min( &ppp ), 0 ) );
+  ASSERT_EQ( -HUGE_VAL, vec_elem( ppp_min( &ppp ), 1 ) );
+  ASSERT_EQ(  HUGE_VAL, vec_elem( ppp_max( &ppp ), 0 ) );
+  ASSERT_EQ(  HUGE_VAL, vec_elem( ppp_max( &ppp ), 1 ) );
   ASSERT_EQ( 10, ppp_n_sc( &ppp, 0 ) );
   ASSERT_EQ( 10, ppp_n_sc( &ppp, 1 ) );
   ASSERT_EQ( 0, vec_list_num( ppp_p0_list( &ppp ) ) );

@@ -13,8 +13,8 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t 
   ppp_logger(self) = logger;
   self->pmin = vec_create( ppp_dim( self ) );
   self->pmax = vec_create( ppp_dim( self ) );
-  vec_clear( self->pmin );
-  vec_clear( self->pmax );
+  vec_fill( self->pmin, -HUGE_VAL );
+  vec_fill( self->pmax, HUGE_VAL );
   if( (self->n_sc = nalloc( int, ppp_dim(self) ) ) == NULL ) {
     ALLOC_ERR();
     exit( 1 );
