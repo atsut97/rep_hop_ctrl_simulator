@@ -24,6 +24,7 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t 
 
   simulator_init( ppp_simulator(self), ppp_cmd(self), ppp_ctrl(self), ppp_model(self ) );
   simulator_set_default_logger( ppp_simulator(self), ppp_logger(self) );
+  simulator_set_reset_fp( ppp_simulator(self), ppp_simulator_reset );
   simulator_set_update_fp( ppp_simulator(self), ppp_simulator_update );
 
   /* prepare initial points list */
@@ -249,6 +250,14 @@ bool ppp_simulator_is_out_of_region(ppp_t *self, vec_t p)
 {
   return ( __is_lower_any( p, self->pmin ) ||
            __is_greater_any( p, self->pmax ) );
+}
+
+bool ppp_simulator_reset(simulator_t *self, void *util)
+{
+  ppp_t *ppp = util;
+
+  vec_ring_reset( ppp_point_buf(ppp) );
+  return true;
 }
 
 bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util)

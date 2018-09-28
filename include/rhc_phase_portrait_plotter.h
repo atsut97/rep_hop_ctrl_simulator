@@ -48,6 +48,7 @@ vec_t ppp_push_p0(ppp_t *self, vec_t p0);
 
 void ppp_generate_edge_points(ppp_t *self);
 
+bool ppp_simulator_reset(simulator_t *self, void *util);
 bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util);
 void ppp_run(ppp_t *self, double max_time, double dt);
 

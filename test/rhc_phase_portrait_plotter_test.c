@@ -186,6 +186,21 @@ TEST(test_phase_portrait_plotter_simulator_update)
   vec_destroy( p0 );
 }
 
+TEST(test_phase_portrait_plotter_simulator_update_reset_point_buffer)
+{
+  vec_t p0;
+
+  p0 = vec_create_list( 2, -3.0, 3.0 );
+  simulator_set_state( ppp_simulator(&ppp), p0 );
+  ASSERT_EQ( 0, vec_ring_size( ppp_point_buf(&ppp) ) );
+  simulator_run( ppp_simulator(&ppp), p0, 0.01, 0.001, NULL, &ppp );
+  ASSERT_EQ( 10, vec_ring_size( ppp_point_buf(&ppp) ) );
+
+  ASSERT_EQ( 10, vec_ring_size( ppp_point_buf(&ppp) ) );
+  simulator_run( ppp_simulator(&ppp), p0, 0.02, 0.001, NULL, &ppp );
+  ASSERT_EQ( 20, vec_ring_size( ppp_point_buf(&ppp) ) );
+}
+
 TEST_SUITE(test_phase_portrait_plotter)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -198,6 +213,7 @@ TEST_SUITE(test_phase_portrait_plotter)
   RUN_TEST(test_phase_portrait_plotter_push_p0);
   RUN_TEST(test_phase_portrait_plotter_generate_edge_points);
   RUN_TEST(test_phase_portrait_plotter_simulator_update);
+  RUN_TEST(test_phase_portrait_plotter_simulator_update_reset_point_buffer);
 }
 
 int main(int argc, char *argv[])
