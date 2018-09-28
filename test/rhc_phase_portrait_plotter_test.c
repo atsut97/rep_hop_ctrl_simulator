@@ -167,16 +167,19 @@ TEST(test_phase_portrait_plotter_generate_edge_points)
 TEST(test_phase_portrait_plotter_simulator_update)
 {
   vec_t p0 = vec_create_list( 2, -3.0, 3.0 );
+  bool ret;
 
   simulator_set_state( ppp_simulator(&ppp), p0 );
   ASSERT_EQ( 0, vec_ring_size( ppp_point_buf(&ppp) ) );
   ASSERT_GE( vec_ring_capacity( ppp_point_buf(&ppp) ), 10 );
 
-  ppp_simulator_update( ppp_simulator(&ppp), 0, 0.001, &ppp );
+  ret = ppp_simulator_update( ppp_simulator(&ppp), 0, 0.001, &ppp );
+  ASSERT_TRUE( ret );
   ASSERT_EQ( 1, vec_ring_size( ppp_point_buf(&ppp) ) );
   ASSERT_TRUE( vec_match( vec_ring_head( ppp_point_buf(&ppp) ), p0 ) );
 
-  ppp_simulator_update( ppp_simulator(&ppp), 0, 0.001, &ppp );
+  ret = ppp_simulator_update( ppp_simulator(&ppp), 0, 0.001, &ppp );
+  ASSERT_TRUE( ret );
   ASSERT_EQ( 2, vec_ring_size( ppp_point_buf(&ppp) ) );
   ASSERT_FALSE( vec_match( vec_ring_head( ppp_point_buf(&ppp) ), p0 ) );
 
