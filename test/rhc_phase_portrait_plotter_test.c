@@ -43,11 +43,14 @@ TEST(test_phase_portrait_plotter_init)
 
 TEST(test_phase_portrait_plotter_destroy)
 {
-  ppp_destroy( &ppp );
-  ASSERT_PTREQ( NULL, ppp_cmd( &ppp ) );
-  ASSERT_PTREQ( NULL, ppp_ctrl( &ppp ) );
-  ASSERT_PTREQ( NULL, ppp_model( &ppp ) );
-  ASSERT_PTREQ( NULL, ppp.n_sc );
+  ppp_t ppp2;
+
+  ppp_init( &ppp2, &cmd, &ctrl, &model, &logger );
+  ppp_destroy( &ppp2 );
+  ASSERT_PTREQ( NULL, ppp_cmd( &ppp2 ) );
+  ASSERT_PTREQ( NULL, ppp_ctrl( &ppp2 ) );
+  ASSERT_PTREQ( NULL, ppp_model( &ppp2 ) );
+  ASSERT_PTREQ( NULL, ppp2.n_sc );
 }
 
 TEST(test_phase_portrait_plotter_set_lim)
