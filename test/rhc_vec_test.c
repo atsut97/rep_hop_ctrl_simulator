@@ -119,6 +119,36 @@ TEST(test_vec_set_elem_list)
   vec_destroy( v );
 }
 
+void check_vec_fill(size_t n, double val)
+{
+  vec_t v;
+  register size_t i;
+
+  v = vec_create( n );
+  set_vec_rand( v );
+  vec_fill( v, val );
+  for( i=0; i<vec_size(v); i++ )
+    ASSERT_EQ( val,vec_elem(v,i) );
+  vec_destroy( v );
+}
+
+TEST(test_vec_fill)
+{
+  struct case_t {
+    int size;
+    double val;
+  } cases[] = {
+    { 2, 0.1 },
+    { 3, -0.5 },
+    { 4, 3.0 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->size>0; c++ )
+    check_vec_fill( c->size, c->val );
+}
+
 void check_vec_clear(size_t n)
 {
   vec_t v;
@@ -923,6 +953,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_set_elem_list);
   RUN_TEST(test_vec_create_list);
   RUN_TEST(test_vec_create_array);
+  RUN_TEST(test_vec_fill);
   RUN_TEST(test_vec_clear);
   RUN_TEST(test_vec_add);
   RUN_TEST(test_vec_add_size_mismatch);

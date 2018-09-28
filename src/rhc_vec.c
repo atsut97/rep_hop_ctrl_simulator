@@ -20,6 +20,15 @@ vec_t vec_set_elem_list(vec_t v, ... )
   return v;
 }
 
+vec_t vec_fill(vec_t v, double val)
+{
+  register size_t i;
+
+  for( i=0; i<vec_size(v); i++ )
+    vec_set_elem( v, i, val );
+  return v;
+}
+
 vec_t vec_clear(vec_t v)
 {
   memset( vec_buf(v), 0, sizeof(double)*vec_size(v) );
