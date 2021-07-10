@@ -121,7 +121,7 @@ void ppp_generate_edge_points_set_min_max(ppp_t *self, int ax, int ith, vec_t p0
   int bin[BUFSIZ];
   register int i, j;
 
-  memset( bin, 0, BUFSIZ );
+  memset( bin, 0, sizeof(int)*BUFSIZ );
   ppp_generate_edge_points_dec2bin( self, ith, bin );
   j = ppp_dim(self) - 2;
   for( i=0; i<ppp_dim(self); i++ ){
@@ -136,7 +136,7 @@ bool ppp_generate_edge_points_is_descending(ppp_t *self, int ax, int ith)
   register int i;
   int bin_sum = 0;
 
-  memset( bin, 0, BUFSIZ );
+  memset( bin, 0, sizeof(int)*BUFSIZ );
   ppp_generate_edge_points_dec2bin( self, ith, bin );
   for( i=0; i<ppp_dim(self); i++ )
     bin_sum += bin[i];
