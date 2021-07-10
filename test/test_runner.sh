@@ -2,14 +2,14 @@
 
 # usage
 usage () {
-    echo "./test_runner <options> test1 test2 ..."
-    echo "Arguments:"
-    echo "\tSpecify tests to be executed. If none of tests"
-    echo "\tis specified all the tests will be executed."
-    echo ""
-    echo "Options:"
-    echo "\t-h|-help      show this message and exit."
-    echo "\t-m|-memcheck  check memory leak using valgrind."
+    printf "./test_runner <options> test1 test2 ...\n"
+    printf "Arguments:\n"
+    printf "\tSpecify tests to be executed. If none of tests\n"
+    printf "\tis specified all the tests will be executed.\n"
+    printf "\n"
+    printf "Options:\n"
+    printf "\t-h|-help      show this message and exit.\n"
+    printf "\t-m|-memcheck  check memory leak using valgrind.\n"
 }
 
 # parse arguments
@@ -36,8 +36,8 @@ done
 # arguments: none
 # output: found exes are output to stdout
 find_exe () {
-    found_exe=`find $1 -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | sed -e "s/:.*$//g"`
-    echo $found_exe
+    found_exe=$(find "$1" -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | sed -e "s/:.*$//g")
+    echo "$found_exe"
 }
 
 # check if a variable is contained in a list
@@ -58,7 +58,7 @@ contain () {
 
 # check if a command is available
 command_exist () {
-    command -v $1 >/dev/null 2>&1
+    command -v "$1" >/dev/null 2>&1
     ret=$?
     if [ $ret -gt 0 ]; then
         echo "$1 is not available"
@@ -71,9 +71,9 @@ command_exist () {
 # argumets: a test to run
 # output: return value of the test
 run_test () {
-    test_name=`echo $i | sed -e "s/^..//g"`
-    echo "\nRunning $test_name..."
-    $VALGRIND$1
+    test_name=$(echo "$i" | sed -e "s/^..//g")
+    printf "\nRunning %s...\n" "$test_name"
+    $VALGRIND "$1"
     return $?
 }
 
@@ -82,8 +82,8 @@ report_failed_tests () {
     printf "\n"
     printf "\033[31m==============================\n"
     printf "\033[31m There are some failed tests!\n"
-    for i in $@; do
-        printf "\033[31m   * $i\n"
+    for i in "$@"; do
+        printf "\033[31m   * %s\n" "$i"
     done
     printf "\033[31m==============================\n"
     printf "\033[0m"
@@ -100,7 +100,7 @@ report_all_green () {
 # arguments: a list of failed tests
 report () {
     if [ $# -gt 0 ]; then
-        report_failed_tests $@
+        report_failed_tests "$@"
     else
         report_all_green
     fi
@@ -111,8 +111,8 @@ report () {
 #
 
 # if no test is specified find all tests
-if [ -z $TESTS ]; then
-    TESTS=`find_exe .`
+if [ -z "$TESTS" ]; then
+    TESTS=$(find_exe .)
 fi
 # check memcheck flag
 VALGRIND=
@@ -127,16 +127,16 @@ fi
 SKIPPED_TESTS="./rhc_test_test"
 FAILED_TESTS=""
 for i in $TESTS; do
-    contain $i $SKIPPED_TESTS
+    contain "$i" "$SKIPPED_TESTS"
     ret=$?
     if [ $ret -eq 0 ]; then
         # echo "$i is skipped"
         continue
     fi
-    run_test $i
-    if [ $? -gt 0 ]; then
+
+    if ! run_test "$i"; then
         FAILED_TESTS="$FAILED_TESTS $test_name"
     fi
 done
 
-report $FAILED_TESTS
+report "$FAILED_TESTS"
