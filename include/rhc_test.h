@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <time.h>	/* clock_gettime() */
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
@@ -43,9 +44,14 @@ static void (*__test_teardown)() = NULL;
 
 #define STACK_FAILURE_MESSAGE(message) do{\
   if( __test_fail < TEST_N_MSG_STACK - 1 )\
-    snprintf( __test_messages[__test_fail], TEST_BUFSIZ, "FAIL: %s (%s:%d)\n%s%s\n", __test_running_test_name, __FILE__, __LINE__, TEST_SEPARATOR2, message );\
+    snprintf( __test_messages[__test_fail], TEST_BUFSIZ,\
+              "FAIL: %s (%s:%d)\n%s%s\n",\
+              __test_running_test_name, __FILE__, __LINE__, TEST_SEPARATOR2, message )\
+        < 0 ? abort() : (void)0;\
   else\
-    snprintf( __test_messages[TEST_N_MSG_STACK-1], TEST_BUFSIZ, "Too many failures! (subsequent messages are skipped)\n" );\
+    snprintf( __test_messages[TEST_N_MSG_STACK-1], TEST_BUFSIZ,\
+              "Too many failures! (subsequent messages are skipped)\n" )\
+        < 0 ? abort() : (void)0;\
 } while( 0 )
 
 #define ASSERT(test, message) do{\
@@ -58,24 +64,35 @@ static void (*__test_teardown)() = NULL;
 } while( 0 )
 
 #define FAIL(message) do{\
-  snprintf( __test_last_message, TEST_BUFSIZ, "%s", message);\
+  snprintf( __test_last_message, TEST_BUFSIZ,\
+            "%s", message)\
+      < 0 ? abort() : (void)0;\
   ASSERT( 0, __test_last_message );\
 } while( 0 )
 
 #define ASSERT_TRUE(cond) do{\
-  snprintf( __test_last_message, TEST_BUFSIZ, "Value of %s\nExpected: true\n But was: false", #cond );\
+  snprintf( __test_last_message, TEST_BUFSIZ,\
+            "Value of %s\nExpected: true\n But was: false",\
+            #cond )\
+      < 0 ? abort() : (void)0;\
   ASSERT( (cond), __test_last_message );\
 } while( 0 )
 
 #define ASSERT_FALSE(cond) do{\
-  snprintf( __test_last_message, TEST_BUFSIZ, "Value of %s\nExpected: false\n But was: true", #cond );\
+  snprintf( __test_last_message, TEST_BUFSIZ,\
+            "Value of %s\nExpected: false\n But was: true",\
+            #cond )\
+      < 0 ? abort() : (void)0;\
   ASSERT( !(cond), __test_last_message );\
 } while( 0 )
 
 #define ASSERT_EQ(expected, actual) do{\
   if( (expected) != (actual) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %g\n But was: %g", #actual, (double)expected, (double)actual );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Value of: %s\nExpected: %g\n But was: %g",\
+              #actual, (double)expected, (double)actual )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -85,7 +102,10 @@ static void (*__test_teardown)() = NULL;
 #define ASSERT_NE(expected, actual) do{\
   if( (expected) == (actual) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) != (%s)\n But was: %g vs %g", #expected, #actual, (double)expected, (double)actual );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Expected: (%s) != (%s)\n But was: %g vs %g",\
+              #expected, #actual, (double)expected, (double)actual )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -97,7 +117,10 @@ static void (*__test_teardown)() = NULL;
   double __actual_double   = (actual);\
   if( fabs( (__expected_double) - (__actual_double) ) > TEST_TOL ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %.10g\n But was: %.10g", #actual, __expected_double, __actual_double);\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Value of: %s\nExpected: %.10g\n But was: %.10g",\
+              #actual, __expected_double, __actual_double)\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -109,7 +132,10 @@ static void (*__test_teardown)() = NULL;
   double __actual_double   = (actual);\
   if( fabs( (__expected_double) - (__actual_double) ) > (tol) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %.10g\n But was: %.10g\nTolerance: %.10g", #actual, __expected_double, __actual_double, (tol) );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Value of: %s\nExpected: %.10g\n But was: %.10g\nTolerance: %.10g",\
+              #actual, __expected_double, __actual_double, (tol) )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -121,7 +147,10 @@ static void (*__test_teardown)() = NULL;
   double __tmp_val2 = (val2);\
   if( !( __tmp_val1 > __tmp_val2 ) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) > (%s)\n But was: %g vs %g", #val1, #val2, __tmp_val1, __tmp_val2 );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Expected: (%s) > (%s)\n But was: %g vs %g",\
+              #val1, #val2, __tmp_val1, __tmp_val2 )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -133,7 +162,10 @@ static void (*__test_teardown)() = NULL;
   double __tmp_val2 = (val2);\
   if( !( __tmp_val1 >= __tmp_val2 ) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) >= (%s)\n But was: %g vs %g", #val1, #val2, __tmp_val1, __tmp_val2 );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Expected: (%s) >= (%s)\n But was: %g vs %g",\
+              #val1, #val2, __tmp_val1, __tmp_val2 )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -145,7 +177,10 @@ static void (*__test_teardown)() = NULL;
   double __tmp_val2 = (val2);\
   if( !( __tmp_val1 < __tmp_val2 ) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) < (%s)\n But was: %g vs %g", #val1, #val2, __tmp_val1, __tmp_val2 );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Expected: (%s) < (%s)\n But was: %g vs %g",\
+              #val1, #val2, __tmp_val1, __tmp_val2 )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -157,7 +192,10 @@ static void (*__test_teardown)() = NULL;
   double __tmp_val2 = (val2);\
   if( !( __tmp_val1 <= __tmp_val2 ) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) <= (%s)\n But was: %g vs %g", #val1, #val2, __tmp_val1, __tmp_val2 );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Expected: (%s) <= (%s)\n But was: %g vs %g",\
+              #val1, #val2, __tmp_val1, __tmp_val2 )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -167,7 +205,10 @@ static void (*__test_teardown)() = NULL;
 #define ASSERT_STREQ(expected, actual) do{\
   if( strcmp( (expected), (actual) ) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %s\n But was: %s", #actual, expected, actual );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Value of: %s\nExpected: %s\n But was: %s",\
+              #actual, expected, actual )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -177,7 +218,10 @@ static void (*__test_teardown)() = NULL;
 #define ASSERT_PTREQ(expected, actual) do{\
   if( (expected) != (actual) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Value of: %s\nExpected: %p\n But was: %p", #actual, expected, actual );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Value of: %s\nExpected: %p\n But was: %p",\
+              #actual, expected, actual )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -187,7 +231,10 @@ static void (*__test_teardown)() = NULL;
 #define ASSERT_PTRNE(expected, actual) do{\
   if( (expected) == (actual) ){\
     __test_status = 1;\
-    snprintf( __test_last_message, TEST_BUFSIZ, "Expected: (%s) != (%s)\n But was: %p vs %p", #expected, #actual, expected, actual );\
+    snprintf( __test_last_message, TEST_BUFSIZ,\
+              "Expected: (%s) != (%s)\n But was: %p vs %p",\
+              #expected, #actual, expected, actual )\
+        < 0 ? abort() : (void)0;\
     STACK_FAILURE_MESSAGE( __test_last_message );\
     __test_fail++;\
     return;\
@@ -196,7 +243,10 @@ static void (*__test_teardown)() = NULL;
 
 #define RUN_TEST(test_name) do{\
   if( __test_timer_time == 0 ) __test_timer_time = test_timer();\
-  snprintf( __test_running_test_name, TEST_BUFSIZ, "%s", #test_name );\
+  snprintf( __test_running_test_name, TEST_BUFSIZ,\
+            "%s",\
+            #test_name )\
+      < 0 ? abort() : (void)0;\
   if( __test_setup ) (*__test_setup)();\
   __test_status = 0;\
   test_name();\
