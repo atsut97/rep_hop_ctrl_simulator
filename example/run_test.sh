@@ -18,6 +18,6 @@ if [ $RET -gt 0 ]; then
   exit 1
 fi
 
-if [ -f Pipfile ]; then
-  pipenv run ./plot_one_hop.py "$TEST.csv"
+if [ -f pyproject.toml ]; then
+  poetry run ./plot_one_hop.py "$TEST.csv"
 fi
