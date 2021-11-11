@@ -199,6 +199,8 @@ TEST(test_phase_portrait_plotter_simulator_update_reset_point_buffer)
   ASSERT_EQ( 10, vec_ring_size( ppp_point_buf(&ppp) ) );
   simulator_run( ppp_simulator(&ppp), p0, 0.02, 0.001, NULL, &ppp );
   ASSERT_EQ( 20, vec_ring_size( ppp_point_buf(&ppp) ) );
+
+  vec_destroy( p0 );
 }
 
 TEST_SUITE(test_phase_portrait_plotter)
