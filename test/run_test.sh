@@ -249,5 +249,7 @@ main() {
 }
 
 # Skip rhc_test_test because it always fails.
-skipped="${skipped} rhc_test_test"
+if [ $# -eq 0 ]; then
+  skipped="${skipped} rhc_test_test"
+fi
 main "$@"
