@@ -29,10 +29,11 @@ debug:
 .PHONY: test
 test: all
 ifeq ($(MEMCHECK),y)
-	@echo "Running test_runner in memory check mode..."
-	@./test_runner.sh -m
+# $ make test MEMCHECK=y
+	@echo "Running tests in memory check mode..."
+	@./run_test.sh --memcheck
 else
-	@./test_runner.sh
+	@./run_test.sh
 endif
 
 %_test: %_test.o $(OBJS)
