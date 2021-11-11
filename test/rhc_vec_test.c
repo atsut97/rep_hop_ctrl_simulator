@@ -1,5 +1,5 @@
-#include "rhc_vec.h"
 #include "rhc_test.h"
+#include "rhc_vec.h"
 #include <malloc.h>
 
 /* set random values to a vector */

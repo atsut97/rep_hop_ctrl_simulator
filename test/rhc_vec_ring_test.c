@@ -1,5 +1,5 @@
-#include "rhc_vec_ring.h"
 #include "rhc_test.h"
+#include "rhc_vec_ring.h"
 
 #define SIZE 7
 #define NUM_VEC ( SIZE + 3 )

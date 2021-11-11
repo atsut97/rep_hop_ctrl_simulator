@@ -1,5 +1,5 @@
-#include "rhc_vec_list.h"
 #include "rhc_test.h"
+#include "rhc_vec_list.h"
 
 vec_list_node_t *node1, *node2, *node3;
 

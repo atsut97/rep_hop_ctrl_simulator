@@ -1,5 +1,5 @@
-#include "rhc_simulator.h"
 #include "rhc_ctrl_regulator.h"
+#include "rhc_simulator.h"
 
 #define DT 0.001
 #define T  10

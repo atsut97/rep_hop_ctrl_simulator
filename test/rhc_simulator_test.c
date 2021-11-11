@@ -1,5 +1,5 @@
-#include "rhc_simulator.h"
 #include "rhc_ctrl_dummy.h"
+#include "rhc_simulator.h"
 #include "rhc_test.h"
 
 cmd_t cmd;

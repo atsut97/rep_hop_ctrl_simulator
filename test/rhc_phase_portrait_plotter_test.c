@@ -1,5 +1,5 @@
-#include "rhc_phase_portrait_plotter.h"
 #include "rhc_ctrl_dummy.h"
+#include "rhc_phase_portrait_plotter.h"
 #include "rhc_test.h"
 
 cmd_t cmd;

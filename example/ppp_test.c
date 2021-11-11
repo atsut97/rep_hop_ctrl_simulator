@@ -1,7 +1,7 @@
-#include "rhc_phase_portrait_plotter.h"
+#include "rhc_ctrl_regulator.h"
 #include "rhc_ctrl_slip.h"
 #include "rhc_ctrl_slip_var_stiff.h"
-#include "rhc_ctrl_regulator.h"
+#include "rhc_phase_portrait_plotter.h"
 
 #define DT 0.001
 #define T  10
