@@ -230,6 +230,10 @@ main() {
     done
   else
     for filepath in "$@"; do
+      case "$filepath" in
+        /*|./*) ;;
+        *) filepath="$(pwd)/$filepath" ;;
+      esac
       if ! try_run_test "$filepath"; then
         basename "$filepath" >"$pipe" &
       fi
