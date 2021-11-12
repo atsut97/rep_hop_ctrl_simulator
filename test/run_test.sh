@@ -209,7 +209,7 @@ report_summary() {
 }
 
 # Get the directory path where this script exists.
-this_directory=$(cd -- "$(dirname -- "$0")" && pwd -P)
+test_directory=$(cd -- "$(dirname -- "$0")" && pwd -P)
 
 # Prints executable files in the specified directory, but exclude
 # executable shell scripts.
@@ -223,7 +223,7 @@ main() {
   pipe="$tmpdir/pipe"
   mkfifo "$pipe"; :>"$pipe" &
   if [ $# -eq 0 ]; then
-    find_all_tests "$this_directory" | while IFS='' read -r filepath; do
+    find_all_tests "$test_directory" | while IFS='' read -r filepath; do
       if ! try_run_test "$filepath"; then
         basename "$filepath" >"$pipe" &
       fi
