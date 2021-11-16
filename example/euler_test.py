@@ -11,10 +11,11 @@ def plot(data):
 
 def main():
     import sys
+
     data = np.loadtxt(sys.argv[1])
     plot(data)
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
