@@ -51,6 +51,9 @@ Options:
   --no-make
     Do not run make.
 
+  -n, --dry-run
+    Just print commands to be executed if it were not for this option.
+
   -h, --help
     Show this message.
 
@@ -78,6 +81,7 @@ delete=0
 make=1
 run=1
 plot=1
+dryrun=0
 while :; do
   case $1 in
     -h|--help)
@@ -130,6 +134,9 @@ while :; do
     --no-make)
       make=0
       ;;
+    -n|--dryrun|--dry-run)
+      dryrun=1
+      ;;
     --)
       shift
       break
@@ -164,9 +171,19 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+# Execute the provided arguments when --dry-option is not enable,
+# otherwise just print them.
+execcmd() {
+  if [ $((dryrun)) -ne 0 ]; then
+    echo "$@"
+  else
+    "$@"
+  fi
+}
+
 # Run make.
 if [ $((make)) -ne 0 ]; then
-  make
+  execcmd make
 fi
 
 # Run program and redirect produced output to an intermediate data
@@ -181,8 +198,11 @@ if [ $((run)) -ne 0 ]; then
   ret=
   if [ -f "$program" ]; then
     [ -z "$data" ] && data="${program_name}.csv"
-    # "$program" "$@" >"$data"
-    "$program" "$@" '>' "$data"
+    if [ $((dryrun)) -ne 0 ]; then
+      execcmd "$program" "$@" '>' "$data"
+    else
+      execcmd "$program" "$@" > "$data"
+    fi
     ret=$?
   else
     echo >&2 "error: $program not found"
@@ -230,14 +250,14 @@ fi
 
 if command -v poetry >/dev/null && \
     [ -f "${example_directory}/pyproject.toml" ]; then
-  poetry run "$plot_script" "$data"
+  execcmd poetry run "$plot_script" "$data"
 elif command -v pipenv >/dev/null && \
     [ -f "${example_directory}/Pipfile" ]; then
-  pipenv run "$plot_script" "$data"
+  execcmd pipenv run "$plot_script" "$data"
 elif command -v python >/dev/null; then
   py_ver=$(python --version | cut -d' ' -f2)
   if [ "${py_ver%%.*}" -gt 2 ]; then
-    python "$plot_script" "$data"
+    execcmd python "$plot_script" "$data"
   else
     echo >&2 "error: Python3 is required"
     exit 1
