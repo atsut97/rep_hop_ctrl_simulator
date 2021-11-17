@@ -98,7 +98,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness)
     double m, z, v, z0, zd, zb;
     double expected_k;
   } cases[] = {
-    /* decompression phases */
+    /* extension phases */
     { 1, 0.24, 0, 0.26, 0.28, 0.24, 200*G },
     { 1, 0.25, 0.1, 0.26, 0.28, 0.24, (6*G-1)*100 },
     { 2, 0.24, 0, 0.26, 0.28, 0.24, 400*G },

@@ -98,12 +98,12 @@ TEST(test_ctrl_flight)
     { 0.3,  0.26, -0.15, false },     /* compression */
     { 0.26, 0.24, 0.0,   false },     /* bottom */
     { 0.3,  0.26, 0.0,   false },     /* bottom */
-    { 0.26, 0.26, 0.1,   false },     /* decompression */
-    { 0.26, 0.25, 0.1,   false },     /* decompression */
-    { 0.26, 0.24, 0.15,  false },     /* decompression */
-    { 0.3,  0.3,  0.1,   false },     /* decompression */
-    { 0.3,  0.28, 0.1,   false },     /* decompression */
-    { 0.3,  0.26, 0.15,  false },     /* decompression */
+    { 0.26, 0.26, 0.1,   false },     /* extension */
+    { 0.26, 0.25, 0.1,   false },     /* extension */
+    { 0.26, 0.24, 0.15,  false },     /* extension */
+    { 0.3,  0.3,  0.1,   false },     /* extension */
+    { 0.3,  0.28, 0.1,   false },     /* extension */
+    { 0.3,  0.26, 0.15,  false },     /* extension */
     { 0.0, 0.0, 0.0, false }
   };
   struct case_t *c;
@@ -140,12 +140,12 @@ TEST(test_ctrl_compression)
     { 0.3,  0.26, -0.15, true  },     /* compression */
     { 0.26, 0.24, 0.0,   false },     /* bottom */
     { 0.3,  0.26, 0.0,   false },     /* bottom */
-    { 0.26, 0.26, 0.1,   false },     /* decompression */
-    { 0.26, 0.25, 0.1,   false },     /* decompression */
-    { 0.26, 0.24, 0.15,  false },     /* decompression */
-    { 0.3,  0.3,  0.1,   false },     /* decompression */
-    { 0.3,  0.28, 0.1,   false },     /* decompression */
-    { 0.3,  0.26, 0.15,  false },     /* decompression */
+    { 0.26, 0.26, 0.1,   false },     /* extension */
+    { 0.26, 0.25, 0.1,   false },     /* extension */
+    { 0.26, 0.24, 0.15,  false },     /* extension */
+    { 0.3,  0.3,  0.1,   false },     /* extension */
+    { 0.3,  0.28, 0.1,   false },     /* extension */
+    { 0.3,  0.26, 0.15,  false },     /* extension */
     { 0.0, 0.0, 0.0, false }
   };
   struct case_t *c;
@@ -162,7 +162,7 @@ TEST(test_ctrl_compression)
   }
 }
 
-TEST(test_ctrl_decompression)
+TEST(test_ctrl_extension)
 {
   struct case_t {
     double z0, z, v;
@@ -182,18 +182,18 @@ TEST(test_ctrl_decompression)
     { 0.3,  0.26, -0.15, false },     /* compression */
     { 0.26, 0.24, 0.0,   true  },     /* bottom */
     { 0.3,  0.26, 0.0,   true  },     /* bottom */
-    { 0.26, 0.26, 0.1,   true  },     /* decompression */
-    { 0.26, 0.25, 0.1,   true  },     /* decompression */
-    { 0.26, 0.24, 0.15,  true  },     /* decompression */
-    { 0.3,  0.3,  0.1,   true  },     /* decompression */
-    { 0.3,  0.28, 0.1,   true  },     /* decompression */
-    { 0.3,  0.26, 0.15,  true  },     /* decompression */
+    { 0.26, 0.26, 0.1,   true  },     /* extension */
+    { 0.26, 0.25, 0.1,   true  },     /* extension */
+    { 0.26, 0.24, 0.15,  true  },     /* extension */
+    { 0.3,  0.3,  0.1,   true  },     /* extension */
+    { 0.3,  0.28, 0.1,   true  },     /* extension */
+    { 0.3,  0.26, 0.15,  true  },     /* extension */
     { 0.0, 0.0, 0.0, false }
   };
   struct case_t *c;
   bool (*method)(ctrl_t*,vec_t);
 
-  method = ctrl_is_in_decompression;
+  method = ctrl_is_in_extension;
   for( c=cases; c->z>0; c++ ){
     cmd.z0 = c->z0;
     vec_set_elem_list( p, 2, c->z, c->v );
@@ -343,7 +343,7 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_zb);
   RUN_TEST(test_ctrl_flight);
   RUN_TEST(test_ctrl_compression);
-  RUN_TEST(test_ctrl_decompression);
+  RUN_TEST(test_ctrl_extension);
   RUN_TEST(test_ctrl_v0);
   RUN_TEST(test_ctrl_update_default);
   RUN_TEST(test_ctrl_calc_phase_complex);

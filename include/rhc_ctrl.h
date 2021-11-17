@@ -36,7 +36,7 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model);
 
 bool ctrl_is_in_flight(ctrl_t *self, vec_t p);
 bool ctrl_is_in_compression(ctrl_t *self, vec_t p);
-bool ctrl_is_in_decompression(ctrl_t *self, vec_t p);
+bool ctrl_is_in_extension(ctrl_t *self, vec_t p);
 
 double ctrl_calc_sqr_v0(double z0, double zd);
 #define ctrl_calc_v0(z0,zd) sqrt( ctrl_calc_sqr_v0( z0, zd ) )
