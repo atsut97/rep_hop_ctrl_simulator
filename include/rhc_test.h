@@ -5,8 +5,9 @@
 /*       http://www.jera.com/techinfo/jtns/jtn002.html */
 
 /* TODO: */
-/*   - Make timer function be compatible with otherwise Linux */
-/*   - Remove limit of failure message number */
+/*   - Make timer function be compatible with other Linux
+       distributions than Ubuntu. */
+/*   - Remove limitation of number of failure messages. */
 
 #include <unistd.h>
 #include <time.h>	/* clock_gettime() */
