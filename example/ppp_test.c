@@ -2,6 +2,7 @@
 #include "rhc_ctrl_slip.h"
 #include "rhc_ctrl_slip_var_stiff.h"
 #include "rhc_phase_portrait_plotter.h"
+#include "rhc_string.h"
 
 #define DT 0.001
 #define T  10
@@ -19,25 +20,38 @@ enum ctrl_list {
 };
 enum ctrl_list ctrl_id = NONE;
 
-void parse(int argc, char *argv[])
+void usage(int argc, const char *argv[])
 {
-  char *name;
+  fprintf( stderr, "Usage:\n" );
+  fprintf( stderr, "  %s <controller name>\n", argv[0] );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, "  Acceptable controller names:\n" );
+  fprintf( stderr, "    slip             SLIP model\n" );
+  fprintf( stderr, "    slip_var_stiff   SLIP model with variable stiffness\n" );
+  fprintf( stderr, "    regulator        Regulator\n" );
+}
 
-  if( argc < 2 ){
+void parse(int argc, const char *argv[])
+{
+  if( argc < 2 ) {
     ctrl_id = SLIP;
     return;
   }
 
-  name = argv[1];
-  if( strcmp( name, "slip" ) == 0 )
+  if( string_ends_with( argv[1], "help" ) ) {
+    usage( argc, argv );
+    exit( 0 );
+  } else if( strcmp( argv[1], "slip" ) == 0 )
     ctrl_id = SLIP;
-  else if( strcmp( name, "slip_var_stiff" ) == 0 )
+  else if( strcmp( argv[1], "slip_var_stiff" ) == 0 )
     ctrl_id = SLIP_VAR_STIFF;
-  else if( strcmp( name, "regulator" ) == 0)
+  else if( strcmp( argv[1], "regulator" ) == 0)
     ctrl_id = REGULATOR;
   else {
-    fprintf( stderr, "%s is not available\n", name );
+    fprintf( stderr, "%s is not available\n", argv[1] );
     ctrl_id = NONE;
+    usage( argc, argv );
+    exit( 1 );
   }
 }
 
@@ -47,16 +61,6 @@ void init()
   model_init( &model, 10 );
   logger_init( &logger );
   ppp_init( &plotter, &cmd, &ctrl, &model, &logger );
-}
-
-void usage()
-{
-  fprintf( stderr, "Usage:\n" );
-  fprintf( stderr, "ppp_test <controller name>\n");
-  fprintf( stderr, "  Controller names:\n" );
-  fprintf( stderr, "    slip             SLIP model\n" );
-  fprintf( stderr, "    slip_var_stiff   SLIP model with variable stiffness\n" );
-  fprintf( stderr, "    regulator        Regulator\n" );
 }
 
 void make_initial_points(ppp_t *ppp)
@@ -115,7 +119,6 @@ void setup_ctrl()
       break;
     case NONE:
     default:
-      usage();
       exit( 1 );
       break;
   }
@@ -135,7 +138,7 @@ void destroy()
   cmd_destroy( &cmd );
 }
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
   parse( argc, argv );
   init();
