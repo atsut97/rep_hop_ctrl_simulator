@@ -13,8 +13,9 @@
 #endif  /* BUFSIZ */
 
 /* error messages */
-#define ERR_SIZMIS  "size mismatch of vector"
-#define ERR_ZERODIV "division by zero"
+#define ERR_SIZMIS        "size mismatch of vector"
+#define ERR_ZERODIV       "division by zero"
+#define ERR_BUF_EXHAUSTED "exhausted buffer for string"
 
 #ifndef __USE_MISC
 typedef unsigned int       uint;
