@@ -9,12 +9,12 @@
        distributions than Ubuntu. */
 /*   - Remove limitation of number of failure messages. */
 
-#include <unistd.h>
-#include <time.h>	/* clock_gettime() */
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
+#include <time.h>	/* clock_gettime() */
+#include <unistd.h>
 
 #define TEST_BUFSIZ      1024
 #define TEST_N_MSG_STACK 64
