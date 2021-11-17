@@ -1,11 +1,11 @@
 #ifndef __RHC_SIMULATOR_H__
 #define __RHC_SIMULATOR_H__
 
-#include "rhc_ode.h"
 #include "rhc_cmd.h"
 #include "rhc_ctrl.h"
-#include "rhc_model.h"
 #include "rhc_logger.h"
+#include "rhc_model.h"
+#include "rhc_ode.h"
 #include "rhc_string.h"
 
 #define ERR_RESET_FAIL "user-given reset function faild"

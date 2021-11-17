@@ -1,11 +1,11 @@
 #ifndef __RHC_DEFS_H__
 #define __RHC_DEFS_H__
 
+#include <math.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
-#include <math.h>
 #include <time.h>
 
 #ifndef BUFSIZ

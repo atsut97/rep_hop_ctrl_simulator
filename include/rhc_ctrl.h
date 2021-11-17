@@ -1,10 +1,10 @@
 #ifndef __RHC_CTRL_H__
 #define __RHC_CTRL_H__
 
-#include "rhc_complex.h"
-#include "rhc_vec.h"
 #include "rhc_cmd.h"
+#include "rhc_complex.h"
 #include "rhc_model.h"
+#include "rhc_vec.h"
 
 typedef struct _ctrl_t{
   cmd_t *cmd;

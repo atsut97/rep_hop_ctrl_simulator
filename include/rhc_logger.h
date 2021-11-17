@@ -1,9 +1,9 @@
 #ifndef __RHC_LOGGER_H__
 #define __RHC_LOGGER_H__
 
-#include "rhc_misc.h"
 #include "rhc_cmd.h"
 #include "rhc_ctrl.h"
+#include "rhc_misc.h"
 #include "rhc_model.h"
 
 /* definition of _simulator_t exists in rhc_simulator.h */
