@@ -129,7 +129,7 @@ void run()
 void destroy()
 {
   ppp_destroy( &plotter );
-  logger_destroy( &logger);
+  logger_destroy( &logger );
   model_destroy( &model );
   ctrl_destroy( &ctrl );
   cmd_destroy( &cmd );
