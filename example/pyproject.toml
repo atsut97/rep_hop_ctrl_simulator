@@ -1,18 +1,17 @@
 [tool.poetry]
-name = "scripts"
+name = "rhc_scripts"
 version = "0.1.0"
-description = "Python scripts to create graph figures"
-authors = ["Hiroshi Atsuta <atsuta@ieee.org>"]
-license = "MIT"
+description = "Collection of scripts to create graphs, figures, and so on."
+authors = ["Hiroshi Atsuta <atsuta.hiroshi@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-numpy = "^1.21.0"
-matplotlib = "^3.4.2"
-pandas = "^1.3.0"
+python = "^3.10"
+numpy = "^1.21.1"
+matplotlib = "^3.5.0"
+pandas = "^1.3.4"
 
 [tool.poetry.dev-dependencies]
-ipython = "^7.25.0"
+ipython = "^7.29.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
