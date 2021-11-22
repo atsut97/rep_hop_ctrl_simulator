@@ -186,18 +186,27 @@ if [ $((make)) -ne 0 ]; then
   execcmd make
 fi
 
+# Just concatenate a provided relative path with PWD variable. Note
+# that it does not resolve symbolic links nor eliminate implied
+# directory components such as '.' and '..'.
+abspath() {
+  _abspath=''
+  case "$1" in
+    /*) _abspath=$1 ;;
+    *) _abspath=${PWD}/$1 ;;
+  esac
+  echo "$_abspath"
+}
+
 # Run program and redirect produced output to an intermediate data
 # file.
-program=$1; shift
-case "$program" in
-  /*|./*) ;;
-  *) program="$(pwd)/$program" ;;
-esac
+program=$(abspath "$1"); shift
 program_name=$(basename "$program")
 if [ $((run)) -ne 0 ]; then
   ret=
   if [ -f "$program" ]; then
     [ -z "$data" ] && data="${program_name}.csv"
+    data=$(abspath "$data")
     if [ $((dryrun)) -ne 0 ]; then
       execcmd "$program" "$@" '>' "$data"
     else
