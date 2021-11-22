@@ -269,11 +269,13 @@ elif command -v python >/dev/null; then
   if [ "${py_ver%%.*}" -gt 2 ]; then
     execcmd python "$plot_script" "$data"
   else
+    cd - >/dev/null
     echo >&2 "error: Python3 is required"
     exit 1
   fi
 else
+  cd - >/dev/null
   echo >&2 "error: Python is not availble on the system"
   exit 1
 fi
-cd -
+cd - >/dev/null
