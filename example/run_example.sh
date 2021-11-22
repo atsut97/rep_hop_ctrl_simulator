@@ -230,14 +230,14 @@ fi
 [ $((plot)) -eq 0 ] && exit 0
 
 # Plot the data with an appropriate Python script.
-example_directory=$(cd -- "$(dirname -- "$0")" && pwd -P)
+scripts_directory=$(cd -- "$(dirname -- "$0")" && pwd -P)/scripts
 if [ -n "$plot_script" ]; then
   # Fix path to the plot script specified by the user.
   if [ ! -f "$plot_script" ]; then
-    if [ -f "${example_directory}/${plot_script}.py" ]; then
-      plot_script=${example_directory}/${plot_script}.py
-    elif [ -f "${example_directory}/${plot_script}" ]; then
-      plot_script=${example_directory}/${plot_script}
+    if [ -f "${scripts_directory}/${plot_script}.py" ]; then
+      plot_script=${scripts_directory}/${plot_script}.py
+    elif [ -f "${scripts_directory}/${plot_script}" ]; then
+      plot_script=${scripts_directory}/${plot_script}
     else
       echo >&2 "error: specified plot script not found: $plot_script"
       exit 1
@@ -245,10 +245,10 @@ if [ -n "$plot_script" ]; then
   fi
 else
   # Find an accessible script since none is specified by the user.
-  if [ -f "${example_directory}/${program_name}.py" ]; then
-    plot_script=${example_directory}/${program_name}.py
-  elif [ -f "${example_directory}/${program_name}" ]; then
-    plot_script=${example_directory}/${program_name}
+  if [ -f "${scripts_directory}/${program_name}.py" ]; then
+    plot_script=${scripts_directory}/${program_name}.py
+  elif [ -f "${scripts_directory}/${program_name}" ]; then
+    plot_script=${scripts_directory}/${program_name}
   else
     echo >&2 "error: Python script to plot not found"
     echo >&2 "Or use plot_one_hop.py like as:"
@@ -257,11 +257,12 @@ else
   fi
 fi
 
+cd "$scripts_directory" || exit 1
 if command -v poetry >/dev/null && \
-    [ -f "${example_directory}/pyproject.toml" ]; then
+    [ -f "${scripts_directory}/pyproject.toml" ]; then
   execcmd poetry run "$plot_script" "$data"
 elif command -v pipenv >/dev/null && \
-    [ -f "${example_directory}/Pipfile" ]; then
+    [ -f "${scripts_directory}/Pipfile" ]; then
   execcmd pipenv run "$plot_script" "$data"
 elif command -v python >/dev/null; then
   py_ver=$(python --version | cut -d' ' -f2)
@@ -275,3 +276,4 @@ else
   echo >&2 "error: Python is not availble on the system"
   exit 1
 fi
+cd -
