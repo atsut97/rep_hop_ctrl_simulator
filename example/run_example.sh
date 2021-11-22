@@ -209,22 +209,24 @@ abspath() {
 program=$(abspath "$1"); shift
 program_name=$(basename "$program")
 if [ $((run)) -ne 0 ]; then
-  ret=
+  ret=0
   if [ -f "$program" ]; then
     [ -z "$data" ] && data="${program_name}.csv"
     data=$(abspath "$data")
     if [ $((dryrun)) -ne 0 ]; then
       execcmd "$program" "$@" '>' "$data"
     else
+      printf "%s" "Making plot data with $program_name ..."
       execcmd "$program" "$@" > "$data"
+      ret=$?
+      printf "%s\n" " Done."
     fi
-    ret=$?
   else
     die "error: $program not found"
   fi
 
   # When the program exits with error, abort it.
-  if [ $ret -ne 0 ]; then
+  if [ $((ret)) -ne 0 ]; then
     echo >&2 "error: ${program} exited with non-zero status"
     exit $ret
   fi
@@ -263,6 +265,7 @@ EOF
 fi
 
 cd "$scripts_directory" || exit 1
+[ $((dryrun)) -ne 0 ] || printf "%s" "Running script to plot data ..."
 if command -v poetry >/dev/null && \
     [ -f "${scripts_directory}/pyproject.toml" ]; then
   execcmd poetry run "$plot_script" "$data"
@@ -281,4 +284,5 @@ else
   cd - >/dev/null
   die "error: Python is not availble on the system"
 fi
+[ $((dryrun)) -ne 0 ] || printf "%s\n" " Done."
 cd - >/dev/null
