@@ -75,6 +75,15 @@ Examples:
 USAGE
 }
 
+die() {
+  if [ -p /dev/stdin ]; then
+    cat >&2 </dev/stdin
+  else
+    echo >&2 "$@"
+  fi
+  exit 1
+}
+
 data=''
 plot_script=''
 delete=0
@@ -93,32 +102,28 @@ while :; do
         data="$2"
         shift
       else
-        echo >&2 "error: --data reauires a non-empty argument"
-        exit 1
+        die "error: --data reauires a non-empty argument"
       fi
       ;;
     --data=?*)
       data="${1#*=}"
       ;;
     '--data=')
-      echo >&2 "error: --data reauires a non-empty argument"
-      exit 1
+      die "error: --data reauires a non-empty argument"
       ;;
     -p|--plot-script)
       if [ -n "$2" ] && echo "$2" | grep -q -- '^[^-]'; then
         plot_script="$2"
         shift
       else
-        echo >&2 "error: --plot-script reauires a non-empty argument"
-        exit 1
+        die "error: --plot-script reauires a non-empty argument"
       fi
       ;;
     --plot-script=?*)
       plot_script="${1#*=}"
       ;;
     '--plot-script=')
-      echo >&2 "error: --plot-script reauires a non-empty argument"
-      exit 1
+      die "error: --plot-script reauires a non-empty argument"
       ;;
     -D|--delete)
       delete=1
@@ -165,10 +170,11 @@ set -eu
 
 # Exit with error when no program is specified.
 if [ $# -eq 0 ]; then
-  echo >&2 "error: program name is required"
-  echo >&2 "Example:"
-  echo >&2 "  $0 slip_test"
-  exit 1
+  die <<EOF
+error: program name is required
+Example:
+  $0 slip_test
+EOF
 fi
 
 # Execute the provided arguments when --dry-option is not enable,
@@ -214,8 +220,7 @@ if [ $((run)) -ne 0 ]; then
     fi
     ret=$?
   else
-    echo >&2 "error: $program not found"
-    exit 1
+    die "error: $program not found"
   fi
 
   # When the program exits with error, abort it.
@@ -239,8 +244,7 @@ if [ -n "$plot_script" ]; then
     elif [ -f "${scripts_directory}/${plot_script}" ]; then
       plot_script=${scripts_directory}/${plot_script}
     else
-      echo >&2 "error: specified plot script not found: $plot_script"
-      exit 1
+      die "error: specified plot script not found: $plot_script"
     fi
   fi
 else
@@ -250,10 +254,11 @@ else
   elif [ -f "${scripts_directory}/${program_name}" ]; then
     plot_script=${scripts_directory}/${program_name}
   else
-    echo >&2 "error: Python script to plot not found"
-    echo >&2 "Or use plot_one_hop.py like as:"
-    echo >&2 "  $0 -p plot_one_hop slip_test"
-    exit 1
+    die <<EOF
+error: Python script to plot not found
+Or use plot_one_hop.py like as:
+  $0 -p plot_one_hop slip_test
+EOF
   fi
 fi
 
@@ -270,12 +275,10 @@ elif command -v python >/dev/null; then
     execcmd python "$plot_script" "$data"
   else
     cd - >/dev/null
-    echo >&2 "error: Python3 is required"
-    exit 1
+    die "error: Python3 is required"
   fi
 else
   cd - >/dev/null
-  echo >&2 "error: Python is not availble on the system"
-  exit 1
+  die "error: Python is not availble on the system"
 fi
 cd - >/dev/null
