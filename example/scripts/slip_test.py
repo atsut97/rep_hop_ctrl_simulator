@@ -6,15 +6,16 @@ import pandas as pd
 
 
 def plot(data):
-    plt.plot(data.z, data.v)
+    plt.plot(data.z, data.vz)
 
 
 def main():
     import sys
+
     data = pd.read_csv(sys.argv[1])
     plot(data)
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
