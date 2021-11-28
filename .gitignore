@@ -1,14 +1,52 @@
-/compile_commands.json
-/.cache
-
-# Object files
-*.o
-
-# Dependecy files
-*.d
-
 # Test executables
 /test/*_test
 /example/*_test
-/example/data.csv
+
+# Test data
 /example/*.csv
+/example/*.txt
+
+### CMake ###
+compile_commands.json
+
+### C ###
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
