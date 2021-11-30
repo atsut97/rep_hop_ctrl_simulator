@@ -1,79 +1,141 @@
 # -*- coding: utf-8 -*-
 
+from abc import ABC
+from collections.abc import Iterator
 from pathlib import Path
-import typing
-from typing import cast
+from typing import Any, Tuple, overload
 
+import numpy as np
 import pandas as pd
-from pandas.io.parsers import TextFileReader
 from pandas.api.types import is_string_dtype
 
 
-class Data(object):
-    @typing.overload
-    def __init__(self, data: str, **kwargs) -> None:
+class DataBase(ABC):
+    _csvpath: Path
+    _dataframe: pd.DataFrame
+
+    def _get_csvpath(self) -> Path:
+        return self._csvpath
+
+    def _set_csvpath(self, path: Path | str) -> None:
+        self._csvpath = Path(path)
+
+    csvpath = property(_get_csvpath, _set_csvpath)
+
+    def _get_dataframe(self) -> pd.DataFrame:
+        return self._dataframe
+
+    dataframe = property(_get_dataframe)
+
+
+class Data(DataBase):
+    @overload
+    def __init__(self, data: str | Path, **kwargs) -> None:
         ...
 
-    @typing.overload
-    def __init__(self, data: pd.DataFrame, **kwargs) -> None:
+    @overload
+    def __init__(self, data: pd.DataFrame | pd.Series, **kwargs) -> None:
         ...
 
     def __init__(self, data, **kwargs) -> None:
-        self._csvpath: Path | None = None
-        self._dataframe: pd.DataFrame | TextFileReader | None = None
-
-        if isinstance(data, str):
+        if isinstance(data, (str, Path)):
             self.read_csv(data, **kwargs)
-        elif isinstance(data, pd.DataFrame):
+        elif isinstance(data, (pd.DataFrame, pd.Series)):
             self.copy_dataframe(data)
         else:
-            raise RuntimeError("Data only accepts string or pandas.DataFrame")
+            raise TypeError(f"unsupported type: {type(data)}")
 
-    @typing.overload
-    def __getitem__(self, key: int) -> pd.Series:
-        ...
+    def __getitem__(self, key: int | str) -> pd.Series:
+        return self._dataframe[key]
 
-    @typing.overload
-    def __getitem__(self, key: str) -> pd.Series:
-        ...
+    def _set_attr(self) -> None:
+        if is_string_dtype(self._dataframe.columns):
+            for c in self._dataframe.columns:
+                setattr(self, str(c), getattr(self._dataframe, str(c)))
 
-    def __getitem__(self, key) -> pd.Series:
-        if isinstance(self._dataframe, pd.DataFrame):
-            return self._dataframe[key]
-        else:
-            raise RuntimeError("Data has not been constructed yet")
-
-    def _setattr(self, dataframe: pd.DataFrame):
-        if is_string_dtype(dataframe.columns):
-            for c in dataframe.columns:
-                col = cast(str, c)
-                setattr(self, col, getattr(dataframe, col))
-
-    @property
-    def csvpath(self) -> str | None:
-        if isinstance(self._csvpath, Path):
-            return str(self._csvpath.resolve())
-
-    @csvpath.setter
-    def csvpath(self, path: str) -> None:
-        if Path(path).is_file():
-            self._csvpath = Path(path)
-        else:
-            raise FileNotFoundError(path)
-
-    @property
-    def dataframe(self) -> pd.DataFrame | None:
-        if isinstance(self._dataframe, pd.DataFrame):
-            return self._dataframe
-
-    def read_csv(self, path: str, **kwargs) -> None:
+    def read_csv(self, path: str | Path, **kwargs) -> None:
         self.csvpath = path
-        self._dataframe = pd.read_csv(self.csvpath, **kwargs)
-        if isinstance(self._dataframe, pd.DataFrame):
-            self._setattr(self._dataframe)
+        df = pd.read_csv(self.csvpath, **kwargs)
+        if isinstance(df, pd.DataFrame):
+            self._dataframe = df
         else:
-            raise RuntimeError("Unable to set attributes to Data")
+            raise TypeError(f"unsupported type: {type(df)}")
+        self._set_attr()
 
-    def copy_dataframe(self, dataframe: pd.DataFrame) -> None:
-        self._dataframe = dataframe
-        self._setattr(self._dataframe)
+    def copy_dataframe(self, df: pd.DataFrame | pd.Series) -> None:
+        if isinstance(df, pd.DataFrame):
+            self._dataframe = df
+        else:
+            self._dataframe = pd.DataFrame(df)
+        self._set_attr()
+
+
+class DataGroup(DataBase):
+    _datadict: dict[str, Data]
+    _groupby: Any
+    _by: str
+
+    def __init__(self, data: str | Path, **kwargs) -> None:
+        self._datadict = {}
+        self._by = kwargs.pop("by", "tag")
+
+        if isinstance(data, (str, Path)):
+            self.read_csv(data, **kwargs)
+            self.make_groupby()
+        else:
+            raise TypeError(f"unsupported type: {type(data)}")
+
+    @property
+    def datadict(self) -> dict[str, Data]:
+        return self._datadict
+
+    def read_csv(self, path: str | Path, **kwargs) -> None:
+        self.csvpath = path
+        if "dtype" not in kwargs:
+            kwargs["dtype"] = {self._by: object}
+        else:
+            kwargs["dtype"].update({self._by: object})
+
+        df = pd.read_csv(self.csvpath, **kwargs)
+        if isinstance(df, pd.DataFrame):
+            self._dataframe = df
+        else:
+            raise TypeError(f"unsupported type: {type(df)}")
+
+    def make_groupby(self):
+        if self._by in self._dataframe.columns:
+            self._groupby = self._dataframe.groupby(self._by)
+            self._datadict = {
+                str(k): Data(self._groupby.get_group(k))
+                for k in self._groupby.groups.keys()
+            }
+        else:
+            self._datadict = {"0": Data(self._dataframe)}
+
+    def __iter__(self) -> Iterator[Data]:
+        return iter(self._datadict.values())
+
+    def keys(self) -> list[str]:
+        return list(self._datadict.keys())
+
+    def items(self) -> list[Tuple[str, Data]]:
+        return list(self._datadict.items())
+
+    @overload
+    def param(self, col: str, tag: str) -> int | float | np.number:
+        ...
+
+    @overload
+    def param(
+        self, col: list[str] | tuple[str], tag: str
+    ) -> list[int | float | np.number]:
+        ...
+
+    def param(self, col, tag=None):
+        if tag is None:
+            tag = self.keys()[0]
+
+        if isinstance(col, str):
+            return self.datadict[tag].dataframe.at[0, col]
+        else:
+            return [self.datadict[tag].dataframe.at[0, c] for c in col]
