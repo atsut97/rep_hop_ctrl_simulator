@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
+
 from lib.datautil import Data
 
 
