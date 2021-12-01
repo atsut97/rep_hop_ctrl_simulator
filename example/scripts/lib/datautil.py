@@ -10,6 +10,9 @@ import pandas as pd
 from pandas.api.types import is_string_dtype
 
 
+NumericType = int | float | complex | np.number
+
+
 class DataBase(ABC):
     _csvpath: Path
     _dataframe: pd.DataFrame
@@ -69,6 +72,20 @@ class Data(DataBase):
             self._dataframe = pd.DataFrame(df)
         self._set_attr()
 
+    @overload
+    def param(self, col: str) -> NumericType:
+        ...
+
+    @overload
+    def param(self, col: list[str] | tuple[str]) -> list[NumericType]:
+        ...
+
+    def param(self, col):
+        if isinstance(col, str):
+            return self.dataframe.at[0, col]
+        else:
+            return [self.dataframe.at[0, c] for c in col]
+
 
 class DataGroup(DataBase):
     _datadict: dict[str, Data]
@@ -121,21 +138,9 @@ class DataGroup(DataBase):
     def items(self) -> list[Tuple[str, Data]]:
         return list(self._datadict.items())
 
-    @overload
-    def param(self, col: str, tag: str) -> int | float | np.number:
-        ...
-
-    @overload
     def param(
-        self, col: list[str] | tuple[str], tag: str
-    ) -> list[int | float | np.number]:
-        ...
-
-    def param(self, col, tag=None):
+        self, col: str | list[str] | tuple[str], tag=None
+    ) -> NumericType | list[NumericType]:
         if tag is None:
             tag = self.keys()[0]
-
-        if isinstance(col, str):
-            return self.datadict[tag].dataframe.at[0, col]
-        else:
-            return [self.datadict[tag].dataframe.at[0, c] for c in col]
+        return self.datadict[tag].param(col)
