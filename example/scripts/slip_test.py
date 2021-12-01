@@ -2,18 +2,24 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
-import pandas as pd
+
+from lib.datautil import DataGroup
 
 
-def plot(data):
+def plot(datagroup):
+    data = datagroup.get("sc00005")
+    z0 = data.param("z0")
+    plt.axvline(z0, lw=1, c="k")
+    plt.axhline(0, lw=1, c="k")
     plt.plot(data.z, data.vz)
 
 
 def main():
     import sys
 
-    data = pd.read_csv(sys.argv[1])
-    plot(data)
+    datagroup = DataGroup(sys.argv[1])
+    plot(datagroup)
+
     plt.show()
 
 
