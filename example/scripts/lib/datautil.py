@@ -144,3 +144,8 @@ class DataGroup(DataBase):
         if tag is None:
             tag = self.keys()[0]
         return self.datadict[tag].param(col)
+
+    def get(self, tag: str = None) -> Data:
+        if tag is None:
+            tag = self.keys()[0]
+        return self.datadict[tag]
