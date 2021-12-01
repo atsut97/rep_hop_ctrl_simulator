@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 from pandas.api.types import is_string_dtype
 
-
 NumericType = int | float | complex | np.number
 
 
@@ -123,7 +122,7 @@ class DataGroup(DataBase):
         if self._by in self._dataframe.columns:
             self._groupby = self._dataframe.groupby(self._by)
             self._datadict = {
-                str(k): Data(self._groupby.get_group(k))
+                str(k): Data(self._groupby.get_group(k).reset_index(drop=True))
                 for k in self._groupby.groups.keys()
             }
         else:
