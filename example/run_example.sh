@@ -316,9 +316,9 @@ else
   # Find the plot script from the program name.
   _plot_script=$(find_plot_script "$program_name")
   [ -z "$_plot_script" ] && die <<EOF
-error: Unable to find plot script for ${program_name} in ${scriptsdir}
-Try to use plot_one_hop.py like as:
-  $0 -p plot_one_hop slip_test
+error: unable to find plot script for ${program_name} in ${scriptsdir}
+Try the following:
+  $0 -p plot_phase_portrait ${program}
 EOF
 fi
 plot_script=$_plot_script
