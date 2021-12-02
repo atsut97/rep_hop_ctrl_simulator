@@ -284,13 +284,19 @@ fi
 # system always print the given path if it exists.
 _is_python_script() {
   given_path=$1
-  if [ -f "$given_path" ]; then
+  if command -v readlink >/dev/null && \
+      readlink "$given_path" >/dev/null; then
+    resolved_path=$(readlink -e "$given_path")
+  else
+    resolved_path=$given_path
+  fi
+  if [ -f "$resolved_path" ]; then
     if ! command -v file >/dev/null || \
-        file "$given_path" | grep -q "Python script"; then
+        file "$resolved_path" | grep -q "Python script"; then
       echo "$given_path"
     fi
   fi
-  unset given_path
+  unset given_path resolved_path
 }
 
 # Try to find a plot script in $scriptdir, whose filename is given as
