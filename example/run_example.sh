@@ -6,6 +6,8 @@ Run example program and make plot.
 
 Synopsis:
   $0 [-d <file>|--data=<file>] [-p <file>|--plot-script=<file>]
+     [-w <directory>|--work-directory=<directory>]
+     [-s <directory>|--scripts-directory=<directory>]
      [-D|--delete] [-P|--plot-only] [--no-make] [--no-plot]
      <file> [<arg>...]
   $0 [-h|--help]
@@ -44,6 +46,14 @@ Options:
   -P, --plot-only
     Do not execute the program. Instead, plot using existing data
     file.
+
+  -w <directory>, --work-directory=<directory>
+    Change to <directory> when running make, program and script. It is
+    set to the current working directory by default.
+
+  -s <directory>, --scripts-directory=<directory>
+    Specify a directory path that contains scripts for plotting. The
+    default value is where this script ($0) exists.
 
   --no-plot
     Do not plot.
@@ -91,6 +101,9 @@ make=1
 run=1
 plot=1
 dryrun=0
+startdir=$PWD
+workdir=''
+scriptsdir=''
 while :; do
   case $1 in
     -h|--help)
@@ -133,6 +146,34 @@ while :; do
       run=0
       plot=1
       ;;
+    -w|--work-directory|--working-directory)
+      if [ -n "$2" ] && echo "$2" | grep -q -- '^[^-]'; then
+        workdir="$2"
+        shift
+      else
+        die "error: --work-directory reauires a non-empty argument"
+      fi
+      ;;
+    --work-directory=?*|--working-directory=?*)
+      workdir="${1#*=}"
+      ;;
+    '--work-directory='|'--working-directory=')
+      die "error: --work-directory reauires a non-empty argument"
+      ;;
+    -s|--scripts-directory|--script-directory)
+      if [ -n "$2" ] && echo "$2" | grep -q -- '^[^-]'; then
+        scriptsdir="$2"
+        shift
+      else
+        die "error: --scripts-directory reauires a non-empty argument"
+      fi
+      ;;
+    --scripts-directory=?*|--script-directory=?*)
+      scriptsdir="${1#*=}"
+      ;;
+    '--scripts-directory='|'--script-directory=')
+      die "error: --scripts-directory reauires a non-empty argument"
+      ;;
     --no-plot)
       plot=0
       ;;
@@ -162,6 +203,9 @@ cleanup() {
   if [ $((delete)) -ne 0 ]; then
     [ -n "$data" ] && rm -f "$data"
   fi
+  if [ -n "$workdir" ]; then
+    cd "$startdir" || exit 1
+  fi
 }
 trap 'cleanup' EXIT
 
@@ -187,32 +231,31 @@ execcmd() {
   fi
 }
 
+# Change directory if needed.
+if [ -n "$workdir" ]; then
+  cd "$workdir" || exit 1
+else
+  workdir=$startdir
+fi
+
 # Run make.
 if [ $((make)) -ne 0 ]; then
   execcmd make
 fi
 
-# Just concatenate a provided relative path with PWD variable. Note
-# that it does not resolve symbolic links nor eliminate implied
-# directory components such as '.' and '..'.
-abspath() {
-  _abspath=''
-  case "$1" in
-    /*) _abspath=$1 ;;
-    *) _abspath=${PWD}/$1 ;;
-  esac
-  echo "$_abspath"
-}
-
 # Run program and redirect produced output to an intermediate data
 # file.
-program=$(abspath "$1"); shift
+program="$1"; shift
+case "$program" in
+  /*|./*) ;;
+  # Fix program path.
+  *) program=./$program ;;
+esac
 program_name=$(basename "$program")
 if [ $((run)) -ne 0 ]; then
   ret=0
   if [ -f "$program" ]; then
     [ -z "$data" ] && data="${program_name}.csv"
-    data=$(abspath "$data")
     if [ $((dryrun)) -ne 0 ]; then
       execcmd "$program" "$@" '>' "$data"
     else
@@ -222,7 +265,7 @@ if [ $((run)) -ne 0 ]; then
       printf "%s\n" " Done."
     fi
   else
-    die "error: $program not found"
+    die "error: ${program} not found in ${PWD}"
   fi
 
   # When the program exits with error, abort it.
@@ -236,53 +279,71 @@ fi
 # Terminate when --no-plot is enabled.
 [ $((plot)) -eq 0 ] && exit 0
 
-# Plot the data with an appropriate Python script.
-scripts_directory=$(cd -- "$(dirname -- "$0")" && pwd -P)/scripts
-if [ -n "$plot_script" ]; then
-  # Fix path to the plot script specified by the user.
-  if [ ! -f "$plot_script" ]; then
-    if [ -f "${scripts_directory}/${plot_script}.py" ]; then
-      plot_script=${scripts_directory}/${plot_script}.py
-    elif [ -f "${scripts_directory}/${plot_script}" ]; then
-      plot_script=${scripts_directory}/${plot_script}
-    else
-      die "error: specified plot script not found: $plot_script"
+# Print the given path when it is accessible and written in Python
+# with the file command. When the file command is unavailable on the
+# system always print the given path if it exists.
+_is_python_script() {
+  given_path=$1
+  if [ -f "$given_path" ]; then
+    if ! command -v file >/dev/null || \
+        file "$given_path" | grep -q "Python script"; then
+      echo "$given_path"
     fi
   fi
+  unset given_path
+}
+
+# Try to find a plot script in $scriptdir, whose filename is given as
+# the 1st argument.
+find_plot_script() {
+  name=$1
+  found_path=$(_is_python_script "$name")
+  [ -z "$found_path" ] && found_path=$(_is_python_script "${scriptsdir}/${name}.py")
+  [ -z "$found_path" ] && found_path=$(_is_python_script "${scriptsdir}/${name}")
+  echo "$found_path"
+  unset name found_path
+}
+
+# Plot the data with an appropriate Python script.
+if [ -z "$scriptsdir" ]; then
+  scriptsdir=$(cd -- "$(dirname -- "$0")" && pwd -P)/scripts
+fi
+if [ -n "$plot_script" ]; then
+  # Fix path to the plot script specified by the user.
+  _plot_script=$(find_plot_script "$plot_script")
+  [ -z "$_plot_script" ] && die "error: ${plot_script} not found in ${scriptsdir}"
 else
-  # Find an accessible script since none is specified by the user.
-  if [ -f "${scripts_directory}/${program_name}.py" ]; then
-    plot_script=${scripts_directory}/${program_name}.py
-  elif [ -f "${scripts_directory}/${program_name}" ]; then
-    plot_script=${scripts_directory}/${program_name}
-  else
-    die <<EOF
-error: Python script to plot not found
-Or use plot_one_hop.py like as:
+  # Find the plot script from the program name.
+  _plot_script=$(find_plot_script "$program_name")
+  [ -z "$_plot_script" ] && die <<EOF
+error: Unable to find plot script for ${program_name} in ${scriptsdir}
+Try to use plot_one_hop.py like as:
   $0 -p plot_one_hop slip_test
 EOF
-  fi
 fi
+plot_script=$_plot_script
 
-cd "$scripts_directory" || exit 1
 [ $((dryrun)) -ne 0 ] || printf "%s" "Running script to plot data ..."
 if command -v poetry >/dev/null && \
-    [ -f "${scripts_directory}/pyproject.toml" ]; then
-  execcmd poetry run "$plot_script" "$data"
+    [ -f "${scriptsdir}/pyproject.toml" ]; then
+  (
+    cd "$scriptsdir" || exit 1
+    execcmd poetry run sh -c "cd \"$workdir\" && python \"$plot_script\" \"$data\""
+  )
 elif command -v pipenv >/dev/null && \
-    [ -f "${scripts_directory}/Pipfile" ]; then
-  execcmd pipenv run "$plot_script" "$data"
+    [ -f "${scriptsdir}/Pipfile" ]; then
+  (
+    cd "$scriptsdir" || exit 1
+    execcmd pipenv sh -c "cd \"$workdir\" && python \"$plot_script\" \"$data\""
+  )
 elif command -v python >/dev/null; then
   py_ver=$(python --version | cut -d' ' -f2)
   if [ "${py_ver%%.*}" -gt 2 ]; then
     execcmd python "$plot_script" "$data"
   else
-    cd - >/dev/null
     die "error: Python3 is required"
   fi
 else
-  cd - >/dev/null
   die "error: Python is not availble on the system"
 fi
 [ $((dryrun)) -ne 0 ] || printf "%s\n" " Done."
-cd - >/dev/null
