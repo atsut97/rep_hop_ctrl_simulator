@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
+from pyplotutil.datautil import DataSet
 
-from lib.datautil import DataGroup
 
-
-def plot(datagroup):
-    data = datagroup.get("sc00005")
+def plot(dataset: DataSet) -> None:
+    data = dataset.get("sc00005")
     z0, zd, zb = data.param(["z0", "zd", "zb"])
     plt.axvline(z0, lw=1, c="k")
     plt.axhline(0, lw=1, c="k")
@@ -16,11 +15,11 @@ def plot(datagroup):
     plt.plot(data.z, data.vz)
 
 
-def main():
+def main() -> None:
     import sys
 
-    datagroup = DataGroup(sys.argv[1])
-    plot(datagroup)
+    dataset = DataSet(sys.argv[1])
+    plot(dataset)
 
     plt.show()
 

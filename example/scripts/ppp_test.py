@@ -2,27 +2,26 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
+from pyplotutil.datautil import DataSet
 
-from lib.datautil import DataGroup
 
-
-def plot(datagroup):
+def plot(dataset: DataSet) -> None:
     # Prepare figure.
     _, ax = plt.subplots()
     ax.set_xlabel("position [m]")
     ax.set_ylabel("velocity [m/s]")
-    if datagroup.csvpath:
-        ax.set_title(datagroup.csvpath.name)
+    if dataset.datapath:
+        ax.set_title(dataset.datapath.name)
 
     # Plot constant parameters.
-    z0, zd, zb = datagroup.param(["z0", "zd", "zb"])
+    z0, zd, zb = dataset.param(["z0", "zd", "zb"])
     ax.axvline(z0, ls="-", lw=1, c="k")
     ax.axhline(0, ls="-", lw=1, c="k")
     ax.axvline(zd, ls="--", lw=1, c="k")
     ax.axvline(zb, ls="--", lw=1, c="k")
 
     # Plot solution curves.
-    for data in datagroup:
+    for data in dataset:
         ax.plot(data.z, data.vz, ls="-", lw=1, c="k")
 
     # Set misc.
@@ -31,7 +30,7 @@ def plot(datagroup):
     ax.set_ylim([-0.8, 0.8])
 
 
-def main():
+def main() -> None:
     import sys
 
     if len(sys.argv) == 1:
@@ -42,8 +41,8 @@ Usage:
         print(usage)
         exit()
 
-    datagroup = DataGroup(sys.argv[1])
-    plot(datagroup)
+    dataset = DataSet(sys.argv[1])
+    plot(dataset)
     plt.show()
 
 

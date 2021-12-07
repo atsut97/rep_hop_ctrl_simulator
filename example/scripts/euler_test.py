@@ -2,15 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
+from pyplotutil.datautil import Data
 
-from lib.datautil import Data
 
-
-def plot(data):
+def plot(data: Data) -> None:
     plt.plot(data[0], data[1])
 
 
-def main():
+def main() -> None:
     import sys
 
     data = Data(sys.argv[1], sep=" ", usecols=[0, 1], header=None)
