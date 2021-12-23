@@ -13,7 +13,6 @@ void setup()
 {
   cmd_default_init( &cmd );
   model_init( &model, 10 );
-  ctrl_raibert_create( &ctrl, &cmd, &model );
   p = vec_create( 2 );
 }
 
@@ -26,6 +25,7 @@ void teardown()
 
 TEST(test_ctrl_raibert_create)
 {
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
   ASSERT_PTREQ( ctrl_cmd( &ctrl ), &cmd );
   ASSERT_PTREQ( ctrl_model( &ctrl ), &model );
   ASSERT_PTREQ( ctrl_raibert_update, ctrl._update );
@@ -48,6 +48,7 @@ TEST(test_ctrl_raibert_create)
 
 TEST(test_ctrl_raibert_destroy)
 {
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
   ctrl_raibert_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl_model( &ctrl ) );
@@ -58,7 +59,26 @@ TEST(test_ctrl_raibert_destroy)
 
 TEST(test_ctrl_raibert_create_full_nonlinear)
 {
+  ctrl_raibert_create_full_nonlinear( &ctrl, &cmd, &model );
+  ASSERT_EQ( full_nonlinear, ctrl_raibert_type( &ctrl ) );
+}
 
+TEST(test_ctrl_raibert_create_simplified_nonlinear)
+{
+  ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model );
+  ASSERT_EQ( simplified_nonlinear, ctrl_raibert_type( &ctrl ) );
+}
+
+TEST(test_ctrl_raibert_create_full_linear)
+{
+  ctrl_raibert_create_full_linear( &ctrl, &cmd, &model );
+  ASSERT_EQ( full_linear, ctrl_raibert_type( &ctrl ) );
+}
+
+TEST(test_ctrl_raibert_create_simplified_linear)
+{
+  ctrl_raibert_create_simplified_linear( &ctrl, &cmd, &model );
+  ASSERT_EQ( simplified_linear, ctrl_raibert_type( &ctrl ) );
 }
 
 TEST_SUITE(test_ctrl_raibert)
@@ -67,6 +87,9 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_create);
   RUN_TEST(test_ctrl_raibert_destroy);
   RUN_TEST(test_ctrl_raibert_create_full_nonlinear);
+  RUN_TEST(test_ctrl_raibert_create_simplified_nonlinear);
+  RUN_TEST(test_ctrl_raibert_create_full_linear);
+  RUN_TEST(test_ctrl_raibert_create_simplified_linear);
 }
 
 int main(int argc, char *argv[])

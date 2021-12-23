@@ -2,10 +2,8 @@
 #include "rhc_ctrl.h"
 #include "rhc_misc.h"
 
-ctrl_t *ctrl_raibert_create(ctrl_t *self, cmd_t *cmd, model_t *model)
+ctrl_t *ctrl_raibert_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_raibert_types type)
 {
-  ctrl_raibert_prp *prp;
-
   ctrl_init( self, cmd, model );
   self->_update = ctrl_raibert_update;
   self->_destroy = ctrl_raibert_destroy;
@@ -16,8 +14,7 @@ ctrl_t *ctrl_raibert_create(ctrl_t *self, cmd_t *cmd, model_t *model)
     ALLOC_ERR();
     return NULL;
   }
-  prp = self->prp;
-  prp->type = none;
+  ((ctrl_raibert_prp *)(self->prp))->type = type;
   return self;
 }
 
