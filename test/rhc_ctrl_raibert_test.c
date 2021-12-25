@@ -81,6 +81,60 @@ TEST(test_ctrl_raibert_create_simplified_linear)
   ASSERT_EQ( simplified_linear, ctrl_raibert_type( &ctrl ) );
 }
 
+TEST(test_ctrl_raibert_set_delta)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_delta( &ctrl, 0.01 );
+  ASSERT_DOUBLE_EQ( 0.01, ctrl_raibert_delta(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_tau)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_tau( &ctrl, 0.02 );
+  ASSERT_DOUBLE_EQ( 0.02, ctrl_raibert_tau(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_gamma)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_gamma( &ctrl, 0.03 );
+  ASSERT_DOUBLE_EQ( 0.03, ctrl_raibert_gamma(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_yeta1)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_yeta1( &ctrl, 0.04 );
+  ASSERT_DOUBLE_EQ( 0.04, ctrl_raibert_yeta1(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_zr)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_zr( &ctrl, 0.05 );
+  ASSERT_DOUBLE_EQ( 0.05, ctrl_raibert_zr(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_mu)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_mu( &ctrl, 0.06 );
+  ASSERT_DOUBLE_EQ( 0.06, ctrl_raibert_mu(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_params)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_params( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 );
+  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_zr(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.6, ctrl_raibert_mu(&ctrl) );
+}
+
 TEST_SUITE(test_ctrl_raibert)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -90,6 +144,13 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_create_simplified_nonlinear);
   RUN_TEST(test_ctrl_raibert_create_full_linear);
   RUN_TEST(test_ctrl_raibert_create_simplified_linear);
+  RUN_TEST(test_ctrl_raibert_set_delta);
+  RUN_TEST(test_ctrl_raibert_set_tau);
+  RUN_TEST(test_ctrl_raibert_set_gamma);
+  RUN_TEST(test_ctrl_raibert_set_yeta1);
+  RUN_TEST(test_ctrl_raibert_set_zr);
+  RUN_TEST(test_ctrl_raibert_set_mu);
+  RUN_TEST(test_ctrl_raibert_set_params);
 }
 
 int main(int argc, char *argv[])

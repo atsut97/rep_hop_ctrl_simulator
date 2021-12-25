@@ -13,12 +13,14 @@ enum ctrl_raibert_types {
 
 typedef struct{
   enum ctrl_raibert_types type;  /* controller type */
+  /* parameters */
   double delta;                  /* thrust time */
   double tau;                    /* thrust force */
   double gamma;                  /* friction constant */
   double yeta1;                  /* initial spring constant */
   double zr;                     /* spring relax position */
   double mu;                     /* mass ration */
+  /* variables */
   double tb;                     /* time at the bottom */
   double zb;                     /* position at the bottom */
   double tet;                    /* time at the end of thrust phase */
@@ -31,11 +33,31 @@ ctrl_t *ctrl_raibert_update(ctrl_t *self, double t, vec_t p);
 void ctrl_raibert_header(FILE *fp, void *util);
 void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util);
 
-#define ctrl_raibert_type(self) ( ((ctrl_raibert_prp*)((self)->prp))->type )
+#define ctrl_raibert_get_prp(self) ( (ctrl_raibert_prp*)((self)->prp) )
+#define ctrl_raibert_type(self)    ( ctrl_raibert_get_prp(self)->type )
+#define ctrl_raibert_delta(self)   ( ctrl_raibert_get_prp(self)->delta )
+#define ctrl_raibert_tau(self)     ( ctrl_raibert_get_prp(self)->tau )
+#define ctrl_raibert_gamma(self)   ( ctrl_raibert_get_prp(self)->gamma )
+#define ctrl_raibert_yeta1(self)   ( ctrl_raibert_get_prp(self)->yeta1 )
+#define ctrl_raibert_zr(self)      ( ctrl_raibert_get_prp(self)->zr )
+#define ctrl_raibert_mu(self)      ( ctrl_raibert_get_prp(self)->mu )
+#define ctrl_raibert_tb(self)      ( ctrl_raibert_get_prp(self)->tb )
+#define ctrl_raibert_zb(self)      ( ctrl_raibert_get_prp(self)->zb )
+#define ctrl_raibert_tet(self)     ( ctrl_raibert_get_prp(self)->tet )
+#define ctrl_raibert_zet(self)     ( ctrl_raibert_get_prp(self)->zet )
+
+#define ctrl_raibert_set_delta(self,val) ( ctrl_raibert_delta(self) = (val) )
+#define ctrl_raibert_set_tau(self,val)   ( ctrl_raibert_tau(self)   = (val) )
+#define ctrl_raibert_set_gamma(self,val) ( ctrl_raibert_gamma(self) = (val) )
+#define ctrl_raibert_set_yeta1(self,val) ( ctrl_raibert_yeta1(self) = (val) )
+#define ctrl_raibert_set_zr(self,val)    ( ctrl_raibert_zr(self)    = (val) )
+#define ctrl_raibert_set_mu(self,val)    ( ctrl_raibert_mu(self)    = (val) )
 
 #define ctrl_raibert_create_full_nonlinear(self, cmd, model) ctrl_raibert_create(self, cmd, model, full_nonlinear)
 #define ctrl_raibert_create_simplified_nonlinear(self, cmd, model) ctrl_raibert_create(self, cmd, model, simplified_nonlinear)
 #define ctrl_raibert_create_full_linear(self, cmd, model) ctrl_raibert_create(self, cmd, model, full_linear)
 #define ctrl_raibert_create_simplified_linear(self, cmd, model) ctrl_raibert_create(self, cmd, model, simplified_linear)
+
+ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double gamma, double yeta1, double zr, double mu);
 
 #endif /* __RHC_CTRL_RAIBERT_H__ */

@@ -38,3 +38,14 @@ void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util)
 {
 
 }
+
+ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double gamma, double yeta1, double zr, double mu)
+{
+  ctrl_raibert_set_delta( self, delta );
+  ctrl_raibert_set_tau( self, tau );
+  ctrl_raibert_set_gamma( self, gamma );
+  ctrl_raibert_set_yeta1( self, yeta1 );
+  ctrl_raibert_set_zr( self, zr );
+  ctrl_raibert_set_mu( self, mu );
+  return self;
+}
