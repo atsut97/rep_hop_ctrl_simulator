@@ -239,6 +239,8 @@ main() {
       fi
     done
   fi
+  # wait until writing pipe.
+  sleep 0.01
 
   failed_tests=''
   while IFS='' read -r line; do
