@@ -11,6 +11,9 @@ typedef struct{
     struct _regulator {
       double q1, q2;
     } regulator;
+    struct _raibert {
+      double delta, tau, gamma, yeta1, zr, mu;
+    } raibert;
   };
 } cmd_t;
 

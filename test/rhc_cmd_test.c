@@ -19,6 +19,12 @@ void set_rand(cmd_t *cmd)
   cmd->zd = rand();
   cmd->z0 = rand();
   cmd->zb = rand();
+  cmd->raibert.delta = rand();
+  cmd->raibert.tau = rand();
+  cmd->raibert.gamma = rand();
+  cmd->raibert.yeta1 = rand();
+  cmd->raibert.zr = rand();
+  cmd->raibert.mu = rand();
 }
 
 TEST(test_cmd_init)
@@ -36,6 +42,18 @@ TEST(test_cmd_init_regulator)
   cmd_init( &cmd );
   ASSERT_EQ( 0, cmd.regulator.q1 );
   ASSERT_EQ( 0, cmd.regulator.q2 );
+}
+
+TEST(test_cmd_init_raibert)
+{
+  set_rand( &cmd );
+  cmd_init( &cmd );
+  ASSERT_EQ( 0, cmd.raibert.delta );
+  ASSERT_EQ( 0, cmd.raibert.tau );
+  ASSERT_EQ( 0, cmd.raibert.gamma );
+  ASSERT_EQ( 0, cmd.raibert.yeta1 );
+  ASSERT_EQ( 0, cmd.raibert.zr );
+  ASSERT_EQ( 0, cmd.raibert.mu );
 }
 
 TEST(test_cmd_default_init)
@@ -62,6 +80,7 @@ TEST_SUITE(test_cmd)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_cmd_init);
   RUN_TEST(test_cmd_init_regulator);
+  RUN_TEST(test_cmd_init_raibert);
   RUN_TEST(test_cmd_default_init);
   RUN_TEST(test_cmd_destroy);
 }
