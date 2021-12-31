@@ -53,11 +53,23 @@ void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util);
 #define ctrl_raibert_set_zr(self,val)    ( ctrl_raibert_zr(self)    = (val) )
 #define ctrl_raibert_set_mu(self,val)    ( ctrl_raibert_mu(self)    = (val) )
 
-#define ctrl_raibert_create_full_nonlinear(self, cmd, model) ctrl_raibert_create(self, cmd, model, full_nonlinear)
-#define ctrl_raibert_create_simplified_nonlinear(self, cmd, model) ctrl_raibert_create(self, cmd, model, simplified_nonlinear)
-#define ctrl_raibert_create_full_linear(self, cmd, model) ctrl_raibert_create(self, cmd, model, full_linear)
-#define ctrl_raibert_create_simplified_linear(self, cmd, model) ctrl_raibert_create(self, cmd, model, simplified_linear)
+#define ctrl_raibert_create_full_nonlinear(self, cmd, model) \
+  ctrl_raibert_create(self, cmd, model, full_nonlinear)
+#define ctrl_raibert_create_simplified_nonlinear(self, cmd, model) \
+  ctrl_raibert_create(self, cmd, model, simplified_nonlinear)
+#define ctrl_raibert_create_full_linear(self, cmd, model) \
+  ctrl_raibert_create(self, cmd, model, full_linear)
+#define ctrl_raibert_create_simplified_linear(self, cmd, model) \
+  ctrl_raibert_create(self, cmd, model, simplified_linear)
 
 ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double gamma, double yeta1, double zr, double mu);
+#define ctrl_raibert_set_params_full_nonlinear(self, delta, tau, gamma, yeta1, mu) \
+  ctrl_raibert_set_params(self, delta, tau, gamma, yeta1, 0.0, mu)
+#define ctrl_raibert_set_params_simplified_nonlinear(self, tau, yeta1) \
+  ctrl_raibert_set_params(self, 0.0, tau, 0.0, yeta1, 0.0, 0.0)
+#define ctrl_raibert_set_params_full_linear(self, delta, tau, gamma, yeta1, zr, mu) \
+  ctrl_raibert_set_params(self, delta, tau, gamma, yeta1, zr, mu)
+#define ctrl_raibert_set_params_simplified_linear(self, delta, tau, gamma, yeta1, zr) \
+  ctrl_raibert_set_params(self, delta, tau, gamma, yeta1, zr, 0.0)
 
 #endif /* __RHC_CTRL_RAIBERT_H__ */

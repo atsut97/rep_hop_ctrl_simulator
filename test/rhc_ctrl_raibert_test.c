@@ -135,6 +135,54 @@ TEST(test_ctrl_raibert_set_params)
   ASSERT_DOUBLE_EQ( 0.6, ctrl_raibert_mu(&ctrl) );
 }
 
+TEST(test_ctrl_raibert_set_params_full_nonlinear)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_params_full_nonlinear( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5 );
+  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_zr(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_mu(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_params_simplified_nonlinear)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_params_simplified_nonlinear( &ctrl, 0.1, 0.2 );
+  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_delta(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_tau(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_gamma(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_yeta1(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_zr(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_mu(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_params_full_linear)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_params_full_linear( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 );
+  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_zr(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.6, ctrl_raibert_mu(&ctrl) );
+}
+
+TEST(test_ctrl_raibert_set_params_simplified_linear)
+{
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  ctrl_raibert_set_params_simplified_linear( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5 );
+  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_zr(&ctrl) );
+  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_mu(&ctrl) );
+}
+
 TEST_SUITE(test_ctrl_raibert)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -151,6 +199,10 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_set_zr);
   RUN_TEST(test_ctrl_raibert_set_mu);
   RUN_TEST(test_ctrl_raibert_set_params);
+  RUN_TEST(test_ctrl_raibert_set_params_full_nonlinear);
+  RUN_TEST(test_ctrl_raibert_set_params_simplified_nonlinear);
+  RUN_TEST(test_ctrl_raibert_set_params_full_linear);
+  RUN_TEST(test_ctrl_raibert_set_params_simplified_linear);
 }
 
 int main(int argc, char *argv[])
