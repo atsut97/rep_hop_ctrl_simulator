@@ -30,6 +30,14 @@ TEST(test_cmd_init)
   ASSERT_EQ( 0, cmd.zb );
 }
 
+TEST(test_cmd_init_regulator)
+{
+  set_rand( &cmd );
+  cmd_init( &cmd );
+  ASSERT_EQ( 0, cmd.regulator.q1 );
+  ASSERT_EQ( 0, cmd.regulator.q2 );
+}
+
 TEST(test_cmd_default_init)
 {
   set_rand( &cmd );
@@ -53,6 +61,7 @@ TEST_SUITE(test_cmd)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_cmd_init);
+  RUN_TEST(test_cmd_init_regulator);
   RUN_TEST(test_cmd_default_init);
   RUN_TEST(test_cmd_destroy);
 }
