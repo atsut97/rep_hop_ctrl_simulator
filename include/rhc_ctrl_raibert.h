@@ -13,14 +13,6 @@ enum ctrl_raibert_types {
 
 typedef struct{
   enum ctrl_raibert_types type;  /* controller type */
-  /* parameters */
-  double delta;                  /* thrust time */
-  double tau;                    /* thrust force */
-  double gamma;                  /* friction constant */
-  double yeta1;                  /* initial spring constant */
-  double zr;                     /* spring relax position */
-  double mu;                     /* mass ration */
-  /* variables */
   double tb;                     /* time at the bottom */
   double zb;                     /* position at the bottom */
   double tet;                    /* time at the end of thrust phase */
@@ -33,14 +25,14 @@ ctrl_t *ctrl_raibert_update(ctrl_t *self, double t, vec_t p);
 void ctrl_raibert_header(FILE *fp, void *util);
 void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util);
 
+#define ctrl_raibert_delta(self)   ( ctrl_cmd(self)->raibert.delta )
+#define ctrl_raibert_tau(self)     ( ctrl_cmd(self)->raibert.tau )
+#define ctrl_raibert_gamma(self)   ( ctrl_cmd(self)->raibert.gamma )
+#define ctrl_raibert_yeta1(self)   ( ctrl_cmd(self)->raibert.yeta1 )
+#define ctrl_raibert_zr(self)      ( ctrl_cmd(self)->raibert.zr )
+#define ctrl_raibert_mu(self)      ( ctrl_cmd(self)->raibert.mu )
 #define ctrl_raibert_get_prp(self) ( (ctrl_raibert_prp*)((self)->prp) )
 #define ctrl_raibert_type(self)    ( ctrl_raibert_get_prp(self)->type )
-#define ctrl_raibert_delta(self)   ( ctrl_raibert_get_prp(self)->delta )
-#define ctrl_raibert_tau(self)     ( ctrl_raibert_get_prp(self)->tau )
-#define ctrl_raibert_gamma(self)   ( ctrl_raibert_get_prp(self)->gamma )
-#define ctrl_raibert_yeta1(self)   ( ctrl_raibert_get_prp(self)->yeta1 )
-#define ctrl_raibert_zr(self)      ( ctrl_raibert_get_prp(self)->zr )
-#define ctrl_raibert_mu(self)      ( ctrl_raibert_get_prp(self)->mu )
 #define ctrl_raibert_tb(self)      ( ctrl_raibert_get_prp(self)->tb )
 #define ctrl_raibert_zb(self)      ( ctrl_raibert_get_prp(self)->zb )
 #define ctrl_raibert_tet(self)     ( ctrl_raibert_get_prp(self)->tet )
