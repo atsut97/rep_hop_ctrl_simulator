@@ -57,30 +57,6 @@ TEST(test_ctrl_raibert_destroy)
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
-TEST(test_ctrl_raibert_create_full_nonlinear)
-{
-  ctrl_raibert_create_full_nonlinear( &ctrl, &cmd, &model );
-  ASSERT_EQ( full_nonlinear, ctrl_raibert_type( &ctrl ) );
-}
-
-TEST(test_ctrl_raibert_create_simplified_nonlinear)
-{
-  ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model );
-  ASSERT_EQ( simplified_nonlinear, ctrl_raibert_type( &ctrl ) );
-}
-
-TEST(test_ctrl_raibert_create_full_linear)
-{
-  ctrl_raibert_create_full_linear( &ctrl, &cmd, &model );
-  ASSERT_EQ( full_linear, ctrl_raibert_type( &ctrl ) );
-}
-
-TEST(test_ctrl_raibert_create_simplified_linear)
-{
-  ctrl_raibert_create_simplified_linear( &ctrl, &cmd, &model );
-  ASSERT_EQ( simplified_linear, ctrl_raibert_type( &ctrl ) );
-}
-
 TEST(test_ctrl_raibert_set_delta)
 {
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
@@ -183,15 +159,35 @@ TEST(test_ctrl_raibert_set_params_simplified_linear)
   ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_mu(&ctrl) );
 }
 
+TEST(test_ctrl_raibert_create_full_nonlinear)
+{
+  ctrl_raibert_create_full_nonlinear( &ctrl, &cmd, &model );
+  ASSERT_EQ( full_nonlinear, ctrl_raibert_type( &ctrl ) );
+}
+
+TEST(test_ctrl_raibert_create_simplified_nonlinear)
+{
+  ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model );
+  ASSERT_EQ( simplified_nonlinear, ctrl_raibert_type( &ctrl ) );
+}
+
+TEST(test_ctrl_raibert_create_full_linear)
+{
+  ctrl_raibert_create_full_linear( &ctrl, &cmd, &model );
+  ASSERT_EQ( full_linear, ctrl_raibert_type( &ctrl ) );
+}
+
+TEST(test_ctrl_raibert_create_simplified_linear)
+{
+  ctrl_raibert_create_simplified_linear( &ctrl, &cmd, &model );
+  ASSERT_EQ( simplified_linear, ctrl_raibert_type( &ctrl ) );
+}
+
 TEST_SUITE(test_ctrl_raibert)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_raibert_create);
   RUN_TEST(test_ctrl_raibert_destroy);
-  RUN_TEST(test_ctrl_raibert_create_full_nonlinear);
-  RUN_TEST(test_ctrl_raibert_create_simplified_nonlinear);
-  RUN_TEST(test_ctrl_raibert_create_full_linear);
-  RUN_TEST(test_ctrl_raibert_create_simplified_linear);
   RUN_TEST(test_ctrl_raibert_set_delta);
   RUN_TEST(test_ctrl_raibert_set_tau);
   RUN_TEST(test_ctrl_raibert_set_gamma);
@@ -203,6 +199,10 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_set_params_simplified_nonlinear);
   RUN_TEST(test_ctrl_raibert_set_params_full_linear);
   RUN_TEST(test_ctrl_raibert_set_params_simplified_linear);
+  RUN_TEST(test_ctrl_raibert_create_full_nonlinear);
+  RUN_TEST(test_ctrl_raibert_create_simplified_nonlinear);
+  RUN_TEST(test_ctrl_raibert_create_full_linear);
+  RUN_TEST(test_ctrl_raibert_create_simplified_linear);
 }
 
 int main(int argc, char *argv[])
