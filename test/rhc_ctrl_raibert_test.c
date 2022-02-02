@@ -178,6 +178,7 @@ TEST(test_ctrl_raibert_create_full_nonlinear)
     ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
     ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
     ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_zr(&ctrl) );
     ASSERT_EQ( c->mu, ctrl_raibert_mu(&ctrl) );
     ctrl_raibert_destroy( &ctrl );
   }
@@ -198,8 +199,12 @@ TEST(test_ctrl_raibert_create_simplified_nonlinear)
   for ( c=cases; c->tau>0; c++ ){
     ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model, c->tau, c->yeta1 );
     ASSERT_EQ( simplified_nonlinear, ctrl_raibert_type( &ctrl ) );
+    ASSERT_EQ( 0, ctrl_raibert_delta(&ctrl) );
     ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_gamma(&ctrl) );
     ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_mu(&ctrl) );
     ctrl_raibert_destroy( &ctrl );
   }
 }
@@ -249,6 +254,7 @@ TEST(test_ctrl_raibert_create_simplified_linear)
     ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
     ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
     ASSERT_EQ( c->zr, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_mu(&ctrl) );
     ctrl_raibert_destroy( &ctrl );
   }
 }
