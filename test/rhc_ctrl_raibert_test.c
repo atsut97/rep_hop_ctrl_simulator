@@ -59,104 +59,178 @@ TEST(test_ctrl_raibert_destroy)
 
 TEST(test_ctrl_raibert_set_delta)
 {
+  double delta = 14.0;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_delta( &ctrl, 0.01 );
-  ASSERT_DOUBLE_EQ( 0.01, ctrl_raibert_delta(&ctrl) );
+  ctrl_raibert_set_delta( &ctrl, delta );
+  ASSERT_EQ( delta, ctrl_raibert_delta(&ctrl) );
 }
 
 TEST(test_ctrl_raibert_set_tau)
 {
+  double tau = 96.1;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_tau( &ctrl, 0.02 );
-  ASSERT_DOUBLE_EQ( 0.02, ctrl_raibert_tau(&ctrl) );
+  ctrl_raibert_set_tau( &ctrl, tau );
+  ASSERT_EQ( tau, ctrl_raibert_tau(&ctrl) );
 }
 
 TEST(test_ctrl_raibert_set_gamma)
 {
+  double gamma = 44.2;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_gamma( &ctrl, 0.03 );
-  ASSERT_DOUBLE_EQ( 0.03, ctrl_raibert_gamma(&ctrl) );
+  ctrl_raibert_set_gamma( &ctrl, gamma );
+  ASSERT_EQ( gamma, ctrl_raibert_gamma(&ctrl) );
 }
 
 TEST(test_ctrl_raibert_set_yeta1)
 {
+  double yeta1 = 43.6;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_yeta1( &ctrl, 0.04 );
-  ASSERT_DOUBLE_EQ( 0.04, ctrl_raibert_yeta1(&ctrl) );
+  ctrl_raibert_set_yeta1( &ctrl, yeta1 );
+  ASSERT_EQ( yeta1, ctrl_raibert_yeta1(&ctrl) );
 }
 
 TEST(test_ctrl_raibert_set_zr)
 {
+  double zr = 2.2;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_zr( &ctrl, 0.05 );
-  ASSERT_DOUBLE_EQ( 0.05, ctrl_raibert_zr(&ctrl) );
+  ctrl_raibert_set_zr( &ctrl, zr );
+  ASSERT_EQ( zr, ctrl_raibert_zr(&ctrl) );
 }
 
 TEST(test_ctrl_raibert_set_mu)
 {
+  double mu = 0.3;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_mu( &ctrl, 0.06 );
-  ASSERT_DOUBLE_EQ( 0.06, ctrl_raibert_mu(&ctrl) );
+  ctrl_raibert_set_mu( &ctrl, mu );
+  ASSERT_EQ( mu, ctrl_raibert_mu(&ctrl) );
 }
 
 TEST(test_ctrl_raibert_set_params)
 {
-  ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_params( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 );
-  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_zr(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.6, ctrl_raibert_mu(&ctrl) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    /* { $$, $$, $$, $$, $$, $$ }, */
+    /* { $$, $$, $$, $$, $$, $$ }, */
+    /* { $$, $$, $$, $$, $$, $$ }, */
+    { 69.6, 84.6, 62.8, 69.9, 17.9, 41.3 },
+    { 63.9, 57.7, 83.6, 15.4, 79.8, 92.0 },
+    { 24.4, 94.2, 68.0, 4.8, 39.6, 11.8 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->delta>0; c++ ){
+    ctrl_raibert_create( &ctrl, &cmd, &model, none );
+    ctrl_raibert_set_params( &ctrl, c->delta, c->tau, c->gamma, c->yeta1, c->zr, c->mu );
+    ASSERT_EQ( c->delta, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( c->zr, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( c->mu, ctrl_raibert_mu(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_set_params_full_nonlinear)
 {
-  ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_params_full_nonlinear( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5 );
-  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_zr(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_mu(&ctrl) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 91.5, 22.7, 30.3, 7.2, 12.0, 76.8 },
+    { 94.2, 99.2, 53.4, 79.4, 70.6, 47.0 },
+    { 84.8, 72.3, 94.1, 68.7, 96.4, 48.8 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->delta>0; c++ ){
+    ctrl_raibert_create( &ctrl, &cmd, &model, none );
+    ctrl_raibert_set_params_full_nonlinear( &ctrl, c->delta, c->tau, c->gamma, c->yeta1, c->mu );
+    ASSERT_EQ( c->delta, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( c->mu, ctrl_raibert_mu(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_set_params_simplified_nonlinear)
 {
-  ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_params_simplified_nonlinear( &ctrl, 0.1, 0.2 );
-  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_delta(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_tau(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_gamma(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_yeta1(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_zr(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_mu(&ctrl) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 43.3, 93.4, 28.3, 12.2, 78.4, 73.0 },
+    { 18.9, 10.2, 96.5, 19.9, 26.1, 88.7 },
+    { 70.9, 92.2, 15.5, 76.7, 96.6, 52.3 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->delta>0; c++ ){
+    ctrl_raibert_create( &ctrl, &cmd, &model, none );
+    ctrl_raibert_set_params_simplified_nonlinear( &ctrl, c->tau, c->yeta1 );
+    ASSERT_EQ( 0, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_mu(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_set_params_full_linear)
 {
-  ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_params_full_linear( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 );
-  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_zr(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.6, ctrl_raibert_mu(&ctrl) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 75.4, 60.0, 32.7, 27.7, 45.4, 24.5 },
+    { 17.0, 7.3, 24.7, 35.6, 15.8, 11.7 },
+    { 58.2, 66.7, 43.5, 38.5, 65.4, 81.1 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->delta>0; c++ ){
+    ctrl_raibert_create( &ctrl, &cmd, &model, none );
+    ctrl_raibert_set_params_full_linear( &ctrl, c->delta, c->tau, c->gamma, c->yeta1, c->zr, c->mu );
+    ASSERT_EQ( c->delta, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( c->zr, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( c->mu, ctrl_raibert_mu(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_set_params_simplified_linear)
 {
-  ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  ctrl_raibert_set_params_simplified_linear( &ctrl, 0.1, 0.2, 0.3, 0.4, 0.5 );
-  ASSERT_DOUBLE_EQ( 0.1, ctrl_raibert_delta(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.2, ctrl_raibert_tau(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.3, ctrl_raibert_gamma(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.4, ctrl_raibert_yeta1(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.5, ctrl_raibert_zr(&ctrl) );
-  ASSERT_DOUBLE_EQ( 0.0, ctrl_raibert_mu(&ctrl) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 52.7, 38.0, 84.0, 72.6, 17.2, 55.5 },
+    { 10.8, 69.9, 0.3, 18.6, 56.2, 7.8 },
+    { 4.8, 26.9, 2.6, 91.2, 45.9, 17.4 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->delta>0; c++ ){
+    ctrl_raibert_create( &ctrl, &cmd, &model, none );
+    ctrl_raibert_set_params_simplified_linear( &ctrl, c->delta, c->tau, c->gamma, c->yeta1, c->zr );
+    ASSERT_EQ( c->delta, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( c->zr, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( 0, ctrl_raibert_mu(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_create_full_nonlinear)
