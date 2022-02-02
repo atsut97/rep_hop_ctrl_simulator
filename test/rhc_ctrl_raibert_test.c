@@ -161,26 +161,96 @@ TEST(test_ctrl_raibert_set_params_simplified_linear)
 
 TEST(test_ctrl_raibert_create_full_nonlinear)
 {
-  ctrl_raibert_create_full_nonlinear( &ctrl, &cmd, &model );
-  ASSERT_EQ( full_nonlinear, ctrl_raibert_type( &ctrl ) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 73.6, 90.5, 61.4, 8.7, 35.2, 3.4 },
+    { 14.6, 43.4, 47.5, 62.2, 40.1, 47.8 },
+    { 20.6, 95.4, 64.2, 61.4, 88.4, 69.3 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->tau>0; c++ ){
+    ctrl_raibert_create_full_nonlinear( &ctrl, &cmd, &model, c->delta, c->tau, c->gamma, c->yeta1, c->mu );
+    ASSERT_EQ( full_nonlinear, ctrl_raibert_type( &ctrl ) );
+    ASSERT_EQ( c->delta, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( c->mu, ctrl_raibert_mu(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_create_simplified_nonlinear)
 {
-  ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model );
-  ASSERT_EQ( simplified_nonlinear, ctrl_raibert_type( &ctrl ) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 54.5, 15.7, 52.3, 52.6, 66.9, 62.3 },
+    { 66.9, 42.4, 59.2, 24.1, 45.4, 62.8 },
+    { 40.3, 70.5, 10.0, 63.7, 89.9, 86.4 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->tau>0; c++ ){
+    ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model, c->tau, c->yeta1 );
+    ASSERT_EQ( simplified_nonlinear, ctrl_raibert_type( &ctrl ) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_create_full_linear)
 {
-  ctrl_raibert_create_full_linear( &ctrl, &cmd, &model );
-  ASSERT_EQ( full_linear, ctrl_raibert_type( &ctrl ) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 4.2, 26.7, 65.1, 16.7, 12.7, 20.9 },
+    { 47.5, 80.1, 36.0, 71.3, 27.9, 36.3 },
+    { 28.3, 84.1, 77.1, 41.3, 57.6, 90.0 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->tau>0; c++ ){
+    ctrl_raibert_create_full_linear( &ctrl, &cmd, &model, c->delta, c->tau, c->gamma, c->yeta1, c->zr, c->mu );
+    ASSERT_EQ( full_linear, ctrl_raibert_type( &ctrl ) );
+    ASSERT_EQ( c->delta, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( c->zr, ctrl_raibert_zr(&ctrl) );
+    ASSERT_EQ( c->mu, ctrl_raibert_mu(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST(test_ctrl_raibert_create_simplified_linear)
 {
-  ctrl_raibert_create_simplified_linear( &ctrl, &cmd, &model );
-  ASSERT_EQ( simplified_linear, ctrl_raibert_type( &ctrl ) );
+  struct case_t {
+    double delta, tau, gamma, yeta1, zr, mu;
+  } cases[] = {
+    { 29.6, 68.0, 42.1, 44.6, 48.7, 80.6 },
+    { 64.3, 51.1, 66.6, 22.2, 80.0, 86.4 },
+    { 85.8, 48.9, 5.4, 24.1, 48.1, 34.3 },
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->tau>0; c++ ){
+    ctrl_raibert_create_simplified_linear( &ctrl, &cmd, &model, c->delta, c->tau, c->gamma, c->yeta1, c->zr );
+    ASSERT_EQ( simplified_linear, ctrl_raibert_type( &ctrl ) );
+    ASSERT_EQ( c->delta, ctrl_raibert_delta(&ctrl) );
+    ASSERT_EQ( c->tau, ctrl_raibert_tau(&ctrl) );
+    ASSERT_EQ( c->gamma, ctrl_raibert_gamma(&ctrl) );
+    ASSERT_EQ( c->yeta1, ctrl_raibert_yeta1(&ctrl) );
+    ASSERT_EQ( c->zr, ctrl_raibert_zr(&ctrl) );
+    ctrl_raibert_destroy( &ctrl );
+  }
 }
 
 TEST_SUITE(test_ctrl_raibert)
