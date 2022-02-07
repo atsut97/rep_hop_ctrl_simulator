@@ -333,6 +333,49 @@ TEST(test_ctrl_raibert_create_simplified_linear)
   }
 }
 
+TEST(test_ctrl_raibert_is_in_thrust)
+{
+  struct case_t {
+    double tb, delta, t, expected;
+  } cases[] = {
+    { 10.0, 0.1,  9.8,  false },  /* compression */
+    { 10.0, 0.1,  9.9,  false },  /* compression */
+    { 12.0, 0.2, 11.8,  false },  /* compression */
+    { 12.0, 0.2, 11.9,  false },  /* compression */
+    { 10.0, 0.1, 10.0,  true  },  /* thrust */
+    { 10.0, 0.1, 10.05, true  },  /* thrust */
+    { 10.0, 0.1, 10.09, true  },  /* thrust */
+    { 12.0, 0.2, 12.0,  true  },  /* thrust */
+    { 12.0, 0.2, 12.05, true  },  /* thrust */
+    { 12.0, 0.2, 12.09, true  },  /* thrust */
+    { 12.0, 0.2, 12.1,  true  },  /* thrust */
+    { 12.0, 0.2, 12.15, true  },  /* thrust */
+    { 12.0, 0.2, 12.19, true  },  /* thrust */
+    { 10.0, 0.1, 10.1,  false },  /* extension */
+    { 10.0, 0.1, 10.2,  false },  /* extension */
+    { 12.0, 0.2, 12.2,  false },  /* extension */
+    { 12.0, 0.2, 12.3,  false },  /* extension */
+    { 0.0, 0.0, 0.0, false },
+  };
+  struct case_t *c;
+  bool (*method)(ctrl_t*,double,vec_t);
+  vec_t p;
+
+  p = vec_create_list( 2, 0, 0 );
+  method = ctrl_raibert_is_in_thrust;
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  for ( c=cases; c->tb>0; c++ ) {
+    ctrl_raibert_tb( &ctrl ) = c->tb;
+    ctrl_raibert_set_delta( &ctrl, c->delta );
+    if ( c->expected )
+      ASSERT_TRUE( method( &ctrl, c->t, p ) );
+    else
+      ASSERT_FALSE( method( &ctrl, c->t, p ) );
+  }
+  vec_destroy( p );
+  ctrl_raibert_destroy( &ctrl );
+}
+
 TEST_SUITE(test_ctrl_raibert)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -353,6 +396,7 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_create_simplified_nonlinear);
   RUN_TEST(test_ctrl_raibert_create_full_linear);
   RUN_TEST(test_ctrl_raibert_create_simplified_linear);
+  RUN_TEST(test_ctrl_raibert_is_in_thrust);
 }
 
 int main(int argc, char *argv[])

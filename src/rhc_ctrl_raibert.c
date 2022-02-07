@@ -49,3 +49,8 @@ ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double g
   ctrl_raibert_set_mu( self, mu );
   return self;
 }
+
+bool ctrl_raibert_is_in_thrust(ctrl_t *self, double t, vec_t p)
+{
+  return ( t >= ctrl_raibert_tb(self) && t < ctrl_raibert_tb(self) + ctrl_raibert_delta(self) );
+}

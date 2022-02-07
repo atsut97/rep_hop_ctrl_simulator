@@ -76,4 +76,6 @@ ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double g
     ctrl_raibert_set_params_simplified_linear(self, delta, tau, gamma, yeta1, zr); \
   } while (0)
 
+bool ctrl_raibert_is_in_thrust(ctrl_t *self, double t, vec_t p);
+
 #endif /* __RHC_CTRL_RAIBERT_H__ */
