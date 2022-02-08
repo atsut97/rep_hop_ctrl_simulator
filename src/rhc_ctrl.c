@@ -21,6 +21,25 @@ void ctrl_events_destroy(ctrl_events_t *self)
   ctrl_events_init( self );
 }
 
+complex_t *ctrl_events_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c)
+{
+  double z, v, v0;
+
+  z = vec_elem( p, 0 );
+  v = vec_elem( p, 1 );
+  v0 = ctrl_calc_v0( z0, zd );
+  complex_init( c, (z-z0)/(z0-zb), -v/v0 );
+  return c;
+}
+
+double ctrl_events_calc_phi(double z0, double zd, double zb, vec_t p)
+{
+  complex_t c;
+
+  ctrl_calc_phase_complex( z0, zd, zb, p, &c );
+  return complex_arg( &c );
+}
+
 ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
 {
   return self;

@@ -53,6 +53,53 @@ TEST(test_ctrl_events_destroy)
   ASSERT_EQ( 0, ctrl_events_n(&events) );
 }
 
+TEST(test_ctrl_events_calc_phase_complex)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    complex_t expected;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.28, 0.0, { 1.0, 0.0 } },           /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), { 0.0, 1.0 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, { -1.0, 0.0 } },          /* bottom */
+    { 0.28, 0.26, 0.24, 0.24, -0.0, { -1.0, 0.0 } },         /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), { 0.0, -1.0 } }, /* lift-off */
+    { 0, 0, 0, 0, 0, { 0, 0 } },
+  };
+  struct case_t *c;
+  complex_t cp;
+
+  for( c=cases; c->zd>0; c++ ){
+    vec_set_elem_list( p, 2, c->z, c->v );
+    ctrl_events_calc_phase_complex( c->z0, c->zd, c->zb, p, &cp );
+    ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
+    ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
+  }
+}
+
+TEST(test_ctrl_events_calc_phi)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    double expected;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.28, 0.0, 0.0 },            /* top */
+    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), PI_2 }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.24, -0.0, PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.24, 0.0, -PI },            /* bottom */
+    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), -PI_2 }, /* lift-off */
+    { 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    vec_set_elem_list( p, 2, c->z, c->v );
+    ASSERT_DOUBLE_EQ( c->expected, ctrl_events_calc_phi( c->z0, c->zd, c->zb, p ) );
+  }
+}
+
 TEST(test_ctrl_events_update_apex_1)
 {
   struct case_t {
@@ -107,6 +154,8 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_init);
   RUN_TEST(test_ctrl_events_destroy);
   RUN_TEST(test_ctrl_events_update_apex_1);
+  RUN_TEST(test_ctrl_events_calc_phase_complex);
+  RUN_TEST(test_ctrl_events_calc_phi);
 }
 
 
