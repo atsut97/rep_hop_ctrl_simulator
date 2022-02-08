@@ -21,6 +21,11 @@ void ctrl_events_destroy(ctrl_events_t *self)
   ctrl_events_init( self );
 }
 
+ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
+{
+  return self;
+}
+
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
 {
   self->cmd = cmd;

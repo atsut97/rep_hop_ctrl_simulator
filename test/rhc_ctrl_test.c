@@ -1,16 +1,24 @@
+#include "rhc_cmd.h"
 #include "rhc_ctrl.h"
 #include "rhc_test.h"
+#include "rhc_vec.h"
 
+static cmd_t cmd;
 static ctrl_events_t events;
+static vec_t p;
 
 void setup_events()
 {
+  cmd_default_init( &cmd );
   ctrl_events_init( &events );
+  p = vec_create( 2 );
 }
 
 void teardown_events()
 {
+  vec_destroy( p );
   ctrl_events_destroy( &events );
+  cmd_destroy( &cmd );
 }
 
 TEST(test_ctrl_events_init)
@@ -45,18 +53,65 @@ TEST(test_ctrl_events_destroy)
   ASSERT_EQ( 0, ctrl_events_n(&events) );
 }
 
+TEST(test_ctrl_events_update_apex_1)
+{
+  struct case_t {
+    /* parameters */
+    double zd;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t apex;
+  } cases[] = {
+    /* zd ,   t ,    z ,    v ,apx:{ t,    z } */
+    { 0.25, 0.00, 0.300,  0.00, { 0.00, 0.000 }, },  /* initial */
+
+    { 0.25, 0.01, 0.300, -0.01, { 0.00, 0.000 }, },  /* falling */
+    { 0.25, 0.10, 0.250, -0.30, { 0.00, 0.000 }, },  /* touchdown */
+    { 0.25, 0.20, 0.200,  0.00, { 0.00, 0.000 }, },  /* bottom */
+    { 0.25, 0.30, 0.250,  0.30, { 0.00, 0.000 }, },  /* lift-off */
+    { 0.25, 0.31, 0.251,  0.29, { 0.31, 0.251 }, },  /* rising */
+    { 0.25, 0.32, 0.252,  0.28, { 0.32, 0.252 }, },  /* rising */
+    { 0.25, 0.39, 0.259,  0.01, { 0.39, 0.259 }, },  /* rising */
+    { 0.25, 0.40, 0.300,  0.00, { 0.40, 0.300 }, },  /* apex */
+
+    { 0.00, 0.00, 0.00, 0.00, { 0.00, 0.00 }, },  /* terminator */
+
+    { 0.25, 0.41, 0.300, -0.01, { 0.40, 0.300 }, },  /* falling */
+    { 0.25, 0.50, 0.250, -0.30, { 0.40, 0.300 }, },  /* touchdown */
+    { 0.25, 0.60, 0.200,  0.00, { 0.40, 0.300 }, },  /* bottom */
+    { 0.25, 0.70, 0.250,  0.30, { 0.40, 0.300 }, },  /* lift-off */
+    { 0.25, 0.71, 0.251,  0.29, { 0.71, 0.251 }, },  /* rising */
+    { 0.25, 0.72, 0.252,  0.28, { 0.72, 0.252 }, },  /* rising */
+    { 0.25, 0.79, 0.259,  0.01, { 0.79, 0.259 }, },  /* rising */
+    { 0.25, 0.80, 0.300,  0.00, { 0.80, 0.300 }, },  /* apex */
+
+    { 0.25, 0.81, 0.300, -0.01, { 0.80, 0.300 }, },  /* falling */
+
+    { 0.00, 0.00, 0.00, 0.00, { 0.00, 0.00 }, },  /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, c->t, p, &cmd );
+    ASSERT_EQ( c->apex.t, ctrl_events_apex_t(&events) );
+    ASSERT_EQ( c->apex.z, ctrl_events_apex_z(&events) );
+  }
+}
+
 TEST_SUITE(test_ctrl_events)
 {
   CONFIGURE_SUITE(setup_events, teardown_events);
   RUN_TEST(test_ctrl_events_init);
   RUN_TEST(test_ctrl_events_destroy);
+  RUN_TEST(test_ctrl_events_update_apex_1);
 }
 
 
-static cmd_t cmd;
 static model_t model;
 static ctrl_t ctrl;
-static vec_t p;
 
 void setup()
 {
