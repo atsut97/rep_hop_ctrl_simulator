@@ -1,5 +1,26 @@
 #include "rhc_ctrl.h"
 
+ctrl_events_t *ctrl_events_init(ctrl_events_t *self)
+{
+  ctrl_events_event(self, apex).t = 0;
+  ctrl_events_event(self, apex).z = 0;
+  ctrl_events_event(self, touchdown).t = 0;
+  ctrl_events_event(self, touchdown).z = 0;
+  ctrl_events_event(self, bottom).t = 0;
+  ctrl_events_event(self, bottom).z = 0;
+  ctrl_events_event(self, liftoff).t = 0;
+  ctrl_events_event(self, liftoff).z = 0;
+  self->phase = initial;
+  ctrl_events_phi(self) = 0;
+  ctrl_events_n(self) = 0;
+  return self;
+}
+
+void ctrl_events_destroy(ctrl_events_t *self)
+{
+  ctrl_events_init( self );
+}
+
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
 {
   self->cmd = cmd;

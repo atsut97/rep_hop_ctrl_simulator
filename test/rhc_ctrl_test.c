@@ -1,6 +1,58 @@
 #include "rhc_ctrl.h"
 #include "rhc_test.h"
 
+static ctrl_events_t events;
+
+void setup_events()
+{
+  ctrl_events_init( &events );
+}
+
+void teardown_events()
+{
+  ctrl_events_destroy( &events );
+}
+
+TEST(test_ctrl_events_init)
+{
+  ctrl_events_init( &events );
+  ASSERT_EQ( 0, ctrl_events_apex_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_apex_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_touchdown_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_touchdown_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_bottom_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_bottom_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_liftoff_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_liftoff_z(&events) );
+  ASSERT_EQ( initial, events.phase );
+  ASSERT_EQ( 0, ctrl_events_phi(&events) );
+  ASSERT_EQ( 0, ctrl_events_n(&events) );
+}
+
+TEST(test_ctrl_events_destroy)
+{
+  ctrl_events_destroy( &events );
+  ASSERT_EQ( 0, ctrl_events_apex_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_apex_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_touchdown_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_touchdown_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_bottom_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_bottom_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_liftoff_t(&events) );
+  ASSERT_EQ( 0, ctrl_events_liftoff_z(&events) );
+  ASSERT_EQ( initial, events.phase );
+  ASSERT_EQ( 0, ctrl_events_phi(&events) );
+  ASSERT_EQ( 0, ctrl_events_n(&events) );
+}
+
+TEST_SUITE(test_ctrl_events)
+{
+  CONFIGURE_SUITE(setup_events, teardown_events);
+  RUN_TEST(test_ctrl_events_init);
+  RUN_TEST(test_ctrl_events_destroy);
+}
+
+
 static cmd_t cmd;
 static model_t model;
 static ctrl_t ctrl;
@@ -353,6 +405,7 @@ TEST_SUITE(test_ctrl)
 
 int main(int argc, char *argv[])
 {
+  RUN_SUITE(test_ctrl_events);
   RUN_SUITE(test_ctrl);
   TEST_REPORT();
   TEST_EXIT();

@@ -6,6 +6,54 @@
 #include "rhc_model.h"
 #include "rhc_vec.h"
 
+typedef struct {
+  /* Events are determined by the current position and velocity and
+   * the highest position when standing (z0). */
+  struct _ctrl_events_tuple_t {
+    double t, z;
+  } ctrl_events_tuple_t;
+  struct _ctrl_events_tuple_t apex;
+  struct _ctrl_events_tuple_t touchdown;
+  struct _ctrl_events_tuple_t bottom;
+  struct _ctrl_events_tuple_t liftoff;
+
+  /* Phases are determined by the current phase value, i.e. phi. Note
+   * that which phase an event belongs to can not be identified
+   * uniquely due to digitalization. It means that, for instances, a
+   * bottom event may be updated during extension phase. */
+  enum _ctrl_events_phases_t {
+    initial=-1, flight=0, compression, extension,
+  } _ctrl_events_phases_t;
+  enum _ctrl_events_phases_t phase;
+  double phi;  /* stores the calculated phase value */
+  int n;       /* counts how many it reaches apex */
+} ctrl_events_t;
+
+ctrl_events_t *ctrl_events_init(ctrl_events_t *self);
+ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd);
+void ctrl_events_destroy(ctrl_events_t *self);
+
+#define ctrl_events_event(self,event) ( (self)->event )
+#define ctrl_events_apex_t(self)      ( ctrl_events_event(self,apex).t )
+#define ctrl_events_apex_z(self)      ( ctrl_events_event(self,apex).z )
+#define ctrl_events_touchdown_t(self) ( ctrl_events_event(self,touchdown).t )
+#define ctrl_events_touchdown_z(self) ( ctrl_events_event(self,touchdown).z )
+#define ctrl_events_bottom_t(self)    ( ctrl_events_event(self,bottom).t )
+#define ctrl_events_bottom_z(self)    ( ctrl_events_event(self,bottom).z )
+#define ctrl_events_liftoff_t(self)   ( ctrl_events_event(self,liftoff).t )
+#define ctrl_events_liftoff_z(self)   ( ctrl_events_event(self,liftoff).z )
+
+bool ctrl_events_is_in_flight(ctrl_events_t *self);
+bool ctrl_events_is_in_compression(ctrl_events_t *self);
+bool ctrl_events_is_in_extension(ctrl_events_t *self);
+
+#define ctrl_events_phi(self)  ( (self)->phi )
+#define ctrl_events_n(self)    ( (self)->n )
+complex_t *ctrl_events_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c);
+double ctrl_events_calc_phi(double z0, double zd, double zb, vec_t p);
+
+
+
 typedef struct _ctrl_t{
   cmd_t *cmd;
   model_t *model;
