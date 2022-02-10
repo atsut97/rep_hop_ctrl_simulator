@@ -92,8 +92,8 @@ ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t 
 {
   double phi;
 
-  phi = ctrl_calc_phi( cmd->z0, cmd->zd, cmd->zb, p );
-  /* if( ctrl_phi( self ) < 0 && phi >= 0 ) ctrl_n(self)++; */
+  phi = ctrl_events_calc_phi( cmd->z0, cmd->zd, cmd->zb, p );
+  if( ctrl_events_phi( self ) < 0 && phi >= 0 ) ctrl_events_n(self)++;
   ctrl_events_phi(self) = phi;
   ctrl_events_phase(self) = _ctrl_events_determine_phase( self );
 

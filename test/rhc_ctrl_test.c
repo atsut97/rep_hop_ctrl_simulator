@@ -348,6 +348,68 @@ TEST(test_ctrl_events_update_phase)
   }
 }
 
+TEST(test_ctrl_events_update_n)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    int expected;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,    z ,     v , expected */
+    { 0.28, 0.26, 0.24, 0.280,  0.000, 0 },  /* initial */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, 0 },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, 0 },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, 0 },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, 0 },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, 0 },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, 0 },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, 0 },  /* rising */
+
+    { 0.28, 0.26, 0.24, 0.280,  0.000, 1 },  /* apex */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, 1 },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, 1 },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, 1 },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, 1 },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, 1 },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, 1 },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, 1 },  /* rising */
+    { 0.28, 0.26, 0.24, 0.279,  0.029, 1 },  /* rising */
+
+    { 0.28, 0.26, 0.24, 0.278, -0.002, 2 },  /* falling */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, 2 },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, 2 },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, 2 },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, 2 },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, 2 },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, 2 },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, 2 },  /* rising */
+    { 0.28, 0.26, 0.24, 0.278,  0.028, 2 },  /* rising */
+
+    { 0.28, 0.26, 0.24, 0.279, -0.001, 3 },  /* falling */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, 3 },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, 3 },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, 3 },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, 3 },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, 3 },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, 3 },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, 3 },  /* rising */
+
+    { 0.28, 0.26, 0.24, 0.280,  0.000, 4 },  /* apex */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, 4 },  /* falling */
+
+    {    0,    0,    0,     0,      0, 0 },  /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, 0, p, &cmd );
+    ASSERT_EQ( c->expected, ctrl_events_n(&events) );
+  }
+}
 
 TEST(test_ctrl_events_update_apex_1)
 {
@@ -410,6 +472,7 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_is_in_compression);
   RUN_TEST(test_ctrl_events_is_in_extension);
   RUN_TEST(test_ctrl_events_update_phase);
+  RUN_TEST(test_ctrl_events_update_n);
   /* RUN_TEST(test_ctrl_events_update_apex_1); */
 }
 
