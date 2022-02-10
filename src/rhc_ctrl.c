@@ -1,6 +1,8 @@
 #include "rhc_ctrl.h"
 #include "rhc_misc.h"
 
+static enum _ctrl_events_phases_t _ctrl_events_determine_phase(ctrl_events_t *self);
+
 ctrl_events_t *ctrl_events_init(ctrl_events_t *self)
 {
   ctrl_events_event(self, apex).t = 0;
@@ -71,6 +73,21 @@ bool ctrl_events_is_in_extension(ctrl_events_t *self)
   return ( -PI <= ctrl_events_phi(self) ) && ( ctrl_events_phi(self) < -PI_2 );
 }
 
+enum _ctrl_events_phases_t _ctrl_events_determine_phase(ctrl_events_t *self)
+{
+  if( ctrl_events_is_in_rising( self ) ){
+    return rising;
+  } else if( ctrl_events_is_in_falling( self ) ){
+    return falling;
+  } else if( ctrl_events_is_in_compression( self ) ){
+    return compression;
+  } else if( ctrl_events_is_in_extension( self ) ){
+    return extension;
+  } else {
+    return invalid;
+  }
+}
+
 ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
 {
   double phi;
@@ -78,6 +95,8 @@ ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t 
   phi = ctrl_calc_phi( cmd->z0, cmd->zd, cmd->zb, p );
   /* if( ctrl_phi( self ) < 0 && phi >= 0 ) ctrl_n(self)++; */
   ctrl_events_phi(self) = phi;
+  ctrl_events_phase(self) = _ctrl_events_determine_phase( self );
+
   return self;
 }
 

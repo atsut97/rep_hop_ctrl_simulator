@@ -49,8 +49,9 @@ bool ctrl_events_is_in_flight(ctrl_events_t *self);
 bool ctrl_events_is_in_compression(ctrl_events_t *self);
 bool ctrl_events_is_in_extension(ctrl_events_t *self);
 
-#define ctrl_events_phi(self)  ( (self)->phi )
-#define ctrl_events_n(self)    ( (self)->n )
+#define ctrl_events_phase(self) ( (self)->phase )
+#define ctrl_events_phi(self)   ( (self)->phi )
+#define ctrl_events_n(self)     ( (self)->n )
 complex_t *ctrl_events_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c);
 double ctrl_events_calc_phi(double z0, double zd, double zb, vec_t p);
 

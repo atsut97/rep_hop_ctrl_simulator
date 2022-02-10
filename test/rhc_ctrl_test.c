@@ -309,6 +309,45 @@ TEST(test_ctrl_events_is_in_extension)
   }
 }
 
+TEST(test_ctrl_events_update_phase)
+{
+  struct case_t {
+    double zd, z0, zb;
+    double z, v;
+    enum _ctrl_events_phases_t expected;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,    z ,     v , expected */
+    { 0.28, 0.26, 0.24, 0.280,  0.000, falling     },  /* initial */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, falling     },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, compression },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, compression },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, extension   },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, extension   },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, rising      },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, rising      },  /* rising */
+    { 0.28, 0.26, 0.24, 0.280,  0.000, falling     },  /* apex */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, falling     },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, compression },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, compression },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, extension   },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, extension   },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, rising      },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, rising      },  /* rising */
+    { 0.28, 0.26, 0.24, 0.280,  0.000, falling     },  /* apex */
+    {    0,    0,    0,     0,      0, invalid     },  /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, 0, p, &cmd );
+    ASSERT_EQ( c->expected, ctrl_events_phase(&events) );
+  }
+}
+
 
 TEST(test_ctrl_events_update_apex_1)
 {
@@ -370,6 +409,7 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_is_in_flight);
   RUN_TEST(test_ctrl_events_is_in_compression);
   RUN_TEST(test_ctrl_events_is_in_extension);
+  RUN_TEST(test_ctrl_events_update_phase);
   /* RUN_TEST(test_ctrl_events_update_apex_1); */
 }
 
