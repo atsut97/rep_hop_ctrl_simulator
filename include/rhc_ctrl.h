@@ -22,7 +22,7 @@ typedef struct {
    * uniquely due to digitalization. It means that, for instances, a
    * bottom event may be updated during extension phase. */
   enum _ctrl_events_phases_t {
-    invalid=-1, rising=0, falling, compression, extension,
+    invalid=-1, falling=0, compression, extension, rising,
   } _ctrl_events_phases_t;
   enum _ctrl_events_phases_t phase;
   double phi;  /* stores the calculated phase value */
@@ -43,11 +43,11 @@ void ctrl_events_destroy(ctrl_events_t *self);
 #define ctrl_events_liftoff_t(self)   ( ctrl_events_event(self,liftoff).t )
 #define ctrl_events_liftoff_z(self)   ( ctrl_events_event(self,liftoff).z )
 
-bool ctrl_events_is_in_rising(ctrl_events_t *self);
 bool ctrl_events_is_in_falling(ctrl_events_t *self);
 bool ctrl_events_is_in_flight(ctrl_events_t *self);
 bool ctrl_events_is_in_compression(ctrl_events_t *self);
 bool ctrl_events_is_in_extension(ctrl_events_t *self);
+bool ctrl_events_is_in_rising(ctrl_events_t *self);
 
 #define ctrl_events_phase(self) ( (self)->phase )
 #define ctrl_events_phi(self)   ( (self)->phi )

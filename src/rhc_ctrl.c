@@ -1,7 +1,7 @@
 #include "rhc_ctrl.h"
 #include "rhc_misc.h"
 
-static enum _ctrl_events_phases_t _ctrl_events_determine_phase(ctrl_events_t *self);
+static enum _ctrl_events_phases_t _ctrl_events_determine_phase(double phi);
 
 ctrl_events_t *ctrl_events_init(ctrl_events_t *self)
 {
@@ -39,20 +39,13 @@ double ctrl_events_calc_phi(double z0, double zd, double zb, vec_t p)
 {
   complex_t c;
 
-  ctrl_calc_phase_complex( z0, zd, zb, p, &c );
+  ctrl_events_calc_phase_complex( z0, zd, zb, p, &c );
   return complex_arg( &c );
-}
-
-bool ctrl_events_is_in_rising(ctrl_events_t *self)
-{
-  /* Rising phase includes lift-off event, but not apex. */
-  return ( -PI_2 <= ctrl_events_phi(self) ) && ( ctrl_events_phi(self) < 0 );
 }
 
 bool ctrl_events_is_in_falling(ctrl_events_t *self)
 {
-  /* Falling phase includes apex event, but not touchdown. */
-  return ( 0 <= ctrl_events_phi(self) ) && ( ctrl_events_phi(self) < PI_2 );
+  return ctrl_events_phase(self) == falling;
 }
 
 bool ctrl_events_is_in_flight(ctrl_events_t *self)
@@ -63,26 +56,33 @@ bool ctrl_events_is_in_flight(ctrl_events_t *self)
 
 bool ctrl_events_is_in_compression(ctrl_events_t *self)
 {
-  /* Compression phase includes touchdown event, but not bottom. */
-  return ( PI_2 <= ctrl_events_phi(self) ) && ( ctrl_events_phi(self) < PI );
+  return ctrl_events_phase(self) == compression;
 }
 
 bool ctrl_events_is_in_extension(ctrl_events_t *self)
 {
-  /* Extension phase includes bottom event, but not lift-off. */
-  return ( -PI <= ctrl_events_phi(self) ) && ( ctrl_events_phi(self) < -PI_2 );
+  return ctrl_events_phase(self) == extension;
 }
 
-enum _ctrl_events_phases_t _ctrl_events_determine_phase(ctrl_events_t *self)
+bool ctrl_events_is_in_rising(ctrl_events_t *self)
 {
-  if( ctrl_events_is_in_rising( self ) ){
-    return rising;
-  } else if( ctrl_events_is_in_falling( self ) ){
+  return ctrl_events_phase(self) == rising;
+}
+
+enum _ctrl_events_phases_t _ctrl_events_determine_phase(double phi)
+{
+  if( ( 0 <= phi ) && ( phi < PI_2 ) ){
+    /* Falling phase includes apex event, but not touchdown. */
     return falling;
-  } else if( ctrl_events_is_in_compression( self ) ){
+  } else if( ( PI_2 <= phi ) && ( phi < PI ) ){
+    /* Compression phase includes touchdown event, but not bottom. */
     return compression;
-  } else if( ctrl_events_is_in_extension( self ) ){
+  } else if( ( -PI <= phi ) && ( phi < -PI_2 ) ){
+    /* Extension phase includes bottom event, but not lift-off. */
     return extension;
+  } else if( ( -PI_2 <= phi ) && ( phi < 0 ) ){
+    /* Rising phase includes lift-off event, but not apex. */
+    return rising;
   } else {
     return invalid;
   }
@@ -91,11 +91,14 @@ enum _ctrl_events_phases_t _ctrl_events_determine_phase(ctrl_events_t *self)
 ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
 {
   double phi;
+  enum _ctrl_events_phases_t phase;
 
   phi = ctrl_events_calc_phi( cmd->z0, cmd->zd, cmd->zb, p );
   if( ctrl_events_phi( self ) < 0 && phi >= 0 ) ctrl_events_n(self)++;
+  phase = _ctrl_events_determine_phase( phi );
+
   ctrl_events_phi(self) = phi;
-  ctrl_events_phase(self) = _ctrl_events_determine_phase( self );
+  ctrl_events_phase(self) = phase;
 
   return self;
 }
