@@ -2,6 +2,7 @@
 #include "rhc_misc.h"
 
 static enum _ctrl_events_phases_t _ctrl_events_determine_phase(double phi);
+static void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t phase, double t, double z, cmd_t *cmd);
 
 ctrl_events_t *ctrl_events_init(ctrl_events_t *self)
 {
@@ -88,6 +89,17 @@ enum _ctrl_events_phases_t _ctrl_events_determine_phase(double phi)
   }
 }
 
+void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t phase, double t, double z, cmd_t *cmd)
+{
+  if( phase == rising || ctrl_events_is_in_rising( self ) ) {
+    if( ctrl_events_is_in_extension( self ) ||
+        z >= ctrl_events_event(self, apex).z ){
+      ctrl_events_event(self, apex).t = t;
+      ctrl_events_event(self, apex).z = z;
+    }
+  }
+}
+
 ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
 {
   double phi;
@@ -96,7 +108,7 @@ ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t 
   phi = ctrl_events_calc_phi( cmd->z0, cmd->zd, cmd->zb, p );
   if( ctrl_events_phi( self ) < 0 && phi >= 0 ) ctrl_events_n(self)++;
   phase = _ctrl_events_determine_phase( phi );
-
+  _ctrl_events_update_event( self, phase, t, vec_elem(p,0), cmd );
   ctrl_events_phi(self) = phi;
   ctrl_events_phase(self) = phase;
 
