@@ -99,12 +99,20 @@ void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t p
 
   z = vec_elem( p, 0 );
   v = vec_elem( p, 1 );
-  if( phase == rising || ctrl_events_is_in_rising( self ) ) {
+  if( phase == rising || ctrl_events_is_in_rising( self ) ){
     if( ctrl_events_is_in_extension( self ) ||
         z >= ctrl_events_event(self, apex).z ){
       ctrl_events_event(self, apex).t = t;
       ctrl_events_event(self, apex).z = z;
       ctrl_events_event(self, apex).v = v;
+    }
+  }
+  if( phase == falling || ctrl_events_is_in_falling( self ) ){
+    if( ctrl_events_is_in_rising( self ) ||
+        v <= ctrl_events_event(self, touchdown).v ){
+      ctrl_events_event(self, touchdown).t = t;
+      ctrl_events_event(self, touchdown).z = z;
+      ctrl_events_event(self, touchdown).v = v;
     }
   }
 }

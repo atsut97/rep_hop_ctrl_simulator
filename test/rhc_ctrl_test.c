@@ -519,6 +519,124 @@ TEST(test_ctrl_events_update_apex_2)
   }
 }
 
+TEST(test_ctrl_events_update_touchdown_1)
+{
+  struct case_t {
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t touchdown;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
+                      { 0.00, 0.300,  0.00 }, },         /* initial */
+    { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
+                      { 0.01, 0.299, -0.01 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.09, 0.255, -0.90,
+                      { 0.09, 0.255, -0.90 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.10, 0.250, -sqrt(0.1*G),
+                      { 0.10, 0.250, -sqrt(0.1*G) }, },  /* touchdown */
+
+    { 0.30, 0.25, 0.20, 0.11, 0.249, -0.90,
+                      { 0.10, 0.250, -sqrt(0.1*G) }, },  /* compression */
+    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00,
+                      { 0.10, 0.250, -sqrt(0.1*G) }, },  /* bottom */
+    { 0.30, 0.25, 0.20, 0.30, 0.250,  sqrt(0.1*G),
+                      { 0.10, 0.250, -sqrt(0.1*G) }, },  /* lift-off */
+
+    { 0.30, 0.25, 0.20, 0.40, 0.300,  0.00,
+                      { 0.40, 0.300,  0.00 }, },         /* apex */
+    { 0.30, 0.25, 0.20, 0.41, 0.299, -0.01,
+                      { 0.41, 0.299, -0.01 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.49, 0.255, -0.90,
+                      { 0.49, 0.255, -0.90 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.50, 0.250, -sqrt(0.1*G),
+                      { 0.50, 0.250, -sqrt(0.1*G) }, },  /* touchdown */
+
+    { 0.30, 0.25, 0.20, 0.51, 0.249, -0.90,
+                      { 0.50, 0.250, -sqrt(0.1*G) }, },  /* compression */
+    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, c->t, p, &cmd );
+    ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown_t(&events) );
+    ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown_z(&events) );
+    ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown_v(&events) );
+  }
+}
+
+TEST(test_ctrl_events_update_touchdown_2)
+{
+  struct case_t {
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t touchdown;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
+                      { 0.00, 0.300,  0.00 }, },         /* initial */
+    { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
+                      { 0.01, 0.299, -0.01 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.09, 0.260, -0.80,
+                      { 0.09, 0.260, -0.80 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.10, 0.249, -0.90,
+                      { 0.10, 0.249, -0.90 }, },         /* compression */
+
+    { 0.30, 0.25, 0.20, 0.11, 0.240, -0.80,
+                      { 0.10, 0.249, -0.90 }, },         /* compression */
+    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00,
+                      { 0.10, 0.249, -0.90 }, },         /* bottom */
+    { 0.30, 0.25, 0.20, 0.30, 0.250,  sqrt(0.1*G),
+                      { 0.10, 0.249, -0.90 }, },         /* lift-off */
+    { 0.30, 0.25, 0.20, 0.39, 0.299,  0.01,
+                      { 0.10, 0.249, -0.90 }, },         /* rising */
+
+    { 0.30, 0.25, 0.20, 0.40, 0.295, -0.02,
+                      { 0.40, 0.295, -0.02 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.41, 0.280, -0.04,
+                      { 0.41, 0.280, -0.04 }, },         /* falling */
+    { 0.30, 0.25, 0.20, 0.49, 0.251, -0.90,
+                      { 0.49, 0.251, -0.90 }, },         /* falling */
+
+    { 0.30, 0.25, 0.20, 0.50, 0.248, -0.80,
+                      { 0.49, 0.251, -0.90 }, },         /* compression */
+    { 0.30, 0.25, 0.20, 0.60, 0.200,  0.00,
+                      { 0.49, 0.251, -0.90 }, },         /* bottom */
+    { 0.30, 0.25, 0.20, 0.70, 0.250,  sqrt(0.1*G),
+                      { 0.49, 0.251, -0.90 }, },         /* lift-off */
+    { 0.30, 0.25, 0.20, 0.79, 0.290,  0.03,
+                      { 0.49, 0.251, -0.90 }, },         /* rising */
+
+    { 0.30, 0.25, 0.20, 0.80, 0.295, -0.01,
+                      { 0.80, 0.295, -0.01 }, },         /* falling */
+    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00,
+                      { 0.00, 0.000,  0.00 }, },         /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, c->t, p, &cmd );
+    ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown_t(&events) );
+    ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown_z(&events) );
+    ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown_v(&events) );
+  }
+}
+
 TEST_SUITE(test_ctrl_events)
 {
   CONFIGURE_SUITE(setup_events, teardown_events);
@@ -535,6 +653,8 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_update_n);
   RUN_TEST(test_ctrl_events_update_apex_1);
   RUN_TEST(test_ctrl_events_update_apex_2);
+  RUN_TEST(test_ctrl_events_update_touchdown_1);
+  RUN_TEST(test_ctrl_events_update_touchdown_2);
 }
 
 
