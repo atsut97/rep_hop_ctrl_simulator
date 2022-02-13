@@ -26,12 +26,16 @@ TEST(test_ctrl_events_init)
   ctrl_events_init( &events );
   ASSERT_EQ( 0, ctrl_events_apex_t(&events) );
   ASSERT_EQ( 0, ctrl_events_apex_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_apex_v(&events) );
   ASSERT_EQ( 0, ctrl_events_touchdown_t(&events) );
   ASSERT_EQ( 0, ctrl_events_touchdown_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_touchdown_v(&events) );
   ASSERT_EQ( 0, ctrl_events_bottom_t(&events) );
   ASSERT_EQ( 0, ctrl_events_bottom_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_bottom_v(&events) );
   ASSERT_EQ( 0, ctrl_events_liftoff_t(&events) );
   ASSERT_EQ( 0, ctrl_events_liftoff_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_liftoff_v(&events) );
   ASSERT_EQ( invalid, events.phase );
   ASSERT_EQ( 0, ctrl_events_phi(&events) );
   ASSERT_EQ( 0, ctrl_events_n(&events) );
@@ -42,12 +46,16 @@ TEST(test_ctrl_events_destroy)
   ctrl_events_destroy( &events );
   ASSERT_EQ( 0, ctrl_events_apex_t(&events) );
   ASSERT_EQ( 0, ctrl_events_apex_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_apex_v(&events) );
   ASSERT_EQ( 0, ctrl_events_touchdown_t(&events) );
   ASSERT_EQ( 0, ctrl_events_touchdown_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_touchdown_v(&events) );
   ASSERT_EQ( 0, ctrl_events_bottom_t(&events) );
   ASSERT_EQ( 0, ctrl_events_bottom_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_bottom_v(&events) );
   ASSERT_EQ( 0, ctrl_events_liftoff_t(&events) );
   ASSERT_EQ( 0, ctrl_events_liftoff_z(&events) );
+  ASSERT_EQ( 0, ctrl_events_liftoff_v(&events) );
   ASSERT_EQ( invalid, events.phase );
   ASSERT_EQ( 0, ctrl_events_phi(&events) );
   ASSERT_EQ( 0, ctrl_events_n(&events) );
@@ -421,30 +429,30 @@ TEST(test_ctrl_events_update_apex_1)
     /* expected recorded events */
     struct _ctrl_events_tuple_t apex;
   } cases[] = {
-    /* zd ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z } */
-    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.000 }, },  /* initial */
-    { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.000 }, },  /* falling */
-    { 0.30, 0.25, 0.20, 0.10, 0.250, -0.30, { 0.00, 0.000 }, },  /* touchdown */
-    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00, { 0.00, 0.000 }, },  /* bottom */
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.000, 0.00 }, },  /* initial */
+    { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.000, 0.00 }, },  /* falling */
+    { 0.30, 0.25, 0.20, 0.10, 0.250, -0.30, { 0.00, 0.000, 0.00 }, },  /* touchdown */
+    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00, { 0.00, 0.000, 0.00 }, },  /* bottom */
 
-    { 0.30, 0.25, 0.20, 0.30, 0.250,  sqrt(0.1*G), { 0.30, 0.250 }, },  /* lift-off */
-    { 0.30, 0.25, 0.20, 0.31, 0.251,  0.29, { 0.31, 0.251 }, },  /* rising */
-    { 0.30, 0.25, 0.20, 0.32, 0.252,  0.28, { 0.32, 0.252 }, },  /* rising */
-    { 0.30, 0.25, 0.20, 0.39, 0.259,  0.01, { 0.39, 0.259 }, },  /* rising */
-    { 0.30, 0.25, 0.20, 0.40, 0.300,  0.00, { 0.40, 0.300 }, },  /* apex */
+    { 0.30, 0.25, 0.20, 0.30, 0.250,  sqrt(0.1*G), { 0.30, 0.250, sqrt(0.1*G) }, },  /* lift-off */
+    { 0.30, 0.25, 0.20, 0.31, 0.251,  0.29, { 0.31, 0.251, 0.29 }, },  /* rising */
+    { 0.30, 0.25, 0.20, 0.32, 0.252,  0.28, { 0.32, 0.252, 0.28 }, },  /* rising */
+    { 0.30, 0.25, 0.20, 0.39, 0.259,  0.01, { 0.39, 0.259, 0.01 }, },  /* rising */
+    { 0.30, 0.25, 0.20, 0.40, 0.300,  0.00, { 0.40, 0.300, 0.00 }, },  /* apex */
 
-    { 0.30, 0.25, 0.20, 0.41, 0.300, -0.01, { 0.40, 0.300 }, },  /* falling */
-    { 0.30, 0.25, 0.20, 0.50, 0.250, -0.30, { 0.40, 0.300 }, },  /* touchdown */
-    { 0.30, 0.25, 0.20, 0.60, 0.200,  0.00, { 0.40, 0.300 }, },  /* bottom */
+    { 0.30, 0.25, 0.20, 0.41, 0.300, -0.01, { 0.40, 0.300, 0.00 }, },  /* falling */
+    { 0.30, 0.25, 0.20, 0.50, 0.250, -0.30, { 0.40, 0.300, 0.00 }, },  /* touchdown */
+    { 0.30, 0.25, 0.20, 0.60, 0.200,  0.00, { 0.40, 0.300, 0.00 }, },  /* bottom */
 
-    { 0.30, 0.25, 0.20, 0.70, 0.250,  sqrt(0.1*G), { 0.70, 0.250 }, },  /* lift-off */
-    { 0.30, 0.25, 0.20, 0.71, 0.251,  0.29, { 0.71, 0.251 }, },  /* rising */
-    { 0.30, 0.25, 0.20, 0.72, 0.252,  0.28, { 0.72, 0.252 }, },  /* rising */
-    { 0.30, 0.25, 0.20, 0.79, 0.259,  0.01, { 0.79, 0.259 }, },  /* rising */
-    { 0.30, 0.25, 0.20, 0.80, 0.300,  0.00, { 0.80, 0.300 }, },  /* apex */
+    { 0.30, 0.25, 0.20, 0.70, 0.250,  sqrt(0.1*G), { 0.70, 0.250, sqrt(0.1*G) }, },  /* lift-off */
+    { 0.30, 0.25, 0.20, 0.71, 0.251,  0.29, { 0.71, 0.251, 0.29 }, },  /* rising */
+    { 0.30, 0.25, 0.20, 0.72, 0.252,  0.28, { 0.72, 0.252, 0.28 }, },  /* rising */
+    { 0.30, 0.25, 0.20, 0.79, 0.259,  0.01, { 0.79, 0.259, 0.01 }, },  /* rising */
+    { 0.30, 0.25, 0.20, 0.80, 0.300,  0.00, { 0.80, 0.300, 0.00 }, },  /* apex */
 
-    { 0.30, 0.25, 0.20, 0.81, 0.300, -0.01, { 0.80, 0.300 }, },  /* falling */
-    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000 }, },  /* terminator */
+    { 0.30, 0.25, 0.20, 0.81, 0.300, -0.01, { 0.80, 0.300, 0.00 }, },  /* falling */
+    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
   };
   struct case_t *c;
 
@@ -456,6 +464,7 @@ TEST(test_ctrl_events_update_apex_1)
     ctrl_events_update( &events, c->t, p, &cmd );
     ASSERT_EQ( c->apex.t, ctrl_events_apex_t(&events) );
     ASSERT_EQ( c->apex.z, ctrl_events_apex_z(&events) );
+    ASSERT_EQ( c->apex.v, ctrl_events_apex_v(&events) );
   }
 }
 
