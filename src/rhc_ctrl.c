@@ -123,6 +123,14 @@ void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t p
       ctrl_events_event(self, bottom).v = v;
     }
   }
+  if( phase == extension || ctrl_events_is_in_extension( self ) ){
+    if( ctrl_events_is_in_compression( self ) ||
+        v >= ctrl_events_event(self, liftoff).v ){
+      ctrl_events_event(self, liftoff).t = t;
+      ctrl_events_event(self, liftoff).z = z;
+      ctrl_events_event(self, liftoff).v = v;
+    }
+  }
 }
 
 ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
