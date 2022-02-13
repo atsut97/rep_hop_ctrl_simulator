@@ -115,6 +115,14 @@ void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t p
       ctrl_events_event(self, touchdown).v = v;
     }
   }
+  if( phase == compression || ctrl_events_is_in_compression( self ) ){
+    if( ctrl_events_is_in_falling( self ) ||
+        z <= ctrl_events_event(self, bottom).z ){
+      ctrl_events_event(self, bottom).t = t;
+      ctrl_events_event(self, bottom).z = z;
+      ctrl_events_event(self, bottom).v = v;
+    }
+  }
 }
 
 ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
