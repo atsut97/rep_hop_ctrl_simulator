@@ -160,6 +160,7 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
   self->prp = NULL;
   ctrl_n( self ) = 0;
   ctrl_phi( self ) = 0;
+  ctrl_events_init( ctrl_events( self ) );
   return self;
 }
 

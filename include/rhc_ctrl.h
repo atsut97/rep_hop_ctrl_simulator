@@ -60,27 +60,28 @@ complex_t *ctrl_events_calc_phase_complex(double z0, double zd, double zb, vec_t
 double ctrl_events_calc_phi(double z0, double zd, double zb, vec_t p);
 
 
-
 typedef struct _ctrl_t{
   cmd_t *cmd;
   model_t *model;
   double fz;
   void *prp;
   double n, phi;
+  ctrl_events_t events;
   struct _ctrl_t* (*_update)(struct _ctrl_t*,double,vec_t);
   void (*_destroy)(struct _ctrl_t*);
   void (*_header)(FILE*, void*);
   void (*_writer)(FILE*, struct _ctrl_t*, void*);
 } ctrl_t;
 
-#define ctrl_cmd(self)   ((ctrl_t*)self)->cmd
-#define ctrl_model(self) ((ctrl_t*)self)->model
-#define ctrl_fz(self)    ((ctrl_t*)self)->fz
-#define ctrl_z0(self)    ctrl_cmd(self)->z0
-#define ctrl_zd(self)    ctrl_cmd(self)->zd
-#define ctrl_zb(self)    ctrl_cmd(self)->zb
-#define ctrl_n(self)     ((ctrl_t*)self)->n
-#define ctrl_phi(self)   ((ctrl_t*)self)->phi
+#define ctrl_cmd(self)    ((ctrl_t*)self)->cmd
+#define ctrl_model(self)  ((ctrl_t*)self)->model
+#define ctrl_fz(self)     ((ctrl_t*)self)->fz
+#define ctrl_z0(self)     ctrl_cmd(self)->z0
+#define ctrl_zd(self)     ctrl_cmd(self)->zd
+#define ctrl_zb(self)     ctrl_cmd(self)->zb
+#define ctrl_n(self)      ((ctrl_t*)self)->n
+#define ctrl_phi(self)    ((ctrl_t*)self)->phi
+#define ctrl_events(self) ( &((ctrl_t*)self)->events )
 
 #define ctrl_update(self,t,p)     ((ctrl_t*)self)->_update( self, t, p )
 #define ctrl_destroy(self)        ((ctrl_t*)self)->_destroy( self )

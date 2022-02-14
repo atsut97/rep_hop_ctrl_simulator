@@ -946,6 +946,7 @@ TEST(test_ctrl_init)
   ASSERT_PTREQ( NULL, ctrl.prp);
   ASSERT_EQ( 0, ctrl_n( &ctrl ) );
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
+  ASSERT_EQ( invalid, ctrl_events_phase( ctrl_events( &ctrl ) ) );
 }
 
 TEST(test_ctrl_destroy)
