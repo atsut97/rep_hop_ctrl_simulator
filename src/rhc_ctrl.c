@@ -200,6 +200,7 @@ ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
   phi = ctrl_calc_phi( ctrl_z0(self), ctrl_zd(self), ctrl_zb(self), p );
   if( ctrl_phi( self ) < 0 && phi >= 0 ) ctrl_n(self)++;
   ctrl_phi( self ) = phi;
+  ctrl_events_update( ctrl_events( self ), t, p, ctrl_cmd( self ) );
   return self;
 }
 

@@ -1172,6 +1172,175 @@ TEST(test_ctrl_update_default)
   }
 }
 
+TEST(test_ctrl_phase)
+{
+  double v0 = sqrt( 0.04 * G );
+  struct case_t{
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expectations */
+    enum _ctrl_events_phases_t phase;
+    bool flight, falling, compression, extension, rising;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, falling, true, true, false, false, false }, /* apex */
+    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, falling, true, true, false, false, false }, /* falling */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   compression, false, false, true, false, false }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, compression, false, false, true, false, false }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, extension, false, false, false, true, false }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, extension, false, false, false, true, false }, /* extension */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   rising, true, false, false, false, true }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, rising, true, false, false, false, true }, /* rising */
+    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, falling, true, true, false, false, false }, /* apex */
+    { 0, 0, 0, 0, 0, 0, invalid, false, false, false, false, false },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->phase != invalid; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, c->t, p );
+    ASSERT_EQ( c->phase, ctrl_phase( &ctrl ) );
+    ASSERT_EQ( c->flight, ctrl_phase_in( &ctrl, flight ) );
+    ASSERT_EQ( c->falling, ctrl_phase_in( &ctrl, falling ) );
+    ASSERT_EQ( c->compression, ctrl_phase_in( &ctrl, compression ) );
+    ASSERT_EQ( c->extension, ctrl_phase_in( &ctrl, extension ) );
+    ASSERT_EQ( c->rising, ctrl_phase_in( &ctrl, rising ) );
+  }
+}
+
+TEST(test_ctrl_events_at_apex)
+{
+  double v0 = sqrt( 0.04 * G );
+  struct case_t{
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expectations */
+    struct _ctrl_events_tuple_t apex;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.00,  0.00 } }, /* apex */
+    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.00,  0.00 } }, /* falling */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.00, 0.00,  0.00 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.00, 0.00,  0.00 } }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.00, 0.00,  0.00 } }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.00, 0.00,  0.00 } }, /* extension */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.36, 0.26,  v0   } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.42, 0.27,  0.30 } }, /* rising */
+    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.48, 0.28,  0.00 } }, /* apex */
+    { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd > 0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, c->t, p );
+    ASSERT_EQ( c->apex.t, ctrl_events_at( &ctrl, apex ).t );
+    ASSERT_EQ( c->apex.z, ctrl_events_at( &ctrl, apex ).z );
+    ASSERT_EQ( c->apex.v, ctrl_events_at( &ctrl, apex ).v );
+  }
+}
+
+TEST(test_ctrl_events_at_touchdown)
+{
+  double v0 = sqrt( 0.04 * G );
+  struct case_t{
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expectations */
+    struct _ctrl_events_tuple_t touchdown;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.28,  0.00 } }, /* apex */
+    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.06, 0.27, -0.30 } }, /* falling */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.12, 0.26, -v0   } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.12, 0.26, -v0   } }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.12, 0.26, -v0   } }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.12, 0.26, -v0   } }, /* extension */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.12, 0.26, -v0   } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.12, 0.26, -v0   } }, /* rising */
+    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.48, 0.28,  0.00 } }, /* apex */
+    { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd > 0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, c->t, p );
+    ASSERT_EQ( c->touchdown.t, ctrl_events_at( &ctrl, touchdown ).t );
+    ASSERT_EQ( c->touchdown.z, ctrl_events_at( &ctrl, touchdown ).z );
+    ASSERT_EQ( c->touchdown.v, ctrl_events_at( &ctrl, touchdown ).v );
+  }
+}
+
+TEST(test_ctrl_events_at_bottom)
+{
+  double v0 = sqrt( 0.04 * G );
+  struct case_t{
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expectations */
+    struct _ctrl_events_tuple_t bottom;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.00,  0.00 } }, /* apex */
+    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.00,  0.00 } }, /* falling */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.12, 0.26, -v0   } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.18, 0.25, -0.30 } }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.24, 0.24,  0.00 } }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.24, 0.24,  0.00 } }, /* extension */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.24, 0.24,  0.00 } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.24, 0.24,  0.00 } }, /* rising */
+    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.24, 0.24,  0.00 } }, /* apex */
+    { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd > 0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, c->t, p );
+    ASSERT_EQ( c->bottom.t, ctrl_events_at( &ctrl, bottom ).t );
+    ASSERT_EQ( c->bottom.z, ctrl_events_at( &ctrl, bottom ).z );
+    ASSERT_EQ( c->bottom.v, ctrl_events_at( &ctrl, bottom ).v );
+  }
+}
+
+TEST(test_ctrl_events_at_liftoff)
+{
+  double v0 = sqrt( 0.04 * G );
+  struct case_t{
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expectations */
+    struct _ctrl_events_tuple_t liftoff;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.00,  0.00 } }, /* apex */
+    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.00,  0.00 } }, /* falling */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.00, 0.00,  0.00 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.00, 0.00,  0.00 } }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.24, 0.24,  0.00 } }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.30, 0.25,  0.30 } }, /* extension */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.36, 0.26,  v0   } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.36, 0.26,  v0   } }, /* rising */
+    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.36, 0.26,  v0   } }, /* apex */
+    { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd > 0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, c->t, p );
+    ASSERT_EQ( c->liftoff.t, ctrl_events_at( &ctrl, liftoff ).t );
+    ASSERT_EQ( c->liftoff.z, ctrl_events_at( &ctrl, liftoff ).z );
+    ASSERT_EQ( c->liftoff.v, ctrl_events_at( &ctrl, liftoff ).v );
+  }
+}
+
 TEST(test_ctrl_calc_phase_complex)
 {
   struct case_t {
@@ -1260,6 +1429,11 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_extension);
   RUN_TEST(test_ctrl_v0);
   RUN_TEST(test_ctrl_update_default);
+  RUN_TEST(test_ctrl_phase);
+  RUN_TEST(test_ctrl_events_at_apex);
+  RUN_TEST(test_ctrl_events_at_touchdown);
+  RUN_TEST(test_ctrl_events_at_bottom);
+  RUN_TEST(test_ctrl_events_at_liftoff);
   RUN_TEST(test_ctrl_calc_phase_complex);
   RUN_TEST(test_ctrl_phase_complex);
   RUN_TEST(test_ctrl_calc_phi);

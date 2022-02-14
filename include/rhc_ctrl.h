@@ -81,7 +81,11 @@ typedef struct _ctrl_t{
 #define ctrl_zb(self)     ctrl_cmd(self)->zb
 #define ctrl_n(self)      ((ctrl_t*)self)->n
 #define ctrl_phi(self)    ((ctrl_t*)self)->phi
-#define ctrl_events(self) ( &((ctrl_t*)self)->events )
+
+#define ctrl_phase(self)            ctrl_events_phase( ctrl_events(self) )
+#define ctrl_phase_in(self, phase)  ctrl_events_is_in_##phase( ctrl_events(self) )
+#define ctrl_events(self)           ( &((ctrl_t*)self)->events )
+#define ctrl_events_at(self, event) ctrl_events_event( ctrl_events(self), event )
 
 #define ctrl_update(self,t,p)     ((ctrl_t*)self)->_update( self, t, p )
 #define ctrl_destroy(self)        ((ctrl_t*)self)->_destroy( self )
