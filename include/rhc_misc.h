@@ -25,7 +25,7 @@ inline double sqr(double x){ return x * x; }
 #define eprintf(fmt,...) fprintf( stderr, fmt, ##__VA_ARGS__ )
 
 extern bool __err_echo;
-char __err_last_msg[BUFSIZ];
+extern char __err_last_msg[BUFSIZ];
 #define ECHO_ON()  ( __err_echo = true )
 #define ECHO_OFF() ( __err_echo = false )
 
