@@ -54,3 +54,7 @@ bool ctrl_raibert_is_in_thrust(ctrl_t *self, double t, vec_t p)
 {
   return ( t >= ctrl_raibert_tb(self) && t < ctrl_raibert_tb(self) + ctrl_raibert_delta(self) );
 }
+
+double ctrl_raibert_calc_fz(ctrl_t *self, double t, vec_t p) {
+  return 0;
+}
