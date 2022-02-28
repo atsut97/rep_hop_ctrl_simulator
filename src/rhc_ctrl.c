@@ -158,8 +158,6 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
   self->_header = ctrl_header_default;
   self->_writer = ctrl_writer_default;
   self->prp = NULL;
-  ctrl_n( self ) = 0;
-  ctrl_phi( self ) = 0;
   ctrl_events_init( ctrl_events( self ) );
   return self;
 }
@@ -169,8 +167,7 @@ void ctrl_destroy_default(ctrl_t *self)
   self->cmd = NULL;
   self->model = NULL;
   self->prp = NULL;
-  ctrl_n( self ) = 0;
-  ctrl_phi( self ) = 0;
+  ctrl_events_destroy( ctrl_events( self ) );
 }
 
 bool ctrl_is_in_flight(ctrl_t *self, vec_t p)
@@ -195,11 +192,6 @@ double ctrl_calc_sqr_v0(double z0, double zd)
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
 {
-  double phi;
-
-  phi = ctrl_calc_phi( ctrl_z0(self), ctrl_zd(self), ctrl_zb(self), p );
-  if( ctrl_phi( self ) < 0 && phi >= 0 ) ctrl_n(self)++;
-  ctrl_phi( self ) = phi;
   ctrl_events_update( ctrl_events( self ), t, p, ctrl_cmd( self ) );
   return self;
 }

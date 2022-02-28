@@ -65,7 +65,6 @@ typedef struct _ctrl_t{
   model_t *model;
   double fz;
   void *prp;
-  double n, phi;
   ctrl_events_t events;
   struct _ctrl_t* (*_update)(struct _ctrl_t*,double,vec_t);
   void (*_destroy)(struct _ctrl_t*);
@@ -79,8 +78,8 @@ typedef struct _ctrl_t{
 #define ctrl_z0(self)     ctrl_cmd(self)->z0
 #define ctrl_zd(self)     ctrl_cmd(self)->zd
 #define ctrl_zb(self)     ctrl_cmd(self)->zb
-#define ctrl_n(self)      ((ctrl_t*)self)->n
-#define ctrl_phi(self)    ((ctrl_t*)self)->phi
+#define ctrl_n(self)      ctrl_events_n( ctrl_events(self) )
+#define ctrl_phi(self)    ctrl_events_phi( ctrl_events(self) )
 
 #define ctrl_phase(self)            ctrl_events_phase( ctrl_events(self) )
 #define ctrl_phase_in(self, phase)  ctrl_events_is_in_##phase( ctrl_events(self) )

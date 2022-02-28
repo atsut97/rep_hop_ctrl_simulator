@@ -135,7 +135,7 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
   vec_t state = simulator_state(s);
   model_t *model = simulator_model(s);
   ctrl_t *ctrl = simulator_ctrl(s);
-  fprintf( fp, "%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
+  fprintf( fp, "%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f,%f",
            simulator_tag(s),
            simulator_time(s),
            vec_elem(state,0), vec_elem(state,1),
