@@ -54,9 +54,23 @@ ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double g
   return self;
 }
 
-bool ctrl_raibert_is_in_thrust(ctrl_t *self, double t, vec_t p)
+void ctrl_raibert_update_events(ctrl_t *self, double t, vec_t p)
 {
-  return ( t >= ctrl_raibert_tb(self) && t < ctrl_raibert_tb(self) + ctrl_raibert_delta(self) );
+  double tb;  /* time at bottom */
+
+  ctrl_events_update( ctrl_events(self), t, p, ctrl_cmd(self) );
+  ctrl_raibert_get_prp(self)->is_in_thrust = false;
+  if( ctrl_phase_in( self, extension ) ){
+    tb = ctrl_events_at( self, bottom ).t;
+    if( ( tb <= t ) && ( t < tb + ctrl_raibert_delta(self) ) ){
+      ctrl_raibert_get_prp(self)->is_in_thrust = true;
+    }
+  }
+}
+
+bool ctrl_raibert_is_in_thrust(ctrl_t *self)
+{
+  return ctrl_raibert_get_prp(self)->is_in_thrust;
 }
 
 double ctrl_raibert_calc_fz(ctrl_t *self, double t, vec_t p) {

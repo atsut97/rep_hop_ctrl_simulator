@@ -23,6 +23,8 @@ ctrl_t *ctrl_raibert_update(ctrl_t *self, double t, vec_t p);
 void ctrl_raibert_header(FILE *fp, void *util);
 void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util);
 
+void ctrl_raibert_update_events(ctrl_t *self, double t, vec_t p);
+
 #define ctrl_raibert_delta(self)   ( ctrl_cmd(self)->raibert.delta )
 #define ctrl_raibert_tau(self)     ( ctrl_cmd(self)->raibert.tau )
 #define ctrl_raibert_gamma(self)   ( ctrl_cmd(self)->raibert.gamma )
@@ -74,7 +76,7 @@ ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double g
     ctrl_raibert_set_params_simplified_linear(self, delta, tau, gamma, yeta1, zr); \
   } while (0)
 
-bool ctrl_raibert_is_in_thrust(ctrl_t *self, double t, vec_t p);
+bool ctrl_raibert_is_in_thrust(ctrl_t *self);
 
 double ctrl_raibert_calc_fz(ctrl_t *self, double t, vec_t p);
 

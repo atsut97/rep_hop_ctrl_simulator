@@ -333,44 +333,81 @@ TEST(test_ctrl_raibert_create_simplified_linear)
 TEST(test_ctrl_raibert_is_in_thrust)
 {
   struct case_t {
-    double tb, delta, t, expected;
+    double delta;
+    double t, z, v;
+    bool expected;
   } cases[] = {
-    { 10.0, 0.1,  9.8,  false },  /* compression */
-    { 10.0, 0.1,  9.9,  false },  /* compression */
-    { 12.0, 0.2, 11.8,  false },  /* compression */
-    { 12.0, 0.2, 11.9,  false },  /* compression */
-    { 10.0, 0.1, 10.0,  true  },  /* thrust */
-    { 10.0, 0.1, 10.05, true  },  /* thrust */
-    { 10.0, 0.1, 10.09, true  },  /* thrust */
-    { 12.0, 0.2, 12.0,  true  },  /* thrust */
-    { 12.0, 0.2, 12.05, true  },  /* thrust */
-    { 12.0, 0.2, 12.09, true  },  /* thrust */
-    { 12.0, 0.2, 12.1,  true  },  /* thrust */
-    { 12.0, 0.2, 12.15, true  },  /* thrust */
-    { 12.0, 0.2, 12.19, true  },  /* thrust */
-    { 10.0, 0.1, 10.1,  false },  /* extension */
-    { 10.0, 0.1, 10.2,  false },  /* extension */
-    { 12.0, 0.2, 12.2,  false },  /* extension */
-    { 12.0, 0.2, 12.3,  false },  /* extension */
-    { 0.0, 0.0, 0.0, false },
+    /* delta,  t,     z,     v,   exp */
+    { 0.05, 0.00, 0.800,  0.00, false },  /* initial pos. */
+    { 0.05, 0.20, 0.600, -1.98, false },  /* falling */
+    { 0.05, 0.25, 0.500, -2.43, false },  /* touchdown */
+    { 0.05, 0.40, 0.190,  0.00, true  },  /* bottom */
+    { 0.05, 0.42, 0.194,  0.30, true  },  /* thrust */
+    { 0.05, 0.44, 0.198,  0.60, true  },  /* thrust */
+    { 0.05, 0.45, 0.200,  1.00, false },  /* end of thrust */
+    { 0.05, 0.50, 0.400,  3.00, false },  /* extension */
+    { 0.05, 0.55, 0.500,  4.00, false },  /* lift off */
+    { 0, 0, 0, 0, false },
   };
   struct case_t *c;
-  bool (*method)(ctrl_t*,double,vec_t);
   vec_t p;
 
-  p = vec_create_list( 2, 0, 0 );
-  method = ctrl_raibert_is_in_thrust;
+  p = vec_create( 2 );
+  cmd.zd = 0.8;
+  cmd.z0 = 0.5;
+  cmd.zb = 0.19;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  for ( c=cases; c->tb>0; c++ ) {
-    ctrl_raibert_tb( &ctrl ) = c->tb;
+  for( c=cases; c->delta>0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
     ctrl_raibert_set_delta( &ctrl, c->delta );
-    if ( c->expected )
-      ASSERT_TRUE( method( &ctrl, c->t, p ) );
+    ctrl_raibert_update_events( &ctrl, c->t, p );
+    if( c->expected )
+      ASSERT_TRUE( ctrl_raibert_is_in_thrust( &ctrl ) );
     else
-      ASSERT_FALSE( method( &ctrl, c->t, p ) );
+      ASSERT_FALSE( ctrl_raibert_is_in_thrust( &ctrl ) );
   }
-  vec_destroy( p );
   ctrl_raibert_destroy( &ctrl );
+  vec_destroy( p );
+}
+
+TEST(test_ctrl_raibert_is_in_thrust_2)
+{
+  struct case_t {
+    double delta;
+    double t, z, v;
+    bool expected;
+  } cases[] = {
+    /* delta,  t,     z,     v,   exp */
+    { 0.00, 0.00, 0.800,  0.00, false },  /* initial pos. */
+    { 0.00, 0.20, 0.600, -1.98, false },  /* falling */
+    { 0.00, 0.25, 0.500, -2.43, false },  /* touchdown */
+    { 0.00, 0.40, 0.190,  0.00, false },  /* bottom */
+    { 0.00, 0.42, 0.194,  0.30, false },  /* extension */
+    { 0.00, 0.44, 0.198,  0.60, false },  /* extension */
+    { 0.00, 0.45, 0.200,  1.00, false },  /* extension */
+    { 0.00, 0.50, 0.400,  3.00, false },  /* extension */
+    { 0.00, 0.55, 0.500,  4.00, false },  /* lift off */
+    { 0, 0, 0, 0, false },
+  };
+  struct case_t *c;
+  vec_t p;
+
+  p = vec_create( 2 );
+  cmd.zd = 0.8;
+  cmd.z0 = 0.5;
+  cmd.zb = 0.19;
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  for( c=cases; c->delta>0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_raibert_set_delta( &ctrl, c->delta );
+    ctrl_raibert_update_events( &ctrl, c->t, p );
+    if( c->expected )
+      ASSERT_TRUE( ctrl_raibert_is_in_thrust( &ctrl ) );
+    else
+      ASSERT_FALSE( ctrl_raibert_is_in_thrust( &ctrl ) );
+  }
+  ctrl_raibert_destroy( &ctrl );
+  vec_destroy( p );
 }
 
 TEST(test_ctrl_raibert_calc_fz_full_nonlinear)
@@ -425,7 +462,7 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_create_full_linear);
   RUN_TEST(test_ctrl_raibert_create_simplified_linear);
   RUN_TEST(test_ctrl_raibert_is_in_thrust);
-  RUN_TEST(test_ctrl_raibert_calc_fz_full_nonlinear);
+  RUN_TEST(test_ctrl_raibert_is_in_thrust_2);
 }
 
 int main(int argc, char *argv[])
