@@ -2,10 +2,10 @@
 #include "rhc_ctrl.h"
 #include "rhc_misc.h"
 
-static double _ctrl_raibert_calc_fz_full_nonlinear(ctrl_t *self, double t, vec_t p);
-static double _ctrl_raibert_calc_fz_simplified_nonlinear(ctrl_t *self, double t, vec_t p);
-static double _ctrl_raibert_calc_fz_full_linear(ctrl_t *self, double t, vec_t p);
-static double _ctrl_raibert_calc_fz_simplified_linear(ctrl_t *self, double t, vec_t p);
+static double _ctrl_raibert_calc_fz_unit_full_nonlinear(ctrl_t *self, double t, vec_t p);
+static double _ctrl_raibert_calc_fz_unit_simplified_nonlinear(ctrl_t *self, double t, vec_t p);
+static double _ctrl_raibert_calc_fz_unit_full_linear(ctrl_t *self, double t, vec_t p);
+static double _ctrl_raibert_calc_fz_unit_simplified_linear(ctrl_t *self, double t, vec_t p);
 
 ctrl_t *ctrl_raibert_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_raibert_types type)
 {
@@ -90,58 +90,58 @@ bool ctrl_raibert_is_in_thrust(ctrl_t *self)
   return ctrl_raibert_get_prp(self)->is_in_thrust;
 }
 
-double _ctrl_raibert_calc_fz_full_nonlinear(ctrl_t *self, double t, vec_t p) {
-  double fz;
+double _ctrl_raibert_calc_fz_unit_full_nonlinear(ctrl_t *self, double t, vec_t p) {
+  double fz_unit;
   double tau, gamma, yeta1;
 
   tau = ctrl_cmd(self)->raibert.tau;
   gamma = ctrl_cmd(self)->raibert.gamma;
   yeta1 = ctrl_cmd(self)->raibert.yeta1;
   if( ctrl_phase_in(self, compression) ) {
-    fz = yeta1 / vec_elem(p,0) - gamma * vec_elem(p,1);
+    fz_unit = yeta1 / vec_elem(p,0) - gamma * vec_elem(p,1);
   } else if( ctrl_raibert_is_in_thrust(self) ) {
-    fz = tau - gamma * vec_elem(p,1);
+    fz_unit = tau - gamma * vec_elem(p,1);
   } else if( ctrl_phase_in(self, extension) ) {
-    fz = tau * ctrl_raibert_end_of_thrust_z(self) / vec_elem(p,0) - gamma * vec_elem(p,1);
+    fz_unit = tau * ctrl_raibert_end_of_thrust_z(self) / vec_elem(p,0) - gamma * vec_elem(p,1);
   } else {
-    fz = 0;
+    fz_unit = 0;
   }
-  return fz;
+  return fz_unit;
 }
 
-double _ctrl_raibert_calc_fz_simplified_nonlinear(ctrl_t *self, double t, vec_t p) {
+double _ctrl_raibert_calc_fz_unit_simplified_nonlinear(ctrl_t *self, double t, vec_t p) {
   return 0;
 }
 
-double _ctrl_raibert_calc_fz_full_linear(ctrl_t *self, double t, vec_t p) {
+double _ctrl_raibert_calc_fz_unit_full_linear(ctrl_t *self, double t, vec_t p) {
   return 0;
 }
 
-double _ctrl_raibert_calc_fz_simplified_linear(ctrl_t *self, double t, vec_t p) {
+double _ctrl_raibert_calc_fz_unit_simplified_linear(ctrl_t *self, double t, vec_t p) {
   return 0;
 }
 
 double ctrl_raibert_calc_fz(ctrl_t *self, double t, vec_t p) {
-  double fz;
+  double fz_unit;
 
   /* ctrl_raibert_update_events() must be called before calculating fz
    * to determine the current phase. */
   switch( ctrl_raibert_type(self) ) {
     case full_nonlinear:
-      fz = _ctrl_raibert_calc_fz_full_nonlinear( self, t, p );
+      fz_unit = _ctrl_raibert_calc_fz_unit_full_nonlinear( self, t, p );
       break;
     case simplified_nonlinear:
-      fz = _ctrl_raibert_calc_fz_simplified_nonlinear( self, t, p );
+      fz_unit = _ctrl_raibert_calc_fz_unit_simplified_nonlinear( self, t, p );
       break;
     case full_linear:
-      fz = _ctrl_raibert_calc_fz_full_linear( self, t, p );
+      fz_unit = _ctrl_raibert_calc_fz_unit_full_linear( self, t, p );
       break;
     case simplified_linear:
-      fz = _ctrl_raibert_calc_fz_simplified_linear( self, t, p );
+      fz_unit = _ctrl_raibert_calc_fz_unit_simplified_linear( self, t, p );
       break;
     default:
-      fz = 0;
+      fz_unit = 0;
       break;
   }
-  return fz;
+  return ctrl_model(self)->m * fz_unit;
 }
