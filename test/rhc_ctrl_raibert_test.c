@@ -411,6 +411,58 @@ TEST(test_ctrl_raibert_is_in_thrust_2)
   vec_destroy( p );
 }
 
+TEST(test_ctrl_raibert_end_of_thrust)
+{
+  struct case_t {
+    double delta;
+    double t, z, v;
+    /* expected recorded event */
+    struct _ctrl_events_tuple_t et;
+  } cases[] = {
+    /* delta,  t,     z,     v,   exp */
+    { 0.05, 0.00, 0.800,  0.00, { 0.00, 0.000,  0.00 } },  /* initial pos. */
+    { 0.05, 0.20, 0.600, -1.98, { 0.00, 0.000,  0.00 } },  /* falling */
+    { 0.05, 0.25, 0.500, -2.43, { 0.00, 0.000,  0.00 } },  /* touchdown */
+    { 0.05, 0.40, 0.190,  0.00, { 0.40, 0.190,  0.00 } },  /* bottom */
+    { 0.05, 0.42, 0.194,  0.30, { 0.42, 0.194,  0.30 } },  /* thrust */
+    { 0.05, 0.44, 0.198,  0.60, { 0.44, 0.198,  0.60 } },  /* thrust */
+    { 0.05, 0.45, 0.200,  1.00, { 0.45, 0.200,  1.00 } },  /* end of thrust */
+    { 0.05, 0.50, 0.400,  3.00, { 0.45, 0.200,  1.00 } },  /* extension */
+    { 0.05, 0.55, 0.500,  4.00, { 0.45, 0.200,  1.00 } },  /* lift off */
+    { 0.05, 0.70, 0.600,  1.50, { 0.45, 0.200,  1.00 } },  /* rising */
+    { 0.05, 0.80, 0.800,  0.00, { 0.45, 0.200,  1.00 } },  /* apex */
+
+    { 0.05, 1.00, 0.600, -1.98, { 0.45, 0.200,  1.00 } },  /* falling */
+    { 0.05, 1.05, 0.500, -2.43, { 0.45, 0.200,  1.00 } },  /* touchdown */
+    { 0.05, 1.20, 0.190,  0.00, { 1.20, 0.190,  0.00 } },  /* bottom */
+    { 0.05, 1.22, 0.194,  0.30, { 1.22, 0.194,  0.30 } },  /* thrust */
+    { 0.05, 1.24, 0.198,  0.60, { 1.24, 0.198,  0.60 } },  /* thrust */
+    { 0.05, 1.25, 0.200,  1.00, { 1.25, 0.200,  1.00 } },  /* end of thrust */
+    { 0.05, 1.30, 0.400,  3.00, { 1.25, 0.200,  1.00 } },  /* extension */
+    { 0.05, 1.35, 0.500,  4.00, { 1.25, 0.200,  1.00 } },  /* lift off */
+
+    { 0, 0, 0, 0, { 0, 0, 0 } },
+  };
+  struct case_t *c;
+  vec_t p;
+
+  p = vec_create( 2 );
+  cmd.zd = 0.8;
+  cmd.z0 = 0.5;
+  cmd.zb = 0.19;
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  for( c=cases; c->delta>0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_raibert_set_delta( &ctrl, c->delta );
+    ctrl_raibert_update_events( &ctrl, c->t, p );
+    ASSERT_EQ( c->et.t, ctrl_raibert_end_of_thrust(&ctrl).t );
+    ASSERT_EQ( c->et.z, ctrl_raibert_end_of_thrust(&ctrl).z );
+    ASSERT_EQ( c->et.v, ctrl_raibert_end_of_thrust(&ctrl).v );
+  }
+  ctrl_raibert_destroy( &ctrl );
+  vec_destroy( p );
+}
+
 TEST(test_ctrl_raibert_calc_fz_full_nonlinear)
 {
   struct case_t{
@@ -464,6 +516,7 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_create_simplified_linear);
   RUN_TEST(test_ctrl_raibert_is_in_thrust);
   RUN_TEST(test_ctrl_raibert_is_in_thrust_2);
+  RUN_TEST(test_ctrl_raibert_end_of_thrust);
 }
 
 int main(int argc, char *argv[])

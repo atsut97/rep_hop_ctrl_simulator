@@ -57,15 +57,27 @@ ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double g
 void ctrl_raibert_update_events(ctrl_t *self, double t, vec_t p)
 {
   double tb;  /* time at bottom */
+  bool is_in_thrust = false;
 
+  /* check if current state is in thrust phase */
   ctrl_events_update( ctrl_events(self), t, p, ctrl_cmd(self) );
-  ctrl_raibert_get_prp(self)->is_in_thrust = false;
   if( ctrl_phase_in( self, extension ) ){
     tb = ctrl_events_at( self, bottom ).t;
     if( ( tb <= t ) && ( t < tb + ctrl_raibert_delta(self) ) ){
-      ctrl_raibert_get_prp(self)->is_in_thrust = true;
+      /* we need to keep previous phase intact here, we're going to
+       * update current thrust phase at the end. */
+      is_in_thrust = true;
     }
   }
+
+  /* update end-of-thrust event */
+  if( is_in_thrust || ctrl_raibert_is_in_thrust(self) ){
+    ctrl_raibert_end_of_thrust(self).t = t;
+    ctrl_raibert_end_of_thrust(self).z = vec_elem(p, 0);
+    ctrl_raibert_end_of_thrust(self).v = vec_elem(p, 1);
+  }
+  /* update thrust phase */
+  ctrl_raibert_get_prp(self)->is_in_thrust = is_in_thrust;
 }
 
 bool ctrl_raibert_is_in_thrust(ctrl_t *self)
