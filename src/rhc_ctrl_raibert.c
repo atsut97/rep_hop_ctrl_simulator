@@ -15,6 +15,10 @@ ctrl_t *ctrl_raibert_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_
     return NULL;
   }
   ((ctrl_raibert_prp *)(self->prp))->type = type;
+  (ctrl_raibert_end_of_thrust(self)).t = 0;
+  (ctrl_raibert_end_of_thrust(self)).z = 0;
+  (ctrl_raibert_end_of_thrust(self)).v = 0;
+  ((ctrl_raibert_prp *)(self->prp))->is_in_thrust = false;
   return self;
 }
 

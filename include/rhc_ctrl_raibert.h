@@ -13,10 +13,8 @@ enum ctrl_raibert_types {
 
 typedef struct{
   enum ctrl_raibert_types type;  /* controller type */
-  double tb;                     /* time at the bottom */
-  double zb;                     /* position at the bottom */
-  double tet;                    /* time at the end of thrust phase */
-  double zet;                    /* position at the ned of thrust phase */
+  struct _ctrl_events_tuple_t end_of_thrust;
+  bool is_in_thrust;
 } ctrl_raibert_prp;
 
 ctrl_t *ctrl_raibert_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_raibert_types type);
@@ -33,10 +31,10 @@ void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util);
 #define ctrl_raibert_mu(self)      ( ctrl_cmd(self)->raibert.mu )
 #define ctrl_raibert_get_prp(self) ( (ctrl_raibert_prp*)((self)->prp) )
 #define ctrl_raibert_type(self)    ( ctrl_raibert_get_prp(self)->type )
-#define ctrl_raibert_tb(self)      ( ctrl_raibert_get_prp(self)->tb )
-#define ctrl_raibert_zb(self)      ( ctrl_raibert_get_prp(self)->zb )
-#define ctrl_raibert_tet(self)     ( ctrl_raibert_get_prp(self)->tet )
-#define ctrl_raibert_zet(self)     ( ctrl_raibert_get_prp(self)->zet )
+#define ctrl_raibert_end_of_thrust(self)   ( ctrl_raibert_get_prp(self)->end_of_thrust )
+#define ctrl_raibert_end_of_thrust_t(self) ( ctrl_raibert_end_of_thrust(self).t )
+#define ctrl_raibert_end_of_thrust_z(self) ( ctrl_raibert_end_of_thrust(self).z )
+#define ctrl_raibert_end_of_thrust_v(self) ( ctrl_raibert_end_of_thrust(self).v )
 
 #define ctrl_raibert_set_delta(self,val) ( ctrl_raibert_delta(self) = (val) )
 #define ctrl_raibert_set_tau(self,val)   ( ctrl_raibert_tau(self)   = (val) )

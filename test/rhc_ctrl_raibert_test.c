@@ -40,10 +40,10 @@ TEST(test_ctrl_raibert_create)
   ASSERT_EQ( 0, ctrl_raibert_mu(&ctrl) );
   ASSERT_PTRNE( NULL, ctrl.prp );
   ASSERT_EQ( none, ((ctrl_raibert_prp*)ctrl.prp)->type );
-  ASSERT_EQ( 0, ((ctrl_raibert_prp*)ctrl.prp)->tb );
-  ASSERT_EQ( 0, ((ctrl_raibert_prp*)ctrl.prp)->zb );
-  ASSERT_EQ( 0, ((ctrl_raibert_prp*)ctrl.prp)->tet );
-  ASSERT_EQ( 0, ((ctrl_raibert_prp*)ctrl.prp)->zet );
+  ASSERT_EQ( 0, ((ctrl_raibert_prp*)ctrl.prp)->end_of_thrust.t );
+  ASSERT_EQ( 0, ((ctrl_raibert_prp*)ctrl.prp)->end_of_thrust.z );
+  ASSERT_EQ( 0, ((ctrl_raibert_prp*)ctrl.prp)->end_of_thrust.v );
+  ASSERT_FALSE( ((ctrl_raibert_prp*)ctrl.prp)->is_in_thrust );
 }
 
 TEST(test_ctrl_raibert_destroy)
