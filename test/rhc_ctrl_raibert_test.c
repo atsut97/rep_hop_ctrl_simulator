@@ -1,4 +1,5 @@
 #include "rhc_cmd.h"
+#include "rhc_ctrl.h"
 #include "rhc_ctrl_raibert.h"
 #include "rhc_model.h"
 #include "rhc_test.h"
@@ -387,7 +388,7 @@ TEST(test_ctrl_raibert_is_in_thrust_2)
     { 0.00, 0.45, 0.200,  1.00, false },  /* extension */
     { 0.00, 0.50, 0.400,  3.00, false },  /* extension */
     { 0.00, 0.55, 0.500,  4.00, false },  /* lift off */
-    { 0, 0, 0, 0, false },
+    { -1, 0, 0, 0, false },
   };
   struct case_t *c;
   vec_t p;
@@ -397,7 +398,7 @@ TEST(test_ctrl_raibert_is_in_thrust_2)
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
-  for( c=cases; c->delta>0; c++ ){
+  for( c=cases; c->delta>=0.0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_raibert_set_delta( &ctrl, c->delta );
     ctrl_raibert_update_events( &ctrl, c->t, p );
