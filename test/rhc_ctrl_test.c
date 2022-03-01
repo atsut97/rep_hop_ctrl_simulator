@@ -992,132 +992,6 @@ TEST(test_ctrl_zb)
   }
 }
 
-TEST(test_ctrl_flight)
-{
-  struct case_t {
-    double z0, z, v;
-    bool expected;
-  } cases[] = {
-    { 0.26, 0.28, 0.0,   true  },     /* flight */
-    { 0.26, 0.27, 0.1,   true  },     /* flight */
-    { 0.26, 0.265, -0.2, true  },     /* flight */
-    { 0.3,  0.33, 0.0,   true  },     /* flight */
-    { 0.3,  0.32, 0.1,   true  },     /* flight */
-    { 0.3,  0.31, -0.2,  true  },     /* flight */
-    { 0.26, 0.26, -0.1,  false },     /* compression */
-    { 0.26, 0.25, -0.1,  false },     /* compression */
-    { 0.26, 0.24, -0.15, false },     /* compression */
-    { 0.3,  0.3,  -0.1,  false },     /* compression */
-    { 0.3,  0.28, -0.1,  false },     /* compression */
-    { 0.3,  0.26, -0.15, false },     /* compression */
-    { 0.26, 0.24, 0.0,   false },     /* bottom */
-    { 0.3,  0.26, 0.0,   false },     /* bottom */
-    { 0.26, 0.26, 0.1,   false },     /* extension */
-    { 0.26, 0.25, 0.1,   false },     /* extension */
-    { 0.26, 0.24, 0.15,  false },     /* extension */
-    { 0.3,  0.3,  0.1,   false },     /* extension */
-    { 0.3,  0.28, 0.1,   false },     /* extension */
-    { 0.3,  0.26, 0.15,  false },     /* extension */
-    { 0.0, 0.0, 0.0, false }
-  };
-  struct case_t *c;
-  bool (*method)(ctrl_t*,vec_t);
-
-  method = ctrl_is_in_flight;
-  for( c=cases; c->z>0; c++ ){
-    cmd.z0 = c->z0;
-    vec_set_elem_list( p, 2, c->z, c->v );
-    if( c->expected )
-      ASSERT_TRUE( method( &ctrl, p ) );
-    else
-      ASSERT_FALSE( method( &ctrl, p ) );
-  }
-}
-
-TEST(test_ctrl_compression)
-{
-  struct case_t {
-    double z0, z, v;
-    bool expected;
-  } cases[] = {
-    { 0.26, 0.28, 0.0,   false },     /* flight */
-    { 0.26, 0.27, 0.1,   false },     /* flight */
-    { 0.26, 0.265, -0.2, false },     /* flight */
-    { 0.3,  0.33, 0.0,   false },     /* flight */
-    { 0.3,  0.32, 0.1,   false },     /* flight */
-    { 0.3,  0.31, -0.2,  false },     /* flight */
-    { 0.26, 0.26, -0.1,  true  },     /* compression */
-    { 0.26, 0.25, -0.1,  true  },     /* compression */
-    { 0.26, 0.24, -0.15, true  },     /* compression */
-    { 0.3,  0.3,  -0.1,  true  },     /* compression */
-    { 0.3,  0.28, -0.1,  true  },     /* compression */
-    { 0.3,  0.26, -0.15, true  },     /* compression */
-    { 0.26, 0.24, 0.0,   false },     /* bottom */
-    { 0.3,  0.26, 0.0,   false },     /* bottom */
-    { 0.26, 0.26, 0.1,   false },     /* extension */
-    { 0.26, 0.25, 0.1,   false },     /* extension */
-    { 0.26, 0.24, 0.15,  false },     /* extension */
-    { 0.3,  0.3,  0.1,   false },     /* extension */
-    { 0.3,  0.28, 0.1,   false },     /* extension */
-    { 0.3,  0.26, 0.15,  false },     /* extension */
-    { 0.0, 0.0, 0.0, false }
-  };
-  struct case_t *c;
-  bool (*method)(ctrl_t*,vec_t);
-
-  method = ctrl_is_in_compression;
-  for( c=cases; c->z>0; c++ ){
-    cmd.z0 = c->z0;
-    vec_set_elem_list( p, 2, c->z, c->v );
-    if( c->expected )
-      ASSERT_TRUE( method( &ctrl, p ) );
-    else
-      ASSERT_FALSE( method( &ctrl, p ) );
-  }
-}
-
-TEST(test_ctrl_extension)
-{
-  struct case_t {
-    double z0, z, v;
-    bool expected;
-  } cases[] = {
-    { 0.26, 0.28, 0.0,   false },     /* flight */
-    { 0.26, 0.27, 0.1,   false },     /* flight */
-    { 0.26, 0.265, -0.2, false },     /* flight */
-    { 0.3,  0.33, 0.0,   false },     /* flight */
-    { 0.3,  0.32, 0.1,   false },     /* flight */
-    { 0.3,  0.31, -0.2,  false },     /* flight */
-    { 0.26, 0.26, -0.1,  false },     /* compression */
-    { 0.26, 0.25, -0.1,  false },     /* compression */
-    { 0.26, 0.24, -0.15, false },     /* compression */
-    { 0.3,  0.3,  -0.1,  false },     /* compression */
-    { 0.3,  0.28, -0.1,  false },     /* compression */
-    { 0.3,  0.26, -0.15, false },     /* compression */
-    { 0.26, 0.24, 0.0,   true  },     /* bottom */
-    { 0.3,  0.26, 0.0,   true  },     /* bottom */
-    { 0.26, 0.26, 0.1,   true  },     /* extension */
-    { 0.26, 0.25, 0.1,   true  },     /* extension */
-    { 0.26, 0.24, 0.15,  true  },     /* extension */
-    { 0.3,  0.3,  0.1,   true  },     /* extension */
-    { 0.3,  0.28, 0.1,   true  },     /* extension */
-    { 0.3,  0.26, 0.15,  true  },     /* extension */
-    { 0.0, 0.0, 0.0, false }
-  };
-  struct case_t *c;
-  bool (*method)(ctrl_t*,vec_t);
-
-  method = ctrl_is_in_extension;
-  for( c=cases; c->z>0; c++ ){
-    cmd.z0 = c->z0;
-    vec_set_elem_list( p, 2, c->z, c->v );
-    if( c->expected )
-      ASSERT_TRUE( method( &ctrl, p ) );
-    else
-      ASSERT_FALSE( method( &ctrl, p ) );
-  }
-}
-
 TEST(test_ctrl_v0)
 {
   struct case_t {
@@ -1341,81 +1215,6 @@ TEST(test_ctrl_events_at_liftoff)
   }
 }
 
-TEST(test_ctrl_calc_phase_complex)
-{
-  struct case_t {
-    double zd, z0, zb;
-    double z, v;
-    complex_t expected;
-  } cases[] = {
-    { 0.28, 0.26, 0.24, 0.28, 0.0, { 1.0, 0.0 } },           /* top */
-    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), { 0.0, 1.0 } }, /* touchdown */
-    { 0.28, 0.26, 0.24, 0.24, 0.0, { -1.0, 0.0 } },          /* bottom */
-    { 0.28, 0.26, 0.24, 0.24, -0.0, { -1.0, 0.0 } },         /* bottom */
-    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), { 0.0, -1.0 } }, /* lift-off */
-    { 0, 0, 0, 0, 0, { 0, 0 } },
-  };
-  struct case_t *c;
-  complex_t cp;
-
-  for( c=cases; c->zd>0; c++ ){
-    vec_set_elem_list( p, 2, c->z, c->v );
-    ctrl_calc_phase_complex( c->z0, c->zd, c->zb, p, &cp );
-    ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
-    ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
-  }
-}
-
-TEST(test_ctrl_phase_complex)
-{
-  struct case_t {
-    double zd, z0, zb;
-    double z, v;
-    complex_t expected;
-  } cases[] = {
-    { 0.28, 0.26, 0.24, 0.28, 0.0, { 1.0, 0.0 } },           /* top */
-    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), { 0.0, 1.0 } }, /* touchdown */
-    { 0.28, 0.26, 0.24, 0.24, 0.0, { -1.0, 0.0 } },          /* bottom */
-    { 0.28, 0.26, 0.24, 0.24, -0.0, { -1.0, 0.0 } },         /* bottom */
-    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), { 0.0, -1.0 } }, /* lift-off */
-    { 0, 0, 0, 0, 0, { 0, 0 } },
-  };
-  struct case_t *c;
-  complex_t cp;
-
-  for( c=cases; c->zd>0; c++ ){
-    cmd.zd = c->zd;
-    cmd.z0 = c->z0;
-    cmd.zb = c->zb;
-    vec_set_elem_list( p, 2, c->z, c->v );
-    ctrl_phase_complex( &ctrl, p, &cp );
-    ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
-    ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
-  }
-}
-
-TEST(test_ctrl_calc_phi)
-{
-  struct case_t {
-    double zd, z0, zb;
-    double z, v;
-    double expected;
-  } cases[] = {
-    { 0.28, 0.26, 0.24, 0.28, 0.0, 0.0 },            /* top */
-    { 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), PI_2 }, /* touchdown */
-    { 0.28, 0.26, 0.24, 0.24, -0.0, PI },            /* bottom */
-    { 0.28, 0.26, 0.24, 0.24, 0.0, -PI },            /* bottom */
-    { 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), -PI_2 }, /* lift-off */
-    { 0, 0, 0, 0, 0, 0 },
-  };
-  struct case_t *c;
-
-  for( c=cases; c->zd>0; c++ ){
-    vec_set_elem_list( p, 2, c->z, c->v );
-    ASSERT_DOUBLE_EQ( c->expected, ctrl_calc_phi( c->z0, c->zd, c->zb, p ) );
-  }
-}
-
 TEST_SUITE(test_ctrl)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -1424,9 +1223,6 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_z0);
   RUN_TEST(test_ctrl_zd);
   RUN_TEST(test_ctrl_zb);
-  RUN_TEST(test_ctrl_flight);
-  RUN_TEST(test_ctrl_compression);
-  RUN_TEST(test_ctrl_extension);
   RUN_TEST(test_ctrl_v0);
   RUN_TEST(test_ctrl_update_default);
   RUN_TEST(test_ctrl_phase);
@@ -1434,9 +1230,6 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_events_at_touchdown);
   RUN_TEST(test_ctrl_events_at_bottom);
   RUN_TEST(test_ctrl_events_at_liftoff);
-  RUN_TEST(test_ctrl_calc_phase_complex);
-  RUN_TEST(test_ctrl_phase_complex);
-  RUN_TEST(test_ctrl_calc_phi);
 }
 
 int main(int argc, char *argv[])

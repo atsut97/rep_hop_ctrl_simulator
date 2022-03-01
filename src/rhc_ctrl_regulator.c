@@ -42,7 +42,7 @@ ctrl_t *ctrl_regulator_update(ctrl_t *self, double t, vec_t p)
   prp = self->prp;
   prp->xi = ctrl_regulator_calc_xi( ctrl_z0(self) );
   self->fz = ctrl_regulator_calc_fz( self, p );
-  if( ctrl_is_in_flight( self, p ) ) self->fz = 0;
+  if( ctrl_phase_in( self, flight ) ) self->fz = 0;
   return self;
 }
 

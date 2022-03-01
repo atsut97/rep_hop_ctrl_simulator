@@ -53,12 +53,6 @@ bool ctrl_events_is_in_falling(ctrl_events_t *self)
   return ctrl_events_phase(self) == falling;
 }
 
-bool ctrl_events_is_in_flight(ctrl_events_t *self)
-{
-  /* Flight phase is the union of rising and falling phases. */
-  return ctrl_events_is_in_rising( self ) || ctrl_events_is_in_falling( self );
-}
-
 bool ctrl_events_is_in_compression(ctrl_events_t *self)
 {
   return ctrl_events_phase(self) == compression;
@@ -72,6 +66,12 @@ bool ctrl_events_is_in_extension(ctrl_events_t *self)
 bool ctrl_events_is_in_rising(ctrl_events_t *self)
 {
   return ctrl_events_phase(self) == rising;
+}
+
+bool ctrl_events_is_in_flight(ctrl_events_t *self)
+{
+  /* Flight phase is the union of rising and falling phases. */
+  return ctrl_events_is_in_rising( self ) || ctrl_events_is_in_falling( self );
 }
 
 enum _ctrl_events_phases_t _ctrl_events_determine_phase(double phi)
@@ -170,21 +170,6 @@ void ctrl_destroy_default(ctrl_t *self)
   ctrl_events_destroy( ctrl_events( self ) );
 }
 
-bool ctrl_is_in_flight(ctrl_t *self, vec_t p)
-{
-  return ( vec_elem(p,0) > ctrl_z0(self) );
-}
-
-bool ctrl_is_in_compression(ctrl_t *self, vec_t p)
-{
-  return ( vec_elem(p,1) < 0 ) && ( vec_elem(p,0) <= ctrl_z0(self) );
-}
-
-bool ctrl_is_in_extension(ctrl_t *self, vec_t p)
-{
-  return ( vec_elem(p,1) >= 0 ) && ( vec_elem(p,0) <= ctrl_z0(self) );
-}
-
 double ctrl_calc_sqr_v0(double z0, double zd)
 {
   return 2.0 * G * ( zd - z0 );
@@ -204,23 +189,4 @@ void ctrl_header_default(FILE *fp, void *util)
 void ctrl_writer_default(FILE *fp, ctrl_t *self, void *util)
 {
   fprintf( fp, "\n" );
-}
-
-complex_t *ctrl_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c)
-{
-  double z, v, v0;
-
-  z = vec_elem( p, 0 );
-  v = vec_elem( p, 1 );
-  v0 = ctrl_calc_v0( z0, zd );
-  complex_init( c, (z-z0)/(z0-zb), -v/v0 );
-  return c;
-}
-
-double ctrl_calc_phi(double z0, double zd, double zb, vec_t p)
-{
-  complex_t c;
-
-  ctrl_calc_phase_complex( z0, zd, zb, p, &c );
-  return complex_arg( &c );
 }

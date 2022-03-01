@@ -48,10 +48,10 @@ void ctrl_events_destroy(ctrl_events_t *self);
 #define ctrl_events_liftoff_v(self)   ( ctrl_events_event(self,liftoff).v )
 
 bool ctrl_events_is_in_falling(ctrl_events_t *self);
-bool ctrl_events_is_in_flight(ctrl_events_t *self);
 bool ctrl_events_is_in_compression(ctrl_events_t *self);
 bool ctrl_events_is_in_extension(ctrl_events_t *self);
 bool ctrl_events_is_in_rising(ctrl_events_t *self);
+bool ctrl_events_is_in_flight(ctrl_events_t *self);
 
 #define ctrl_events_phase(self) ( (self)->phase )
 #define ctrl_events_phi(self)   ( (self)->phi )
@@ -93,18 +93,10 @@ typedef struct _ctrl_t{
 
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model);
 
-bool ctrl_is_in_flight(ctrl_t *self, vec_t p);
-bool ctrl_is_in_compression(ctrl_t *self, vec_t p);
-bool ctrl_is_in_extension(ctrl_t *self, vec_t p);
-
 double ctrl_calc_sqr_v0(double z0, double zd);
 #define ctrl_calc_v0(z0,zd) sqrt( ctrl_calc_sqr_v0( z0, zd ) )
 #define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_z0(self), ctrl_zd(self) )
 #define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
-
-complex_t *ctrl_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c);
-#define ctrl_phase_complex(self,p,c) ctrl_calc_phase_complex( ctrl_z0(self), ctrl_zd(self), ctrl_zb(self), p, c )
-double ctrl_calc_phi(double z0, double zd, double zb, vec_t p);
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p);
 void ctrl_destroy_default(ctrl_t *self);
