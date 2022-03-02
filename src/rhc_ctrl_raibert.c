@@ -94,9 +94,9 @@ double _ctrl_raibert_calc_fz_unit_full_nonlinear(ctrl_t *self, double t, vec_t p
   double fz_unit;
   double tau, gamma, yeta1;
 
-  tau = ctrl_cmd(self)->raibert.tau;
-  gamma = ctrl_cmd(self)->raibert.gamma;
-  yeta1 = ctrl_cmd(self)->raibert.yeta1;
+  tau = ctrl_raibert_tau(self);
+  gamma = ctrl_raibert_gamma(self);
+  yeta1 = ctrl_raibert_yeta1(self);
   if( ctrl_phase_in(self, compression) ) {
     fz_unit = yeta1 / vec_elem(p,0) - gamma * vec_elem(p,1);
   } else if( ctrl_raibert_is_in_thrust(self) ) {
@@ -110,7 +110,19 @@ double _ctrl_raibert_calc_fz_unit_full_nonlinear(ctrl_t *self, double t, vec_t p
 }
 
 double _ctrl_raibert_calc_fz_unit_simplified_nonlinear(ctrl_t *self, double t, vec_t p) {
-  return 0;
+  double fz_unit;
+  double tau, yeta1;
+
+  tau = ctrl_raibert_tau(self);
+  yeta1 = ctrl_raibert_yeta1(self);
+  if( ctrl_phase_in(self, compression) ) {
+    fz_unit = yeta1 / vec_elem(p,0) + G;
+  } else if( ctrl_phase_in(self, extension) ) {
+    fz_unit = tau * ctrl_events_at(self, bottom).z / vec_elem(p,0) + G;
+  } else {
+    fz_unit = 0;
+  }
+  return fz_unit;
 }
 
 double _ctrl_raibert_calc_fz_unit_full_linear(ctrl_t *self, double t, vec_t p) {

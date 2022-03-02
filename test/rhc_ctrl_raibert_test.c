@@ -497,6 +497,40 @@ TEST(test_ctrl_raibert_calc_fz_full_nonlinear)
   vec_destroy( p );
 }
 
+TEST(test_ctrl_raibert_calc_fz_simplified_nonlinear)
+{
+  struct case_t{
+    double t, z, v;
+    double expected;
+  } cases[] = {
+    { 0.00, 1.150,  0.00, 0.0     },  /* initial pos. */
+    { 0.27, 0.800, -2.62, 0.0     },  /* falling */
+    { 0.36, 0.500, -3.57, 21.4267 },  /* touchdown */
+    { 0.45, 0.300, -2.60, 29.1733 },  /* compress */
+    { 0.60, 0.190,  0.00, 51.6667 },  /* bottom */
+    { 0.70, 0.300,  2.60, 36.3180 },  /* extension */
+    { 0.80, 0.500,  3.57, 0.0     },  /* lift off */
+    { 0.90, 0.800,  2.62, 0.0     },  /* rising */
+    { -1, 0, 0, 0 },
+  };
+  struct case_t *c;
+  vec_t p;
+
+  p = vec_create( 2 );
+  model_set_mass( &model, 1 );
+  cmd.zd = 1.15;
+  cmd.z0 = 0.5;
+  cmd.zb = 0.19;
+  ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model, 41.86, 5.81 );
+  for ( c=cases; c->t>=0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_raibert_update_events( &ctrl, c->t, p );
+    ASSERT_NEAR( c->expected, ctrl_raibert_calc_fz( &ctrl, c->t, p ), 1e-4 );
+  }
+  ctrl_raibert_destroy( &ctrl );
+  vec_destroy( p );
+}
+
 TEST_SUITE(test_ctrl_raibert)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -521,6 +555,7 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_is_in_thrust_2);
   RUN_TEST(test_ctrl_raibert_end_of_thrust);
   RUN_TEST(test_ctrl_raibert_calc_fz_full_nonlinear);
+  RUN_TEST(test_ctrl_raibert_calc_fz_simplified_nonlinear);
 }
 
 int main(int argc, char *argv[])
