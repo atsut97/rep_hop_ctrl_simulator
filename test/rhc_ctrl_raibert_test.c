@@ -463,6 +463,45 @@ TEST(test_ctrl_raibert_end_of_thrust)
   vec_destroy( p );
 }
 
+TEST(test_ctrl_raibert_end_of_thrust_edge_case)
+{
+  struct case_t {
+    double delta;
+    double t, z, v;
+    /* expected recorded event */
+    struct _ctrl_events_tuple_t et;
+  } cases[] = {
+    /* delta,  t,     z,     v,   exp */
+    { 0.03, 0.00, 0.800,  0.00, { 0.00, 0.000,  0.00 } },  /* initial pos. */
+    { 0.03, 0.25, 0.500, -2.43, { 0.00, 0.000,  0.00 } },  /* touchdown */
+    { 0.03, 0.40, 0.190,  0.00, { 0.40, 0.190,  0.00 } },  /* bottom */
+    { 0.03, 0.41, 0.192,  0.30, { 0.41, 0.192,  0.30 } },  /* thrust */
+    { 0.03, 0.42, 0.194,  0.32, { 0.42, 0.194,  0.32 } },  /* thrust */
+    { 0.03, 0.43, 0.196,  0.34, { 0.43, 0.196,  0.34 } },  /* end of thrust */
+    { 0.03, 0.44, 0.198,  0.40, { 0.43, 0.196,  0.34 } },  /* extension */
+    { 0.03, 0.45, 0.200,  0.44, { 0.43, 0.196,  0.34 } },  /* extension */
+    { 0, 0, 0, 0, { 0, 0, 0 } },
+  };
+  struct case_t *c;
+  vec_t p;
+
+  p = vec_create( 2 );
+  cmd.zd = 0.8;
+  cmd.z0 = 0.5;
+  cmd.zb = 0.19;
+  ctrl_raibert_create( &ctrl, &cmd, &model, none );
+  for( c=cases; c->delta>0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_raibert_set_delta( &ctrl, c->delta );
+    ctrl_raibert_update_events( &ctrl, c->t, p );
+    ASSERT_EQ( c->et.t, ctrl_raibert_end_of_thrust(&ctrl).t );
+    ASSERT_EQ( c->et.z, ctrl_raibert_end_of_thrust(&ctrl).z );
+    ASSERT_EQ( c->et.v, ctrl_raibert_end_of_thrust(&ctrl).v );
+  }
+  ctrl_raibert_destroy( &ctrl );
+  vec_destroy( p );
+}
+
 TEST(test_ctrl_raibert_calc_fz_full_nonlinear)
 {
   struct case_t{
@@ -554,6 +593,7 @@ TEST_SUITE(test_ctrl_raibert)
   RUN_TEST(test_ctrl_raibert_is_in_thrust);
   RUN_TEST(test_ctrl_raibert_is_in_thrust_2);
   RUN_TEST(test_ctrl_raibert_end_of_thrust);
+  RUN_TEST(test_ctrl_raibert_end_of_thrust_edge_case);
   RUN_TEST(test_ctrl_raibert_calc_fz_full_nonlinear);
   RUN_TEST(test_ctrl_raibert_calc_fz_simplified_nonlinear);
 }

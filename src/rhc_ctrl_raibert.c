@@ -68,7 +68,7 @@ void ctrl_raibert_update_events(ctrl_t *self, double t, vec_t p)
   ctrl_events_update( ctrl_events(self), t, p, ctrl_cmd(self) );
   if( ctrl_phase_in( self, extension ) ){
     tb = ctrl_events_at( self, bottom ).t;
-    if( ( tb <= t ) && ( t < tb + ctrl_raibert_delta(self) ) ){
+    if( ( tb <= t + TOL ) && ( t + TOL < tb + ctrl_raibert_delta(self) ) ){
       /* we need to keep previous phase intact here, we're going to
        * update current thrust phase at the end. */
       is_in_thrust = true;
