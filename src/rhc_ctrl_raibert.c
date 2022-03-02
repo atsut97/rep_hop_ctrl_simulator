@@ -126,7 +126,23 @@ double _ctrl_raibert_calc_fz_unit_simplified_nonlinear(ctrl_t *self, double t, v
 }
 
 double _ctrl_raibert_calc_fz_unit_full_linear(ctrl_t *self, double t, vec_t p) {
-  return 0;
+  double fz_unit;
+  double tau, gamma, yeta1, zr;
+
+  tau = ctrl_raibert_tau(self);
+  gamma = ctrl_raibert_gamma(self);
+  yeta1 = ctrl_raibert_yeta1(self);
+  zr = ctrl_raibert_zr(self);
+  if( ctrl_phase_in(self, compression) ) {
+    fz_unit = yeta1 * ( zr - vec_elem(p,0) ) - gamma * vec_elem(p,1);
+  } else if( ctrl_raibert_is_in_thrust(self) ) {
+    fz_unit = tau - gamma * vec_elem(p,1);
+  } else if( ctrl_phase_in(self, extension) ) {
+    fz_unit = tau * ( zr - vec_elem(p,0) ) / ( zr - ctrl_raibert_end_of_thrust_z(self) ) - gamma * vec_elem(p,1);
+  } else {
+    fz_unit = 0;
+  }
+  return fz_unit;
 }
 
 double _ctrl_raibert_calc_fz_unit_simplified_linear(ctrl_t *self, double t, vec_t p) {
