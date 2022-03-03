@@ -39,6 +39,7 @@ TEST(test_ctrl_events_init)
   ASSERT_EQ( invalid, events.phase );
   ASSERT_EQ( 0, ctrl_events_phi(&events) );
   ASSERT_EQ( 0, ctrl_events_n(&events) );
+  ASSERT_FALSE( events.is_updated );
 }
 
 TEST(test_ctrl_events_destroy)
@@ -59,6 +60,7 @@ TEST(test_ctrl_events_destroy)
   ASSERT_EQ( invalid, events.phase );
   ASSERT_EQ( 0, ctrl_events_phi(&events) );
   ASSERT_EQ( 0, ctrl_events_n(&events) );
+  ASSERT_FALSE( events.is_updated );
 }
 
 TEST(test_ctrl_events_calc_phase_complex)
@@ -142,6 +144,7 @@ TEST(test_ctrl_events_is_in_rising)
       ASSERT_TRUE( ctrl_events_is_in_rising( &events ) );
     else
       ASSERT_FALSE( ctrl_events_is_in_rising( &events ) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -182,6 +185,7 @@ TEST(test_ctrl_events_is_in_falling)
       ASSERT_TRUE( ctrl_events_is_in_falling( &events ) );
     else
       ASSERT_FALSE( ctrl_events_is_in_falling( &events ) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -224,6 +228,7 @@ TEST(test_ctrl_events_is_in_flight)
       ASSERT_TRUE( ctrl_events_is_in_flight( &events ) );
     else
       ASSERT_FALSE( ctrl_events_is_in_flight( &events ) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -268,6 +273,7 @@ TEST(test_ctrl_events_is_in_compression)
       ASSERT_TRUE( ctrl_events_is_in_compression( &events ) );
     else
       ASSERT_FALSE( ctrl_events_is_in_compression( &events ) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -314,6 +320,7 @@ TEST(test_ctrl_events_is_in_extension)
       ASSERT_TRUE( ctrl_events_is_in_extension( &events ) );
     else
       ASSERT_FALSE( ctrl_events_is_in_extension( &events ) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -353,6 +360,7 @@ TEST(test_ctrl_events_update_phase)
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
     ASSERT_EQ( c->expected, ctrl_events_phase(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -416,6 +424,7 @@ TEST(test_ctrl_events_update_n)
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
     ASSERT_EQ( c->expected, ctrl_events_n(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -465,6 +474,7 @@ TEST(test_ctrl_events_update_apex_1)
     ASSERT_EQ( c->apex.t, ctrl_events_apex_t(&events) );
     ASSERT_EQ( c->apex.z, ctrl_events_apex_z(&events) );
     ASSERT_EQ( c->apex.v, ctrl_events_apex_v(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -516,6 +526,7 @@ TEST(test_ctrl_events_update_apex_2)
     ASSERT_EQ( c->apex.t, ctrl_events_apex_t(&events) );
     ASSERT_EQ( c->apex.z, ctrl_events_apex_z(&events) );
     ASSERT_EQ( c->apex.v, ctrl_events_apex_v(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -570,6 +581,7 @@ TEST(test_ctrl_events_update_touchdown_1)
     ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown_t(&events) );
     ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown_z(&events) );
     ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown_v(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -634,6 +646,7 @@ TEST(test_ctrl_events_update_touchdown_2)
     ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown_t(&events) );
     ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown_z(&events) );
     ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown_v(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -696,6 +709,7 @@ TEST(test_ctrl_events_update_bottom_1)
     ASSERT_EQ( c->bottom.t, ctrl_events_bottom_t(&events) );
     ASSERT_EQ( c->bottom.z, ctrl_events_bottom_z(&events) );
     ASSERT_EQ( c->bottom.v, ctrl_events_bottom_v(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -760,6 +774,7 @@ TEST(test_ctrl_events_update_bottom_2)
     ASSERT_EQ( c->bottom.t, ctrl_events_bottom_t(&events) );
     ASSERT_EQ( c->bottom.z, ctrl_events_bottom_z(&events) );
     ASSERT_EQ( c->bottom.v, ctrl_events_bottom_v(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -822,6 +837,7 @@ TEST(test_ctrl_events_update_liftoff_1)
     ASSERT_EQ( c->liftoff.t, ctrl_events_liftoff_t(&events) );
     ASSERT_EQ( c->liftoff.z, ctrl_events_liftoff_z(&events) );
     ASSERT_EQ( c->liftoff.v, ctrl_events_liftoff_v(&events) );
+    ctrl_events_update_next( &events );
   }
 }
 
@@ -888,7 +904,44 @@ TEST(test_ctrl_events_update_liftoff_2)
     ASSERT_EQ( c->liftoff.t, ctrl_events_liftoff_t(&events) );
     ASSERT_EQ( c->liftoff.z, ctrl_events_liftoff_z(&events) );
     ASSERT_EQ( c->liftoff.v, ctrl_events_liftoff_v(&events) );
+    ctrl_events_update_next( &events );
   }
+}
+
+TEST(test_ctrl_events_update_flag)
+{
+  struct case_t {
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t liftoff;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
+                      { 0.00, 0.000,  0.00 }, },         /* initial */
+    { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
+                      { 0.00, 0.000,  0.00 }, },         /* falling */
+  };
+  struct case_t *c;
+  double phi;
+
+  c = cases;
+  cmd.zd = c->zd;
+  cmd.z0 = c->z0;
+  cmd.zb = c->zb;
+  vec_set_elem_list( p, c->z, c->v );
+
+  ASSERT_FALSE( events.is_updated );
+  ctrl_events_update( &events, c->t, p, &cmd );
+  phi = ctrl_events_phi( &events );
+
+  c++;
+  vec_set_elem_list( p, c->z, c->v );
+  ASSERT_TRUE( events.is_updated );
+  ctrl_events_update( &events, c->t, p, &cmd );
+  ASSERT_EQ( phi, ctrl_events_phi( &events ) );
 }
 
 TEST_SUITE(test_ctrl_events)
@@ -913,6 +966,7 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_update_bottom_2);
   RUN_TEST(test_ctrl_events_update_liftoff_1);
   RUN_TEST(test_ctrl_events_update_liftoff_2);
+  RUN_TEST(test_ctrl_events_update_flag);
 }
 
 

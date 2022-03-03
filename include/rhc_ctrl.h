@@ -27,6 +27,7 @@ typedef struct {
   enum _ctrl_events_phases_t phase;
   double phi;  /* stores the calculated phase value */
   int n;       /* counts how many it reaches apex */
+  bool is_updated;  /* true if ctrl_events_update() is called. */
 } ctrl_events_t;
 
 ctrl_events_t *ctrl_events_init(ctrl_events_t *self);
@@ -59,6 +60,8 @@ bool ctrl_events_is_in_flight(ctrl_events_t *self);
 complex_t *ctrl_events_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c);
 double ctrl_events_calc_phi(double z0, double zd, double zb, vec_t p);
 
+#define ctrl_events_is_updated(self)  ( (self)->is_updated )
+#define ctrl_events_update_next(self) ( ctrl_events_is_updated(self) = false )
 
 typedef struct _ctrl_t{
   cmd_t *cmd;

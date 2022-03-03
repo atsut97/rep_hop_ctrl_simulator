@@ -21,6 +21,7 @@ ctrl_events_t *ctrl_events_init(ctrl_events_t *self)
   self->phase = invalid;
   ctrl_events_phi(self) = 0;
   ctrl_events_n(self) = 0;
+  self->is_updated = false;
   return self;
 }
 
@@ -138,13 +139,14 @@ ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t 
   double phi;
   enum _ctrl_events_phases_t phase;
 
+  if( ctrl_events_is_updated(self) ) return self;
   phi = ctrl_events_calc_phi( cmd->z0, cmd->zd, cmd->zb, p );
   if( ctrl_events_phi( self ) < 0 && phi >= 0 ) ctrl_events_n(self)++;
   phase = _ctrl_events_determine_phase( phi );
   _ctrl_events_update_event( self, phase, t, p, cmd );
   ctrl_events_phi(self) = phi;
   ctrl_events_phase(self) = phase;
-
+  ctrl_events_is_updated(self) = true;
   return self;
 }
 
@@ -177,6 +179,7 @@ double ctrl_calc_sqr_v0(double z0, double zd)
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
 {
+  ctrl_events_update_next( ctrl_events( self ) );
   ctrl_events_update( ctrl_events( self ), t, p, ctrl_cmd( self ) );
   return self;
 }
