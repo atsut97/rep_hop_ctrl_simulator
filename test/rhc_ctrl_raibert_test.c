@@ -361,6 +361,7 @@ TEST(test_ctrl_raibert_is_in_thrust)
   for( c=cases; c->delta>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_raibert_set_delta( &ctrl, c->delta );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     if( c->expected )
       ASSERT_TRUE( ctrl_raibert_is_in_thrust( &ctrl ) );
@@ -401,6 +402,7 @@ TEST(test_ctrl_raibert_is_in_thrust_2)
   for( c=cases; c->delta>=0.0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_raibert_set_delta( &ctrl, c->delta );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     if( c->expected )
       ASSERT_TRUE( ctrl_raibert_is_in_thrust( &ctrl ) );
@@ -454,6 +456,7 @@ TEST(test_ctrl_raibert_end_of_thrust)
   for( c=cases; c->delta>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_raibert_set_delta( &ctrl, c->delta );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     ASSERT_EQ( c->et.t, ctrl_raibert_end_of_thrust(&ctrl).t );
     ASSERT_EQ( c->et.z, ctrl_raibert_end_of_thrust(&ctrl).z );
@@ -493,6 +496,7 @@ TEST(test_ctrl_raibert_end_of_thrust_edge_case)
   for( c=cases; c->delta>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_raibert_set_delta( &ctrl, c->delta );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     ASSERT_EQ( c->et.t, ctrl_raibert_end_of_thrust(&ctrl).t );
     ASSERT_EQ( c->et.z, ctrl_raibert_end_of_thrust(&ctrl).z );
@@ -529,6 +533,7 @@ TEST(test_ctrl_raibert_calc_fz_full_nonlinear)
   ctrl_raibert_create_full_nonlinear( &ctrl, &cmd, &model, 0.1, 41.86, 2.33, 5.81, 1 );
   for ( c=cases; c->t>=0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     ASSERT_NEAR( c->expected, ctrl_raibert_calc_fz( &ctrl, c->t, p ), 1e-10 );
   }
@@ -563,6 +568,7 @@ TEST(test_ctrl_raibert_calc_fz_simplified_nonlinear)
   ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model, 41.86, 5.81 );
   for ( c=cases; c->t>=0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     ASSERT_NEAR( c->expected, ctrl_raibert_calc_fz( &ctrl, c->t, p ), 1e-4 );
   }
@@ -599,6 +605,7 @@ TEST(test_ctrl_raibert_calc_fz_full_linear)
   ctrl_raibert_create_full_linear( &ctrl, &cmd, &model, 0.05, 41.86, 2.33, 46.5, 1.0, 1 );
   for ( c=cases; c->t>=0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     ASSERT_NEAR( c->expected, ctrl_raibert_calc_fz( &ctrl, c->t, p ), 1e-4 );
   }
@@ -636,6 +643,7 @@ TEST(test_ctrl_raibert_calc_fz_simplified_linear)
   ctrl_raibert_create_simplified_linear( &ctrl, &cmd, &model, 0.05, 41.86, 0.58, 46.5, 0.6 );
   for ( c=cases; c->t>=0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update_next( ctrl_events(&ctrl) );
     ctrl_raibert_update_events( &ctrl, c->t, p );
     ASSERT_NEAR( c->expected, ctrl_raibert_calc_fz( &ctrl, c->t, p ), 1e-4 );
   }
