@@ -40,12 +40,23 @@ ctrl_t *ctrl_raibert_update(ctrl_t *self, double t, vec_t p)
 
 void ctrl_raibert_header(FILE *fp, void *util)
 {
-
+  fprintf( fp, ",type,delta,tau,gamma,yeta1,zr,mu,in_th,et_t,et_z,et_v\n" );
 }
 
 void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util)
 {
-
+  fprintf( fp, ",%d,%f,%f,%f,%f,%f,%f,%d,%f,%f,%f\n",
+           ctrl_raibert_type(self),
+           ctrl_raibert_delta(self),
+           ctrl_raibert_tau(self),
+           ctrl_raibert_gamma(self),
+           ctrl_raibert_yeta1(self),
+           ctrl_raibert_zr(self),
+           ctrl_raibert_mu(self),
+           ctrl_raibert_is_in_thrust(self),
+           ctrl_raibert_end_of_thrust(self).t,
+           ctrl_raibert_end_of_thrust(self).z,
+           ctrl_raibert_end_of_thrust(self).v );
 }
 
 ctrl_t *ctrl_raibert_set_params(ctrl_t *self, double delta, double tau, double gamma, double yeta1, double zr, double mu)
