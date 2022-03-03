@@ -126,7 +126,17 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
 
 void simulator_header_default(FILE *fp, simulator_t *s, void *util)
 {
-  fprintf( fp, "tag,t,z,vz,az,fz,fe,z0,zd,zb,n,phi,m" );
+  /* simulator, states, model */
+  fprintf( fp, "tag,t,z,vz,m,az,fe" );
+  /* controller */
+  fprintf( fp, ",fz,z0,zd,zb,n,phi" );
+  /* phase */
+  fprintf( fp, ",phase" );
+  /* events */
+  fprintf( fp, ",ap_t,ap_z,ap_v" );
+  fprintf( fp, ",td_t,td_z,td_v" );
+  fprintf( fp, ",bt_t,bt_z,bt_v" );
+  fprintf( fp, ",lo_t,lo_z,lo_v" );
   ctrl_header( fp, s->ctrl, util );
 }
 
@@ -135,15 +145,32 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
   vec_t state = simulator_state(s);
   model_t *model = simulator_model(s);
   ctrl_t *ctrl = simulator_ctrl(s);
-  fprintf( fp, "%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f,%f",
-           simulator_tag(s),
-           simulator_time(s),
+  /* simulator, states, model */
+  fprintf( fp, "%s,%f,%f,%f,%f,%f,%f",
+           simulator_tag(s), simulator_time(s),
            vec_elem(state,0), vec_elem(state,1),
-           model_acc(model),
-           ctrl_fz(ctrl), simulator_fe(s),
+           model_mass(model), model_acc(model),
+           simulator_fe(s) );
+  /* controller */
+  fprintf( fp, ",%f,%f,%f,%f,%d,%f",
+           ctrl_fz(ctrl),
            ctrl_z0(ctrl), ctrl_zd(ctrl), ctrl_zb(ctrl),
-           ctrl_n(ctrl), ctrl_phi(ctrl),
-           model_mass(model) );
+           ctrl_n(ctrl), ctrl_phi(ctrl));
+  /* phase and events */
+  fprintf( fp, ",%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
+           ctrl_phase(ctrl),
+           ctrl_events_at(ctrl,apex).t,
+           ctrl_events_at(ctrl,apex).z,
+           ctrl_events_at(ctrl,apex).v,
+           ctrl_events_at(ctrl,touchdown).t,
+           ctrl_events_at(ctrl,touchdown).z,
+           ctrl_events_at(ctrl,touchdown).v,
+           ctrl_events_at(ctrl,bottom).t,
+           ctrl_events_at(ctrl,bottom).z,
+           ctrl_events_at(ctrl,bottom).v,
+           ctrl_events_at(ctrl,liftoff).t,
+           ctrl_events_at(ctrl,liftoff).z,
+           ctrl_events_at(ctrl,liftoff).v );
   ctrl_writer( fp, s->ctrl, util );
 }
 
