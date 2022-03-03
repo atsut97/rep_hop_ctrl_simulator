@@ -35,6 +35,11 @@ void ctrl_raibert_destroy(ctrl_t *self)
 
 ctrl_t *ctrl_raibert_update(ctrl_t *self, double t, vec_t p)
 {
+  /* Note that ctrl_events_update() is called in
+   * ctrl_update_default() */
+  ctrl_update_default( self, t, p );
+  ctrl_raibert_update_events( self, t, p );
+  self->fz = ctrl_raibert_calc_fz( self, t, p );
   return self;
 }
 
