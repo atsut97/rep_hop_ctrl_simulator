@@ -284,14 +284,14 @@ fi
 # system always print the given path if it exists.
 _is_python_script() {
   given_path=$1
-  if command -v readlink >/dev/null && \
+  if command -v readlink >/dev/null 2>&1 && \
       readlink "$given_path" >/dev/null; then
     resolved_path=$(readlink -e "$given_path")
   else
     resolved_path=$given_path
   fi
   if [ -f "$resolved_path" ]; then
-    if ! command -v file >/dev/null || \
+    if ! command -v file >/dev/null 2>&1 || \
         file "$resolved_path" | grep -q "Python script"; then
       echo "$given_path"
     fi
@@ -330,19 +330,19 @@ fi
 plot_script=$_plot_script
 
 [ $((dryrun)) -ne 0 ] || printf "%s" "Running script to plot data ..."
-if command -v poetry >/dev/null && \
+if command -v poetry >/dev/null 2>&1 && \
     [ -f "${scriptsdir}/pyproject.toml" ]; then
   (
     cd "$scriptsdir" || exit 1
     execcmd poetry run sh -c "cd \"$workdir\" && python \"$plot_script\" \"$data\""
   )
-elif command -v pipenv >/dev/null && \
+elif command -v pipenv >/dev/null 2>&1 && \
     [ -f "${scriptsdir}/Pipfile" ]; then
   (
     cd "$scriptsdir" || exit 1
     execcmd pipenv sh -c "cd \"$workdir\" && python \"$plot_script\" \"$data\""
   )
-elif command -v python >/dev/null; then
+elif command -v python >/dev/null 2>&1; then
   py_ver=$(python --version | cut -d' ' -f2)
   if [ "${py_ver%%.*}" -gt 2 ]; then
     execcmd python "$plot_script" "$data"
