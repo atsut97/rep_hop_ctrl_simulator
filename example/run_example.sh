@@ -330,7 +330,13 @@ fi
 plot_script=$_plot_script
 
 [ $((dryrun)) -ne 0 ] || printf "%s" "Running script to plot data ..."
-if command -v poetry >/dev/null 2>&1 && \
+if command -v pdm >/dev/null 2>&1 && \
+    [ -d "${scriptsdir}/__pypackages__" ]; then
+  (
+    cd "$scriptsdir" || exit 1
+    execcmd pdm run sh -c "cd \"$workdir\" && python \"$plot_script\" \"$data\""
+  )
+elif command -v poetry >/dev/null 2>&1 && \
     [ -f "${scriptsdir}/pyproject.toml" ]; then
   (
     cd "$scriptsdir" || exit 1
