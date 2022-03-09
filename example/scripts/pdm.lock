@@ -111,7 +111,7 @@ version = "0.1.0"
 requires_python = ">=3.10"
 git = "https://github.com/hrshtst/pyplotutil.git"
 ref = "develop"
-revision = "e30f60dde763af109b8d540d5bd03432b9e50ab4"
+revision = "3548980300b967097cbf8aaa2dad3b4485a056ae"
 summary = "Python utilities for academic plotting"
 dependencies = [
     "matplotlib>=3.5.1",
