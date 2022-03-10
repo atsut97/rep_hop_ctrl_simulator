@@ -103,33 +103,25 @@ void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t p
   if( phase == rising || ctrl_events_is_in_rising( self ) ){
     if( ctrl_events_is_in_extension( self ) ||
         z >= ctrl_events_apex(self)->z ){
-      ctrl_events_apex(self)->t = t;
-      ctrl_events_apex(self)->z = z;
-      ctrl_events_apex(self)->v = v;
+      ctrl_events_set_apex( self, t, z, v );
     }
   }
   if( phase == falling || ctrl_events_is_in_falling( self ) ){
     if( ctrl_events_is_in_rising( self ) ||
         v <= ctrl_events_touchdown(self)->v ){
-      ctrl_events_touchdown(self)->t = t;
-      ctrl_events_touchdown(self)->z = z;
-      ctrl_events_touchdown(self)->v = v;
+      ctrl_events_set_touchdown( self, t, z, v );
     }
   }
   if( phase == compression || ctrl_events_is_in_compression( self ) ){
     if( ctrl_events_is_in_falling( self ) ||
         z <= ctrl_events_bottom(self)->z ){
-      ctrl_events_bottom(self)->t = t;
-      ctrl_events_bottom(self)->z = z;
-      ctrl_events_bottom(self)->v = v;
+      ctrl_events_set_bottom( self, t, z, v );
     }
   }
   if( phase == extension || ctrl_events_is_in_extension( self ) ){
     if( ctrl_events_is_in_compression( self ) ||
         v >= ctrl_events_liftoff(self)->v ){
-      ctrl_events_liftoff(self)->t = t;
-      ctrl_events_liftoff(self)->z = z;
-      ctrl_events_liftoff(self)->v = v;
+      ctrl_events_set_liftoff( self, t, z, v );
     }
   }
 }
