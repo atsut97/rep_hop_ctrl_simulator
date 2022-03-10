@@ -63,6 +63,86 @@ TEST(test_ctrl_events_destroy)
   ASSERT_FALSE( events.is_updated );
 }
 
+TEST(test_ctrl_events_set_apex)
+{
+  struct case_t {
+    double t, z, v;
+  } cases[] = {
+    { 80.7, 79.8, 49.9 },
+    { 91.2, 57.7, 89.4 },
+    { 37.7, 32.5, 82.5 },
+    { -1, 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->t>0; c++ ){
+    ctrl_events_set_apex( &events, c->t, c->z, c->v );
+    ASSERT_EQ( c->t, ctrl_events_apex(&events)->t );
+    ASSERT_EQ( c->z, ctrl_events_apex(&events)->z );
+    ASSERT_EQ( c->v, ctrl_events_apex(&events)->v );
+  }
+}
+
+TEST(test_ctrl_events_set_touchdown)
+{
+  struct case_t {
+    double t, z, v;
+  } cases[] = {
+    { 89.5, 51.2, 3.4 },
+    { 65.1, 50.6, 23.3 },
+    { 50.5, 14.4, 78.2 },
+    { -1, 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->t>0; c++ ){
+    ctrl_events_set_touchdown( &events, c->t, c->z, c->v );
+    ASSERT_EQ( c->t, ctrl_events_touchdown(&events)->t );
+    ASSERT_EQ( c->z, ctrl_events_touchdown(&events)->z );
+    ASSERT_EQ( c->v, ctrl_events_touchdown(&events)->v );
+  }
+}
+
+TEST(test_ctrl_events_set_bottom)
+{
+  struct case_t {
+    double t, z, v;
+  } cases[] = {
+    { 47.1, 50.2, 87.0 },
+    { 55.2, 60.5, 69.8 },
+    { 78.9, 35.9, 44.9 },
+    { -1, 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->t>0; c++ ){
+    ctrl_events_set_bottom( &events, c->t, c->z, c->v );
+    ASSERT_EQ( c->t, ctrl_events_bottom(&events)->t );
+    ASSERT_EQ( c->z, ctrl_events_bottom(&events)->z );
+    ASSERT_EQ( c->v, ctrl_events_bottom(&events)->v );
+  }
+}
+
+TEST(test_ctrl_events_set_liftoff)
+{
+  struct case_t {
+    double t, z, v;
+  } cases[] = {
+    { 27.9, 5.5, 28.9 },
+    { 15.0, 42.8, 71.6 },
+    { 72.4, 14.5, 76.0 },
+    { -1, 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->t>0; c++ ){
+    ctrl_events_set_liftoff( &events, c->t, c->z, c->v );
+    ASSERT_EQ( c->t, ctrl_events_liftoff(&events)->t );
+    ASSERT_EQ( c->z, ctrl_events_liftoff(&events)->z );
+    ASSERT_EQ( c->v, ctrl_events_liftoff(&events)->v );
+  }
+}
+
 TEST(test_ctrl_events_calc_phase_complex)
 {
   struct case_t {
@@ -949,6 +1029,10 @@ TEST_SUITE(test_ctrl_events)
   CONFIGURE_SUITE(setup_events, teardown_events);
   RUN_TEST(test_ctrl_events_init);
   RUN_TEST(test_ctrl_events_destroy);
+  RUN_TEST(test_ctrl_events_set_apex);
+  RUN_TEST(test_ctrl_events_set_touchdown);
+  RUN_TEST(test_ctrl_events_set_bottom);
+  RUN_TEST(test_ctrl_events_set_liftoff);
   RUN_TEST(test_ctrl_events_calc_phase_complex);
   RUN_TEST(test_ctrl_events_calc_phi);
   RUN_TEST(test_ctrl_events_is_in_rising);

@@ -34,11 +34,25 @@ ctrl_events_t *ctrl_events_init(ctrl_events_t *self);
 ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd);
 void ctrl_events_destroy(ctrl_events_t *self);
 
-#define ctrl_events_event(self,event) ( &(self)->event )
+#define ctrl_events_event(self,event) ( &((self)->event) )
 #define ctrl_events_apex(self)        ctrl_events_event(self, apex)
 #define ctrl_events_touchdown(self)   ctrl_events_event(self, touchdown)
 #define ctrl_events_bottom(self)      ctrl_events_event(self, bottom)
 #define ctrl_events_liftoff(self)     ctrl_events_event(self, liftoff)
+
+#define ctrl_events_set_event(self,event,_t,_z,_v) do{ \
+   ctrl_events_event(self, event)->t = _t; \
+   ctrl_events_event(self, event)->z = _z; \
+   ctrl_events_event(self, event)->v = _v; \
+} while( 0 )
+#define ctrl_events_set_apex(self,t,z,v)        \
+  ctrl_events_set_event(self, apex, t, z, v)
+#define ctrl_events_set_touchdown(self,t,z,v)   \
+  ctrl_events_set_event(self, touchdown, t, z, v)
+#define ctrl_events_set_bottom(self,t,z,v)      \
+  ctrl_events_set_event(self, bottom, t, z, v)
+#define ctrl_events_set_liftoff(self,t,z,v)     \
+  ctrl_events_set_event(self, liftoff, t, z, v)
 
 bool ctrl_events_is_in_falling(ctrl_events_t *self);
 bool ctrl_events_is_in_compression(ctrl_events_t *self);
