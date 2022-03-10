@@ -24,18 +24,18 @@ void teardown_events()
 TEST(test_ctrl_events_init)
 {
   ctrl_events_init( &events );
-  ASSERT_EQ( 0, ctrl_events_apex_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_apex_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_apex_v(&events) );
-  ASSERT_EQ( 0, ctrl_events_touchdown_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_touchdown_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_touchdown_v(&events) );
-  ASSERT_EQ( 0, ctrl_events_bottom_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_bottom_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_bottom_v(&events) );
-  ASSERT_EQ( 0, ctrl_events_liftoff_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_liftoff_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_liftoff_v(&events) );
+  ASSERT_EQ( 0, ctrl_events_apex(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_apex(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_apex(&events)->v );
+  ASSERT_EQ( 0, ctrl_events_touchdown(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_touchdown(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_touchdown(&events)->v );
+  ASSERT_EQ( 0, ctrl_events_bottom(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_bottom(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_bottom(&events)->v );
+  ASSERT_EQ( 0, ctrl_events_liftoff(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_liftoff(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_liftoff(&events)->v );
   ASSERT_EQ( invalid, events.phase );
   ASSERT_EQ( 0, ctrl_events_phi(&events) );
   ASSERT_EQ( 0, ctrl_events_n(&events) );
@@ -45,18 +45,18 @@ TEST(test_ctrl_events_init)
 TEST(test_ctrl_events_destroy)
 {
   ctrl_events_destroy( &events );
-  ASSERT_EQ( 0, ctrl_events_apex_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_apex_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_apex_v(&events) );
-  ASSERT_EQ( 0, ctrl_events_touchdown_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_touchdown_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_touchdown_v(&events) );
-  ASSERT_EQ( 0, ctrl_events_bottom_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_bottom_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_bottom_v(&events) );
-  ASSERT_EQ( 0, ctrl_events_liftoff_t(&events) );
-  ASSERT_EQ( 0, ctrl_events_liftoff_z(&events) );
-  ASSERT_EQ( 0, ctrl_events_liftoff_v(&events) );
+  ASSERT_EQ( 0, ctrl_events_apex(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_apex(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_apex(&events)->v );
+  ASSERT_EQ( 0, ctrl_events_touchdown(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_touchdown(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_touchdown(&events)->v );
+  ASSERT_EQ( 0, ctrl_events_bottom(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_bottom(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_bottom(&events)->v );
+  ASSERT_EQ( 0, ctrl_events_liftoff(&events)->t );
+  ASSERT_EQ( 0, ctrl_events_liftoff(&events)->z );
+  ASSERT_EQ( 0, ctrl_events_liftoff(&events)->v );
   ASSERT_EQ( invalid, events.phase );
   ASSERT_EQ( 0, ctrl_events_phi(&events) );
   ASSERT_EQ( 0, ctrl_events_n(&events) );
@@ -471,9 +471,9 @@ TEST(test_ctrl_events_update_apex_1)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->apex.t, ctrl_events_apex_t(&events) );
-    ASSERT_EQ( c->apex.z, ctrl_events_apex_z(&events) );
-    ASSERT_EQ( c->apex.v, ctrl_events_apex_v(&events) );
+    ASSERT_EQ( c->apex.t, ctrl_events_apex(&events)->t );
+    ASSERT_EQ( c->apex.z, ctrl_events_apex(&events)->z );
+    ASSERT_EQ( c->apex.v, ctrl_events_apex(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -523,9 +523,9 @@ TEST(test_ctrl_events_update_apex_2)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->apex.t, ctrl_events_apex_t(&events) );
-    ASSERT_EQ( c->apex.z, ctrl_events_apex_z(&events) );
-    ASSERT_EQ( c->apex.v, ctrl_events_apex_v(&events) );
+    ASSERT_EQ( c->apex.t, ctrl_events_apex(&events)->t );
+    ASSERT_EQ( c->apex.z, ctrl_events_apex(&events)->z );
+    ASSERT_EQ( c->apex.v, ctrl_events_apex(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -578,9 +578,9 @@ TEST(test_ctrl_events_update_touchdown_1)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown_t(&events) );
-    ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown_z(&events) );
-    ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown_v(&events) );
+    ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown(&events)->t );
+    ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown(&events)->z );
+    ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -643,9 +643,9 @@ TEST(test_ctrl_events_update_touchdown_2)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown_t(&events) );
-    ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown_z(&events) );
-    ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown_v(&events) );
+    ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown(&events)->t );
+    ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown(&events)->z );
+    ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -706,9 +706,9 @@ TEST(test_ctrl_events_update_bottom_1)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->bottom.t, ctrl_events_bottom_t(&events) );
-    ASSERT_EQ( c->bottom.z, ctrl_events_bottom_z(&events) );
-    ASSERT_EQ( c->bottom.v, ctrl_events_bottom_v(&events) );
+    ASSERT_EQ( c->bottom.t, ctrl_events_bottom(&events)->t );
+    ASSERT_EQ( c->bottom.z, ctrl_events_bottom(&events)->z );
+    ASSERT_EQ( c->bottom.v, ctrl_events_bottom(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -771,9 +771,9 @@ TEST(test_ctrl_events_update_bottom_2)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->bottom.t, ctrl_events_bottom_t(&events) );
-    ASSERT_EQ( c->bottom.z, ctrl_events_bottom_z(&events) );
-    ASSERT_EQ( c->bottom.v, ctrl_events_bottom_v(&events) );
+    ASSERT_EQ( c->bottom.t, ctrl_events_bottom(&events)->t );
+    ASSERT_EQ( c->bottom.z, ctrl_events_bottom(&events)->z );
+    ASSERT_EQ( c->bottom.v, ctrl_events_bottom(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -834,9 +834,9 @@ TEST(test_ctrl_events_update_liftoff_1)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->liftoff.t, ctrl_events_liftoff_t(&events) );
-    ASSERT_EQ( c->liftoff.z, ctrl_events_liftoff_z(&events) );
-    ASSERT_EQ( c->liftoff.v, ctrl_events_liftoff_v(&events) );
+    ASSERT_EQ( c->liftoff.t, ctrl_events_liftoff(&events)->t );
+    ASSERT_EQ( c->liftoff.z, ctrl_events_liftoff(&events)->z );
+    ASSERT_EQ( c->liftoff.v, ctrl_events_liftoff(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -901,9 +901,9 @@ TEST(test_ctrl_events_update_liftoff_2)
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
-    ASSERT_EQ( c->liftoff.t, ctrl_events_liftoff_t(&events) );
-    ASSERT_EQ( c->liftoff.z, ctrl_events_liftoff_z(&events) );
-    ASSERT_EQ( c->liftoff.v, ctrl_events_liftoff_v(&events) );
+    ASSERT_EQ( c->liftoff.t, ctrl_events_liftoff(&events)->t );
+    ASSERT_EQ( c->liftoff.z, ctrl_events_liftoff(&events)->z );
+    ASSERT_EQ( c->liftoff.v, ctrl_events_liftoff(&events)->v );
     ctrl_events_update_next( &events );
   }
 }
@@ -1164,9 +1164,9 @@ TEST(test_ctrl_events_at_apex)
   for( c=cases; c->zd > 0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_update( &ctrl, c->t, p );
-    ASSERT_EQ( c->apex.t, ctrl_events_at( &ctrl, apex ).t );
-    ASSERT_EQ( c->apex.z, ctrl_events_at( &ctrl, apex ).z );
-    ASSERT_EQ( c->apex.v, ctrl_events_at( &ctrl, apex ).v );
+    ASSERT_EQ( c->apex.t, ctrl_events_at( &ctrl, apex )->t );
+    ASSERT_EQ( c->apex.z, ctrl_events_at( &ctrl, apex )->z );
+    ASSERT_EQ( c->apex.v, ctrl_events_at( &ctrl, apex )->v );
   }
 }
 
@@ -1197,9 +1197,9 @@ TEST(test_ctrl_events_at_touchdown)
   for( c=cases; c->zd > 0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_update( &ctrl, c->t, p );
-    ASSERT_EQ( c->touchdown.t, ctrl_events_at( &ctrl, touchdown ).t );
-    ASSERT_EQ( c->touchdown.z, ctrl_events_at( &ctrl, touchdown ).z );
-    ASSERT_EQ( c->touchdown.v, ctrl_events_at( &ctrl, touchdown ).v );
+    ASSERT_EQ( c->touchdown.t, ctrl_events_at( &ctrl, touchdown )->t );
+    ASSERT_EQ( c->touchdown.z, ctrl_events_at( &ctrl, touchdown )->z );
+    ASSERT_EQ( c->touchdown.v, ctrl_events_at( &ctrl, touchdown )->v );
   }
 }
 
@@ -1230,9 +1230,9 @@ TEST(test_ctrl_events_at_bottom)
   for( c=cases; c->zd > 0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_update( &ctrl, c->t, p );
-    ASSERT_EQ( c->bottom.t, ctrl_events_at( &ctrl, bottom ).t );
-    ASSERT_EQ( c->bottom.z, ctrl_events_at( &ctrl, bottom ).z );
-    ASSERT_EQ( c->bottom.v, ctrl_events_at( &ctrl, bottom ).v );
+    ASSERT_EQ( c->bottom.t, ctrl_events_at( &ctrl, bottom )->t );
+    ASSERT_EQ( c->bottom.z, ctrl_events_at( &ctrl, bottom )->z );
+    ASSERT_EQ( c->bottom.v, ctrl_events_at( &ctrl, bottom )->v );
   }
 }
 
@@ -1263,9 +1263,9 @@ TEST(test_ctrl_events_at_liftoff)
   for( c=cases; c->zd > 0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     ctrl_update( &ctrl, c->t, p );
-    ASSERT_EQ( c->liftoff.t, ctrl_events_at( &ctrl, liftoff ).t );
-    ASSERT_EQ( c->liftoff.z, ctrl_events_at( &ctrl, liftoff ).z );
-    ASSERT_EQ( c->liftoff.v, ctrl_events_at( &ctrl, liftoff ).v );
+    ASSERT_EQ( c->liftoff.t, ctrl_events_at( &ctrl, liftoff )->t );
+    ASSERT_EQ( c->liftoff.z, ctrl_events_at( &ctrl, liftoff )->z );
+    ASSERT_EQ( c->liftoff.v, ctrl_events_at( &ctrl, liftoff )->v );
   }
 }
 

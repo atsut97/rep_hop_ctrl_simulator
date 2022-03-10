@@ -159,18 +159,18 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
   /* phase and events */
   fprintf( fp, ",%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
            ctrl_phase(ctrl),
-           ctrl_events_at(ctrl,apex).t,
-           ctrl_events_at(ctrl,apex).z,
-           ctrl_events_at(ctrl,apex).v,
-           ctrl_events_at(ctrl,touchdown).t,
-           ctrl_events_at(ctrl,touchdown).z,
-           ctrl_events_at(ctrl,touchdown).v,
-           ctrl_events_at(ctrl,bottom).t,
-           ctrl_events_at(ctrl,bottom).z,
-           ctrl_events_at(ctrl,bottom).v,
-           ctrl_events_at(ctrl,liftoff).t,
-           ctrl_events_at(ctrl,liftoff).z,
-           ctrl_events_at(ctrl,liftoff).v );
+           ctrl_events_at(ctrl,apex)->t,
+           ctrl_events_at(ctrl,apex)->z,
+           ctrl_events_at(ctrl,apex)->v,
+           ctrl_events_at(ctrl,touchdown)->t,
+           ctrl_events_at(ctrl,touchdown)->z,
+           ctrl_events_at(ctrl,touchdown)->v,
+           ctrl_events_at(ctrl,bottom)->t,
+           ctrl_events_at(ctrl,bottom)->z,
+           ctrl_events_at(ctrl,bottom)->v,
+           ctrl_events_at(ctrl,liftoff)->t,
+           ctrl_events_at(ctrl,liftoff)->z,
+           ctrl_events_at(ctrl,liftoff)->v );
   ctrl_writer( fp, s->ctrl, util );
 }
 
