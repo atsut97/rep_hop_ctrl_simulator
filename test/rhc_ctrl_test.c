@@ -519,10 +519,10 @@ TEST(test_ctrl_events_update_apex_1)
     struct _ctrl_events_tuple_t apex;
   } cases[] = {
     /* zd ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
-    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.000, 0.00 }, },  /* initial */
-    { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.000, 0.00 }, },  /* falling */
-    { 0.30, 0.25, 0.20, 0.10, 0.250, -0.30, { 0.00, 0.000, 0.00 }, },  /* touchdown */
-    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00, { 0.00, 0.000, 0.00 }, },  /* bottom */
+    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.300, 0.00 }, },  /* initial */
+    { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.300, 0.00 }, },  /* falling */
+    { 0.30, 0.25, 0.20, 0.10, 0.250, -0.30, { 0.00, 0.300, 0.00 }, },  /* touchdown */
+    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00, { 0.00, 0.300, 0.00 }, },  /* bottom */
 
     { 0.30, 0.25, 0.20, 0.30, 0.250,  sqrt(0.1*G), { 0.30, 0.250, sqrt(0.1*G) }, },  /* lift-off */
     { 0.30, 0.25, 0.20, 0.31, 0.251,  0.29, { 0.31, 0.251, 0.29 }, },  /* rising */
@@ -569,11 +569,11 @@ TEST(test_ctrl_events_update_apex_2)
     struct _ctrl_events_tuple_t apex;
   } cases[] = {
     /* zd ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
-    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.000,  0.00 }, },  /* initial */
-    { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.000,  0.00 }, },  /* falling */
-    { 0.30, 0.25, 0.20, 0.10, 0.250, -0.90, { 0.00, 0.000,  0.00 }, },  /* touchdown */
-    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00, { 0.00, 0.000,  0.00 }, },  /* bottom */
-    { 0.30, 0.25, 0.20, 0.29, 0.249,  0.90, { 0.00, 0.000,  0.00 }, },  /* extension */
+    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.300,  0.00 }, },  /* initial */
+    { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.300,  0.00 }, },  /* falling */
+    { 0.30, 0.25, 0.20, 0.10, 0.250, -0.90, { 0.00, 0.300,  0.00 }, },  /* touchdown */
+    { 0.30, 0.25, 0.20, 0.20, 0.200,  0.00, { 0.00, 0.300,  0.00 }, },  /* bottom */
+    { 0.30, 0.25, 0.20, 0.29, 0.249,  0.90, { 0.00, 0.300,  0.00 }, },  /* extension */
 
     { 0.30, 0.25, 0.20, 0.30, 0.252,  0.80, { 0.30, 0.252,  0.80 }, },  /* rising */
     { 0.30, 0.25, 0.20, 0.31, 0.253,  0.78, { 0.31, 0.253,  0.78 }, },  /* rising */
@@ -594,6 +594,35 @@ TEST(test_ctrl_events_update_apex_2)
 
     { 0.30, 0.25, 0.20, 0.82, 0.290, -0.02, { 0.81, 0.295, -0.01 }, },  /* falling */
     { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000,  0.00 }, },  /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, c->t, p, &cmd );
+    ASSERT_EQ( c->apex.t, ctrl_events_apex(&events)->t );
+    ASSERT_EQ( c->apex.z, ctrl_events_apex(&events)->z );
+    ASSERT_EQ( c->apex.v, ctrl_events_apex(&events)->v );
+    ctrl_events_update_next( &events );
+  }
+}
+
+TEST(test_ctrl_events_update_apex_initial)
+{
+  struct case_t {
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t apex;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.300, 0.00 }, },  /* initial */
+    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
   };
   struct case_t *c;
 
@@ -730,6 +759,36 @@ TEST(test_ctrl_events_update_touchdown_2)
   }
 }
 
+TEST(test_ctrl_events_update_touchdown_initial)
+{
+  struct case_t {
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t touchdown;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.250, -sqrt(0.1*G),
+                      { 0.00, 0.250, -sqrt(0.1*G) }, },  /* touchdown */
+    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, c->t, p, &cmd );
+    ASSERT_EQ( c->touchdown.t, ctrl_events_touchdown(&events)->t );
+    ASSERT_EQ( c->touchdown.z, ctrl_events_touchdown(&events)->z );
+    ASSERT_EQ( c->touchdown.v, ctrl_events_touchdown(&events)->v );
+    ctrl_events_update_next( &events );
+  }
+}
+
 TEST(test_ctrl_events_update_bottom_1)
 {
   struct case_t {
@@ -777,6 +836,36 @@ TEST(test_ctrl_events_update_bottom_1)
                       { 0.60, 0.200,  0.00 }, },         /* extension */
     { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00,
                       { 0.00, 0.000,  0.00 }, },         /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, c->t, p, &cmd );
+    ASSERT_EQ( c->bottom.t, ctrl_events_bottom(&events)->t );
+    ASSERT_EQ( c->bottom.z, ctrl_events_bottom(&events)->z );
+    ASSERT_EQ( c->bottom.v, ctrl_events_bottom(&events)->v );
+    ctrl_events_update_next( &events );
+  }
+}
+
+TEST(test_ctrl_events_update_bottom_initial)
+{
+  struct case_t {
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t bottom;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v ,btm:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.200,  0.00,
+                      { 0.00, 0.200,  0.00 }, },         /* bottom */
+    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
   };
   struct case_t *c;
 
@@ -988,6 +1077,37 @@ TEST(test_ctrl_events_update_liftoff_2)
   }
 }
 
+TEST(test_ctrl_events_update_liftoff_initial)
+{
+  struct case_t {
+    /* parameters */
+    double zd, z0, zb;
+    /* states */
+    double t, z, v;
+    /* expected recorded events */
+    struct _ctrl_events_tuple_t liftoff;
+  } cases[] = {
+    /* zd ,  z0 ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
+    { 0.30, 0.25, 0.20, 0.00, 0.250,  sqrt(0.1*G),
+                      { 0.00, 0.250,  sqrt(0.1*G) }, },  /* lift-off */
+    { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00,
+                      { 0.00, 0.000,  0.00 }, },         /* terminator */
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zd>0; c++ ){
+    cmd.zd = c->zd;
+    cmd.z0 = c->z0;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, c->t, p, &cmd );
+    ASSERT_EQ( c->liftoff.t, ctrl_events_liftoff(&events)->t );
+    ASSERT_EQ( c->liftoff.z, ctrl_events_liftoff(&events)->z );
+    ASSERT_EQ( c->liftoff.v, ctrl_events_liftoff(&events)->v );
+    ctrl_events_update_next( &events );
+  }
+}
+
 TEST(test_ctrl_events_update_flag)
 {
   struct case_t {
@@ -1044,12 +1164,16 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_update_n);
   RUN_TEST(test_ctrl_events_update_apex_1);
   RUN_TEST(test_ctrl_events_update_apex_2);
+  RUN_TEST(test_ctrl_events_update_apex_initial);
   RUN_TEST(test_ctrl_events_update_touchdown_1);
   RUN_TEST(test_ctrl_events_update_touchdown_2);
+  RUN_TEST(test_ctrl_events_update_touchdown_initial);
   RUN_TEST(test_ctrl_events_update_bottom_1);
   RUN_TEST(test_ctrl_events_update_bottom_2);
+  RUN_TEST(test_ctrl_events_update_bottom_initial);
   RUN_TEST(test_ctrl_events_update_liftoff_1);
   RUN_TEST(test_ctrl_events_update_liftoff_2);
+  RUN_TEST(test_ctrl_events_update_liftoff_initial);
   RUN_TEST(test_ctrl_events_update_flag);
 }
 
@@ -1232,12 +1356,12 @@ TEST(test_ctrl_events_at_apex)
     /* expectations */
     struct _ctrl_events_tuple_t apex;
   } cases[] = {
-    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.00,  0.00 } }, /* apex */
-    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.00,  0.00 } }, /* falling */
-    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.00, 0.00,  0.00 } }, /* touchdown */
-    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.00, 0.00,  0.00 } }, /* compression */
-    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.00, 0.00,  0.00 } }, /* bottom */
-    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.00, 0.00,  0.00 } }, /* extension */
+    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.28,  0.00 } }, /* apex */
+    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.28,  0.00 } }, /* falling */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.00, 0.28,  0.00 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.00, 0.28,  0.00 } }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.00, 0.28,  0.00 } }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.00, 0.28,  0.00 } }, /* extension */
     { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.36, 0.26,  v0   } }, /* lift-off */
     { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.42, 0.27,  0.30 } }, /* rising */
     { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.48, 0.28,  0.00 } }, /* apex */

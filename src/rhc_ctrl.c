@@ -100,6 +100,27 @@ void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t p
 
   z = vec_elem( p, 0 );
   v = vec_elem( p, 1 );
+
+  /* Initially we need to handle each event in exceptional way. */
+  if( ctrl_events_phase(self) == invalid ){
+    switch( phase ){
+      case falling:
+        ctrl_events_set_apex( self, t, z, v );
+        break;
+      case compression:
+        ctrl_events_set_touchdown( self, t, z, v );
+        break;
+      case extension:
+        ctrl_events_set_bottom( self, t, z, v );
+        break;
+      case rising:
+        ctrl_events_set_liftoff( self, t, z, v );
+        break;
+      default:
+        break;
+    }
+  }
+
   if( phase == rising || ctrl_events_is_in_rising( self ) ){
     if( ctrl_events_is_in_extension( self ) ||
         z >= ctrl_events_apex(self)->z ){
