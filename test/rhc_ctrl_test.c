@@ -1201,6 +1201,7 @@ TEST(test_ctrl_init)
   ASSERT_PTREQ( &cmd, ctrl_cmd( &ctrl ) );
   ASSERT_PTREQ( &model, ctrl_model( &ctrl ) );
   ASSERT_EQ( 0, ctrl_fz( &ctrl ) );
+  ASSERT_PTREQ( ctrl_reset_default, ctrl._reset );
   ASSERT_PTREQ( ctrl_update_default, ctrl._update );
   ASSERT_PTREQ( ctrl_destroy_default, ctrl._destroy );
   ASSERT_PTREQ( ctrl_header_default, ctrl._header );
@@ -1272,6 +1273,18 @@ TEST(test_ctrl_v0)
     cmd.zd = c->zd;
     ASSERT_DOUBLE_EQ( c->expected, ctrl_v0( &ctrl ) );
   }
+}
+
+TEST(test_ctrl_reset_default)
+{
+  vec_set_elem_list( p, 2, 0.24, 0.0 );
+  ctrl_update( &ctrl, 0.0, p );
+  ctrl_fz( &ctrl ) = 2.34;  /* random */
+  ASSERT_NE( 0.0, ctrl_fz(&ctrl) );
+  ASSERT_NE( invalid, ctrl_phase(&ctrl) );
+  ctrl_reset( &ctrl );
+  ASSERT_EQ( 0.0, ctrl_fz(&ctrl) );
+  ASSERT_EQ( invalid, ctrl_phase(&ctrl) );
 }
 
 TEST(test_ctrl_update_default)
@@ -1486,6 +1499,7 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_zd);
   RUN_TEST(test_ctrl_zb);
   RUN_TEST(test_ctrl_v0);
+  RUN_TEST(test_ctrl_reset_default);
   RUN_TEST(test_ctrl_update_default);
   RUN_TEST(test_ctrl_phase);
   RUN_TEST(test_ctrl_events_at_apex);

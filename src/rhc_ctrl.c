@@ -168,6 +168,7 @@ ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model)
   self->cmd = cmd;
   self->model = model;
   self->fz = 0;
+  self->_reset = ctrl_reset_default;
   self->_update = ctrl_update_default;
   self->_destroy = ctrl_destroy_default;
   self->_header = ctrl_header_default;
@@ -188,6 +189,13 @@ void ctrl_destroy_default(ctrl_t *self)
 double ctrl_calc_sqr_v0(double z0, double zd)
 {
   return 2.0 * G * ( zd - z0 );
+}
+
+ctrl_t *ctrl_reset_default(ctrl_t *self)
+{
+  self->fz = 0;
+  ctrl_events_init( ctrl_events( self ) );
+  return self;
 }
 
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
