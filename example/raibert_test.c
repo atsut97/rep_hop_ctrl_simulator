@@ -9,7 +9,7 @@
 #include "rhc_vec.h"
 
 #define DT 0.001
-#define T  10
+#define T  5
 
 enum raibert_presets {
   raibert_presets_custom = 0,
@@ -202,7 +202,7 @@ void setup_ctrl(const char *argv[])
       cmd.z0 = 0;
       cmd.zd = 0.5;
       cmd.zb = -0.3;
-      ctrl_raibert_set_params_simplified_linear( &ctrl, 0.05, 41.86, 0.58, 46.5, 0.1 );
+      ctrl_raibert_set_params_simplified_linear( &ctrl, 0.039, 41.86, 0.58, 46.5, 0.1 );
       model_set_gravity( ctrl_model(&ctrl), 5 );
       z0_list = vec_create_list( 2, 0.44, 0.5 );
     } else if( preset_id == raibert_presets_untuned_simplified_linear ){
