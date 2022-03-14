@@ -1,6 +1,7 @@
 #include "rhc_ctrl_raibert.h"
 #include "rhc_ctrl.h"
 #include "rhc_misc.h"
+#include "rhc_model.h"
 
 static double _ctrl_raibert_calc_fz_unit_full_nonlinear(ctrl_t *self, double t, vec_t p);
 static double _ctrl_raibert_calc_fz_unit_simplified_nonlinear(ctrl_t *self, double t, vec_t p);
@@ -132,9 +133,9 @@ double _ctrl_raibert_calc_fz_unit_simplified_nonlinear(ctrl_t *self, double t, v
   tau = ctrl_raibert_tau(self);
   yeta1 = ctrl_raibert_yeta1(self);
   if( ctrl_phase_in(self, compression) ) {
-    fz_unit = yeta1 / vec_elem(p,0) + G;
+    fz_unit = yeta1 / vec_elem(p,0) + model_gravity( ctrl_model(self) );
   } else if( ctrl_phase_in(self, extension) ) {
-    fz_unit = tau * ctrl_events_at(self, bottom)->z / vec_elem(p,0) + G;
+    fz_unit = tau * ctrl_events_at(self, bottom)->z / vec_elem(p,0) + model_gravity( ctrl_model(self) );
   } else {
     fz_unit = 0;
   }
