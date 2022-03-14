@@ -4,12 +4,14 @@ model_t *model_init(model_t *self, double m)
 {
   model_set_mass( self, m );
   model_set_acc( self, 0 );
+  model_set_gravity( self, G );
   return self;
 }
 
 void model_destroy(model_t *self)
 {
   model_set_mass( self, 0 );
+  model_set_gravity( self, G );
 }
 
 double model_calc_acc(double m, double fz, double fe)

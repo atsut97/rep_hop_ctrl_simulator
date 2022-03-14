@@ -17,12 +17,14 @@ TEST(test_model_init)
 {
   ASSERT_EQ( 1.0, model_mass( &model ) );
   ASSERT_EQ( 0.0, model_acc( &model ) );
+  ASSERT_EQ( G, model_gravity( &model ) );
 }
 
 TEST(test_model_destroy)
 {
   model_destroy( &model );
   ASSERT_EQ( 0.0, model_mass( &model ) );
+  ASSERT_EQ( G, model_gravity( &model ) );
 }
 
 TEST(test_model_set_mass)
@@ -31,6 +33,14 @@ TEST(test_model_set_mass)
   ASSERT_EQ( 2.0, model_mass(&model) );
   model_set_mass( &model, 4.0 );
   ASSERT_EQ( 4.0, model_mass(&model) );
+}
+
+TEST(test_model_set_gravity)
+{
+  model_set_gravity( &model, 10.0 );
+  ASSERT_EQ( 10.0, model_gravity( &model ) );
+  model_set_gravity( &model, 5.0 );
+  ASSERT_EQ( 5.0, model_gravity( &model ) );
 }
 
 TEST(test_model_calc_acc)
@@ -91,6 +101,7 @@ TEST_SUITE(test_model)
   RUN_TEST(test_model_init);
   RUN_TEST(test_model_destroy);
   RUN_TEST(test_model_set_mass);
+  RUN_TEST(test_model_set_gravity);
   RUN_TEST(test_model_calc_acc);
   RUN_TEST(test_model_update);
 }

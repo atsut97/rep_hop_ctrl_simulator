@@ -6,13 +6,16 @@
 typedef struct{
   double m;
   double acc;
+  double gravity;
 } model_t;
 
-#define model_mass(self) (self)->m
-#define model_acc(self)  (self)->acc
+#define model_mass(self)    (self)->m
+#define model_acc(self)     (self)->acc
+#define model_gravity(self) (self)->gravity
 
-#define model_set_mass(self,m) ( model_mass(self) = (m) )
-#define model_set_acc(self,a)  ( model_acc(self) = (a) )
+#define model_set_mass(self,m)    ( model_mass(self) = (m) )
+#define model_set_acc(self,a)     ( model_acc(self) = (a) )
+#define model_set_gravity(self,g) ( model_gravity(self) = (g) )
 
 model_t *model_init(model_t *self, double m);
 void model_destroy(model_t *self);
