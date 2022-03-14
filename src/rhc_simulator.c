@@ -89,7 +89,7 @@ vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
 
 bool simulator_reset_ctrl(simulator_t *self, void *util)
 {
-  if( ctrl_reset( simulator_ctrl(self) ) )
+  if( ctrl_reset( simulator_ctrl(self), util ) )
     return true;
   else
     return false;

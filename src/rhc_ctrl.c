@@ -191,7 +191,7 @@ double ctrl_calc_sqr_v0(double z0, double zd)
   return 2.0 * G * ( zd - z0 );
 }
 
-ctrl_t *ctrl_reset_default(ctrl_t *self)
+ctrl_t *ctrl_reset_default(ctrl_t *self, void *util)
 {
   self->fz = 0;
   ctrl_events_init( ctrl_events( self ) );

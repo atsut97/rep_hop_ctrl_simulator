@@ -1282,7 +1282,7 @@ TEST(test_ctrl_reset_default)
   ctrl_fz( &ctrl ) = 2.34;  /* random */
   ASSERT_NE( 0.0, ctrl_fz(&ctrl) );
   ASSERT_NE( invalid, ctrl_phase(&ctrl) );
-  ctrl_reset( &ctrl );
+  ctrl_reset( &ctrl, NULL );
   ASSERT_EQ( 0.0, ctrl_fz(&ctrl) );
   ASSERT_EQ( invalid, ctrl_phase(&ctrl) );
 }

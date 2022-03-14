@@ -75,7 +75,7 @@ typedef struct _ctrl_t{
   double fz;
   void *prp;
   ctrl_events_t events;
-  struct _ctrl_t* (*_reset)(struct _ctrl_t*);
+  struct _ctrl_t* (*_reset)(struct _ctrl_t*, void*);
   struct _ctrl_t* (*_update)(struct _ctrl_t*,double,vec_t);
   void (*_destroy)(struct _ctrl_t*);
   void (*_header)(FILE*, void*);
@@ -96,7 +96,7 @@ typedef struct _ctrl_t{
 #define ctrl_events(self)           ( &((ctrl_t*)self)->events )
 #define ctrl_events_at(self, event) ctrl_events_event( ctrl_events(self), event )
 
-#define ctrl_reset(self)          ((ctrl_t*)self)->_reset( self )
+#define ctrl_reset(self,util)     ((ctrl_t*)self)->_reset( self, util )
 #define ctrl_update(self,t,p)     ((ctrl_t*)self)->_update( self, t, p )
 #define ctrl_destroy(self)        ((ctrl_t*)self)->_destroy( self )
 #define ctrl_header(fp,self,util) ((ctrl_t*)self)->_header( fp, util )
@@ -109,7 +109,7 @@ double ctrl_calc_sqr_v0(double z0, double zd);
 #define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_z0(self), ctrl_zd(self) )
 #define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
 
-ctrl_t *ctrl_reset_default(ctrl_t *self);
+ctrl_t *ctrl_reset_default(ctrl_t *self, void *util);
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p);
 void ctrl_destroy_default(ctrl_t *self);
 void ctrl_header_default(FILE *fp, void *util);
