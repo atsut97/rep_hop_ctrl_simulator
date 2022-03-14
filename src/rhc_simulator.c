@@ -12,7 +12,7 @@ simulator_t *simulator_init(simulator_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t
   ode_assign( &self->ode, rk4 );
   ode_init( &self->ode, 2, simulator_dp );
   self->n_trial = 0;
-  simulator_set_reset_fp( self, NULL );
+  simulator_set_reset_fp( self, simulator_reset_ctrl );
   simulator_set_update_fp( self, simulator_update );
   simulator_set_dump_fp( self, simulator_dump );
   simulator_set_tag( self, "" );

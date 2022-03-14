@@ -39,7 +39,7 @@ TEST(test_simulator_init)
   ASSERT_PTREQ( simulator_dp, sim.ode.f );
   ASSERT_PTRNE( NULL, sim.ode._ws );
   ASSERT_EQ( 0, simulator_n_trial( &sim ) );
-  ASSERT_PTREQ( NULL, sim.reset_fp );
+  ASSERT_PTREQ( simulator_reset_ctrl, sim.reset_fp );
   ASSERT_PTREQ( simulator_update, sim.update_fp );
   ASSERT_PTREQ( simulator_dump, sim.dump_fp );
   ASSERT_STREQ("", simulator_tag( &sim ) );
