@@ -64,7 +64,36 @@ TEST(test_model_calc_acc)
 
   for( c=cases; c->m>0; c++ ){
     double acc;
-    acc = model_calc_acc( c->m, c->fz, c->fe );
+    acc = model_calc_acc( c->m, c->fz, c->fe, G );
+    ASSERT_DOUBLE_EQ( c->expected, acc );
+  }
+}
+
+TEST(test_model_calc_acc_gravity_changed)
+{
+  struct case_t {
+    double m, fz, fe, g;
+    double expected;
+  } cases[] = {
+    { 1.0,  2.0, 0.0,  5,  -3 },  /* stance */
+    { 1.0,  2.0, 0.0, 10,  -8 },  /* stance */
+    { 2.0,  6.0, 0.0,  5,  -2 },  /* stance */
+    { 2.0,  6.0, 0.0, 10,  -7 },  /* stance */
+    { 1.0, -1.0, 0.0,  5,  -5 },  /* negative force */
+    { 2.0, -2.0, 0.0, 10, -10 },  /* negative force */
+    { 3.0, -1.0, 0.0,  5,  -5 },  /* negative force */
+    { 3.0, -2.0, 0.0, 10, -10 },  /* negative force */
+    { 1.0,  1.0, 1.0,  5,  -3 },  /* add ext force */
+    { 2.0,  2.0, 4.0, 10,  -7 },  /* add ext force */
+    { 1.0,  0.0, 2.0,  5,  -3 },  /* add ext force */
+    { 2.0,  4.0, 4.0, 10,  -6 },  /* add ext force */
+    { 0, 0, 0, 0, 0 }
+  };
+  struct case_t *c;
+
+  for( c=cases; c->m>0; c++ ){
+    double acc;
+    acc = model_calc_acc( c->m, c->fz, c->fe, c->g );
     ASSERT_DOUBLE_EQ( c->expected, acc );
   }
 }
@@ -103,6 +132,7 @@ TEST_SUITE(test_model)
   RUN_TEST(test_model_set_mass);
   RUN_TEST(test_model_set_gravity);
   RUN_TEST(test_model_calc_acc);
+  RUN_TEST(test_model_calc_acc_gravity_changed);
   RUN_TEST(test_model_update);
 }
 

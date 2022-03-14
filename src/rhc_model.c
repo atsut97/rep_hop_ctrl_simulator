@@ -14,17 +14,17 @@ void model_destroy(model_t *self)
   model_set_gravity( self, G );
 }
 
-double model_calc_acc(double m, double fz, double fe)
+double model_calc_acc(double m, double fz, double fe, double g)
 {
   if( fz < 0 ) fz = 0;
-  return fz / m - G + fe / m;
+  return fz / m - g + fe / m;
 }
 
 model_t *model_update(model_t *self, double fz, double fe)
 {
   double acc;
 
-  acc = model_calc_acc( model_mass(self), fz, fe );
+  acc = model_calc_acc( model_mass(self), fz, fe, G );
   model_set_acc( self, acc );
   return self;
 }

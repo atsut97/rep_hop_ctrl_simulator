@@ -20,7 +20,7 @@ typedef struct{
 model_t *model_init(model_t *self, double m);
 void model_destroy(model_t *self);
 
-double model_calc_acc(double m, double fz, double fe);
+double model_calc_acc(double m, double fz, double fe, double g);
 
 model_t *model_update(model_t *self, double fz, double fe);
 
