@@ -24,7 +24,7 @@ model_t *model_update(model_t *self, double fz, double fe)
 {
   double acc;
 
-  acc = model_calc_acc( model_mass(self), fz, fe, G );
+  acc = model_calc_acc( model_mass(self), fz, fe, model_gravity(self) );
   model_set_acc( self, acc );
   return self;
 }
