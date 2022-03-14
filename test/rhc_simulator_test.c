@@ -1,4 +1,5 @@
 #include "rhc_ctrl_dummy.h"
+#include "rhc_logger.h"
 #include "rhc_simulator.h"
 #include "rhc_test.h"
 
@@ -172,12 +173,23 @@ TEST(test_simulator_has_default_tag)
   ASSERT_FALSE( simulator_has_default_tag( &sim ) );
 }
 
+bool reset_test_failure(simulator_t *simulator, void *util)
+{
+  return false;
+}
+
+TEST(test_simulator_reset_ctrl_return_fail)
+{
+  simulator_set_reset_fp( &sim, reset_test_failure );
+  ASSERT_FALSE( simulator_reset( &sim, NULL ) );
+}
+
 TEST(test_simulator_reset)
 {
   simulator_update_time( &sim, 0.01 );
   ASSERT_NE( 0.0, simulator_time( &sim ) );
   ASSERT_NE( 0, simulator_step( &sim ) );
-  simulator_reset( &sim, NULL );
+  ASSERT_TRUE( simulator_reset( &sim, NULL ) );
   ASSERT_EQ( 0.0, simulator_time( &sim ) );
   ASSERT_EQ( 0, simulator_step( &sim ) );
 }
@@ -270,6 +282,7 @@ TEST_SUITE(test_simulator)
   RUN_TEST(test_simulator_set_tag);
   RUN_TEST(test_simulator_update_default_tag);
   RUN_TEST(test_simulator_has_default_tag);
+  RUN_TEST(test_simulator_reset_ctrl_return_fail);
   RUN_TEST(test_simulator_reset);
   RUN_TEST(test_simulator_reset_check_fail);
   RUN_TEST(test_simulator_update);

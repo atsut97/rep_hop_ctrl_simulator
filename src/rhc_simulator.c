@@ -87,13 +87,25 @@ vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
   return v;
 }
 
-void simulator_reset(simulator_t *self, void *util)
+bool simulator_reset_ctrl(simulator_t *self, void *util)
+{
+  if( ctrl_reset( simulator_ctrl(self) ) )
+    return true;
+  else
+    return false;
+}
+
+bool simulator_reset(simulator_t *self, void *util)
 {
   simulator_time( self ) = 0;
   simulator_step( self ) = 0;
-  if( self->reset_fp )
-    if( !self->reset_fp( self, util ) )
+  if( self->reset_fp ){
+    if( !self->reset_fp( self, util ) ){
       RUNTIME_ERR( ERR_RESET_FAIL );
+      return false;
+    }
+  }
+  return true;
 }
 
 bool simulator_update(simulator_t *self, double fe, double dt, void *util)
@@ -110,7 +122,7 @@ void simulator_update_time(simulator_t *self, double dt)
 
 void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t *logger, void *util)
 {
-  simulator_reset( self, util );
+  if( !simulator_reset( self, util ) ) return;
   simulator_set_state( self, p0 );
   if( simulator_has_default_tag( self ) ){
     simulator_update_default_tag( self );
