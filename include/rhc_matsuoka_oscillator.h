@@ -17,8 +17,8 @@ typedef struct{
   double v;    /* self-inhibitory input (adaptation or fatigue property) */
 } mtoka_osci_neuron_t;
 
-mtoka_osci_neuron_t *mtoka_osci_neuron_init(mtoka_osci_neuron_t *neuron);
-void mtoka_osci_neuron_destroy(mtoka_osci_neuron_t *neuron);
+mtoka_osci_neuron_t *mtoka_osci_neuron_init(mtoka_osci_neuron_t *self);
+void mtoka_osci_neuron_destroy(mtoka_osci_neuron_t *self);
 
 #define mtoka_osci_neuron_rise_time_const(self)       (self)->tau
 #define mtoka_osci_neuron_adapt_time_const(self)      (self)->T
