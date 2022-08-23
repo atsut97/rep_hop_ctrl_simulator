@@ -5,7 +5,7 @@ static mtoka_osci_neuron_t neuron;
 
 void setup()
 {
-  mtoka_osci_neuron_init( &neuron );
+  mtoka_osci_neuron_init( &neuron, 2 );
 }
 
 void teardown()
@@ -15,10 +15,10 @@ void teardown()
 
 TEST(test_mtoka_osci_neuron_init)
 {
-  mtoka_osci_neuron_init( &neuron );
+  mtoka_osci_neuron_init( &neuron, 2 );
   ASSERT_EQ( 1.0, mtoka_osci_neuron_rise_time_const(&neuron) );
   ASSERT_EQ( 1.0, mtoka_osci_neuron_adapt_time_const(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_mutual_inhibit_weight(&neuron) );
+  ASSERT_EQ( 2, vec_size(mtoka_osci_neuron_mutual_inhibit_weights(&neuron)) );
   ASSERT_EQ( 0.0, mtoka_osci_neuron_steady_firing_rate(&neuron) );
   ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_threshold(&neuron) );
   ASSERT_EQ( 0.0, mtoka_osci_neuron_tonic_input(&neuron) );
@@ -26,6 +26,12 @@ TEST(test_mtoka_osci_neuron_init)
   ASSERT_EQ( 0.0, mtoka_osci_neuron_membrane_potential(&neuron) );
   ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_rate(&neuron) );
   ASSERT_EQ( 0.0, mtoka_osci_neuron_adapt_property(&neuron) );
+}
+
+TEST(test_mtoka_osci_neuron_destroy)
+{
+  mtoka_osci_neuron_destroy( &neuron );
+  ASSERT_PTREQ( NULL, mtoka_osci_neuron_mutual_inhibit_weights(&neuron) );
 }
 
 TEST(test_mtoka_osci_neuron_set_rise_time_const)
@@ -45,16 +51,6 @@ TEST(test_mtoka_osci_neuron_set_adapt_time_const)
   for( c=cases; *c>0; c++ ){
     mtoka_osci_neuron_set_adapt_time_const( &neuron, *c );
     ASSERT_EQ( *c, mtoka_osci_neuron_adapt_time_const(&neuron) );
-  }
-}
-
-TEST(test_mtoka_osci_neuron_set_mutual_inhibit_weight)
-{
-  double cases[] = {9.0, 0.3, 4.5, 0};
-  double *c;
-  for( c=cases; *c>0; c++ ){
-    mtoka_osci_neuron_set_mutual_inhibit_weight( &neuron, *c );
-    ASSERT_EQ( *c, mtoka_osci_neuron_mutual_inhibit_weight(&neuron) );
   }
 }
 
@@ -98,40 +94,17 @@ TEST(test_mtoka_osci_neuron_set_sensory_feedback)
   }
 }
 
-TEST(test_mtoka_osci_neuron_set_params)
-{
-  struct case_t {
-    double tau, T, a, b, th;
-  } cases[] = {
-    { 4.5, 7.9, 6.4, 3.4, 1.5 },
-    { 5.4, 4.1, 6.6, 2.4, 6.4 },
-    { 6.5, 9.3, 0.3, 6.1, 1.7 },
-    { 0.0, 0.0, 0.0, 0.0, 0.0 },
-  };
-  struct case_t *c;
-
-  for( c=cases; c->tau>0; c++ ){
-    mtoka_osci_neuron_set_params( &neuron, c->tau, c->T, c->a, c->b, c->th );
-    ASSERT_EQ( c->tau, mtoka_osci_neuron_rise_time_const(&neuron) );
-    ASSERT_EQ( c->T, mtoka_osci_neuron_adapt_time_const(&neuron) );
-    ASSERT_EQ( c->a, mtoka_osci_neuron_mutual_inhibit_weight(&neuron) );
-    ASSERT_EQ( c->b, mtoka_osci_neuron_steady_firing_rate(&neuron) );
-    ASSERT_EQ( c->th, mtoka_osci_neuron_firing_threshold(&neuron) );
-  }
-}
-
 TEST(test_mtoka_osci_neuron)
 {
   CONFIGURE_SUITE(setup, teardown);
   RUN_TEST(test_mtoka_osci_neuron_init);
+  RUN_TEST(test_mtoka_osci_neuron_destroy);
   RUN_TEST(test_mtoka_osci_neuron_set_rise_time_const);
   RUN_TEST(test_mtoka_osci_neuron_set_adapt_time_const);
-  RUN_TEST(test_mtoka_osci_neuron_set_mutual_inhibit_weight);
   RUN_TEST(test_mtoka_osci_neuron_set_steady_firing_rate);
   RUN_TEST(test_mtoka_osci_neuron_set_firing_threshold);
   RUN_TEST(test_mtoka_osci_neuron_set_tonic_input);
   RUN_TEST(test_mtoka_osci_neuron_set_sensory_feedback);
-  RUN_TEST(test_mtoka_osci_neuron_set_params);
 }
 
 int main(int argc, char *argv[])
