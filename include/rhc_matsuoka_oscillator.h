@@ -42,5 +42,13 @@ void mtoka_osci_neuron_destroy(mtoka_osci_neuron_t *neuron);
 #define mtoka_osci_neuron_set_sensory_feedback(self,s)      \
   ( mtoka_osci_neuron_sensory_feedback(self) = (s) )
 
+#define mtoka_osci_neuron_set_params(self,tau,T,a,b)      \
+  do {                                                    \
+    mtoka_osci_neuron_set_rise_time_const(self, tau);     \
+    mtoka_osci_neuron_set_adapt_time_const(self, T);      \
+    mtoka_osci_neuron_set_mutual_inhibit_weight(self, a); \
+    mtoka_osci_neuron_set_steady_firing_rate(self, b);    \
+  } while (0)
+
 
 #endif /* __RHC_MATSUOKA_OSCILLATOR_H__ */
