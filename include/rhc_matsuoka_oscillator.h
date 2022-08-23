@@ -46,5 +46,7 @@ void mtoka_osci_neuron_destroy(mtoka_osci_neuron_t *self);
 #define mtoka_osci_neuron_set_sensory_feedback(self,s)      \
   ( mtoka_osci_neuron_sensory_feedback(self) = (s) )
 
+double mtoka_osci_neuron_dxdt(mtoka_osci_neuron_t *self, vec_t y);
+double mtoka_osci_neuron_dvdt(mtoka_osci_neuron_t *self);
 
 #endif /* __RHC_MATSUOKA_OSCILLATOR_H__ */
