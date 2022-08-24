@@ -185,6 +185,7 @@ typedef struct{
 TEST(test_mtoka_osci_init)
 {
   ASSERT_EQ( 2, mtoka_osci_n_neuron(&osci) );
+  ASSERT_PTRNE( NULL, osci.neurons );
   ASSERT_EQ( 0.0, mtoka_osci_time(&osci) );
   ASSERT_EQ( 2, vec_size(mtoka_osci_membrane_potential(&osci)) );
   ASSERT_EQ( 2, vec_size(mtoka_osci_firing_rate(&osci)) );
@@ -200,6 +201,7 @@ TEST(test_mtoka_osci_init_specify_n_neuron)
   mtoka_osci_t osci_n;
   mtoka_osci_init( &osci_n, n );
   ASSERT_EQ( n, mtoka_osci_n_neuron(&osci_n) );
+  ASSERT_PTRNE( NULL, osci.neurons );
   ASSERT_EQ( 0.0, mtoka_osci_time(&osci_n) );
   ASSERT_EQ( 0, mtoka_osci_step(&osci_n) );
   ASSERT_EQ( n, vec_size(mtoka_osci_membrane_potential(&osci_n)) );
@@ -215,6 +217,7 @@ TEST(test_mtoka_osci_destroy)
 {
   mtoka_osci_destroy( &osci );
   ASSERT_EQ( 0.0, mtoka_osci_time(&osci) );
+  ASSERT_PTREQ( NULL, osci.neurons );
   ASSERT_PTREQ( NULL, mtoka_osci_membrane_potential(&osci) );
   ASSERT_PTREQ( NULL, mtoka_osci_firing_rate(&osci) );
   ASSERT_PTREQ( NULL, mtoka_osci_adapt_property(&osci) );

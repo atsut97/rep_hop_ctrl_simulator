@@ -1,4 +1,5 @@
 #include "rhc_matsuoka_oscillator.h"
+#include "rhc_misc.h"
 #include "rhc_ode.h"
 #include "rhc_vec.h"
 
@@ -39,11 +40,18 @@ mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
   mtoka_osci_n_neuron(self) = n_neuron;
   mtoka_osci_time(self) = 0.0;
   mtoka_osci_step(self) = 0;
+  if( !( self->neurons = nalloc( mtoka_osci_neuron_t, n_neuron ) ) ||
+      !( mtoka_osci_membrane_potential(self) = vec_create(n_neuron) ) ||
+      !( mtoka_osci_firing_rate(self) = vec_create(n_neuron) ) ||
+      !( mtoka_osci_adapt_property(self) = vec_create(n_neuron) ) ){
+    ALLOC_ERR();
+    return NULL;
+  }
   ode_assign( &self->ode, rk4 );
-  ode_init( &self->ode, 2 * n_neuron, mtoka_osci_dp );
-  mtoka_osci_membrane_potential(self) = vec_create(n_neuron);
-  mtoka_osci_firing_rate(self) = vec_create(n_neuron);
-  mtoka_osci_adapt_property(self) = vec_create(n_neuron);
+  if( !ode_init( &self->ode, 2 * n_neuron, mtoka_osci_dp ) ){
+    ALLOC_ERR();
+    return NULL;
+  }
   return self;
 }
 
@@ -58,6 +66,7 @@ void mtoka_osci_destroy(mtoka_osci_t *self)
   mtoka_osci_adapt_property(self) = NULL;
   if( self->ode._ws )
     ode_destroy( &self->ode );
+  sfree( self->neurons );
 }
 
 vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v)
