@@ -45,9 +45,10 @@ mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
 {
   mtoka_osci_n_neuron(self) = n_neuron;
   if( !( self->neurons = nalloc( mtoka_osci_neuron_t, n_neuron ) ) ||
-      !( mtoka_osci_membrane_potential(self) = vec_create(n_neuron) ) ||
-      !( mtoka_osci_firing_rate(self) = vec_create(n_neuron) ) ||
-      !( mtoka_osci_adapt_property(self) = vec_create(n_neuron) ) ){
+      !( mtoka_osci_membrane_potential(self) = vec_create( n_neuron ) ) ||
+      !( mtoka_osci_firing_rate(self) = vec_create( n_neuron ) ) ||
+      !( mtoka_osci_adapt_property(self) = vec_create( n_neuron ) ) ||
+      !( self->xv = vec_create( 2 * n_neuron ) ) ){
     ALLOC_ERR();
     return NULL;
   }
@@ -68,6 +69,8 @@ void mtoka_osci_destroy(mtoka_osci_t *self)
   mtoka_osci_firing_rate(self) = NULL;
   vec_destroy( mtoka_osci_adapt_property(self) );
   mtoka_osci_adapt_property(self) = NULL;
+  vec_destroy( self->xv );
+  self->xv = NULL;
   if( self->ode._ws )
     ode_destroy( &self->ode );
   sfree( self->neurons );

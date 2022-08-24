@@ -60,6 +60,7 @@ typedef struct{
   vec_t x;
   vec_t y;
   vec_t v;
+  vec_t xv;
 } mtoka_osci_t;
 
 mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron);
