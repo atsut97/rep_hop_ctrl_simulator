@@ -38,6 +38,7 @@ mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
 {
   mtoka_osci_n_neuron(self) = n_neuron;
   mtoka_osci_time(self) = 0.0;
+  mtoka_osci_step(self) = 0;
   ode_assign( &self->ode, rk4 );
   ode_init( &self->ode, 2 * n_neuron, mtoka_osci_dp );
   mtoka_osci_membrane_potential(self) = vec_create(n_neuron);

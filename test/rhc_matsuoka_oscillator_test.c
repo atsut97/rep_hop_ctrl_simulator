@@ -201,6 +201,7 @@ TEST(test_mtoka_osci_init_specify_n_neuron)
   mtoka_osci_init( &osci_n, n );
   ASSERT_EQ( n, mtoka_osci_n_neuron(&osci_n) );
   ASSERT_EQ( 0.0, mtoka_osci_time(&osci_n) );
+  ASSERT_EQ( 0, mtoka_osci_step(&osci_n) );
   ASSERT_EQ( n, vec_size(mtoka_osci_membrane_potential(&osci_n)) );
   ASSERT_EQ( n, vec_size(mtoka_osci_firing_rate(&osci_n)) );
   ASSERT_EQ( n, vec_size(mtoka_osci_adapt_property(&osci_n)) );
@@ -220,12 +221,24 @@ TEST(test_mtoka_osci_destroy)
   ASSERT_PTREQ( NULL, osci.ode._ws );
 }
 
+TEST(test_mtoka_osci_inc_step)
+{
+  ASSERT_EQ( 0, mtoka_osci_step(&osci) );
+  mtoka_osci_inc_step( &osci );
+  ASSERT_EQ( 1, mtoka_osci_step(&osci) );
+  mtoka_osci_inc_step( &osci );
+  ASSERT_EQ( 2, mtoka_osci_step(&osci) );
+  mtoka_osci_inc_step( &osci );
+  ASSERT_EQ( 3, mtoka_osci_step(&osci) );
+}
+
 TEST(test_mtoka_osci)
 {
   CONFIGURE_SUITE(setup, teardown);
   RUN_TEST(test_mtoka_osci_init);
   RUN_TEST(test_mtoka_osci_init_specify_n_neuron);
   RUN_TEST(test_mtoka_osci_destroy);
+  RUN_TEST(test_mtoka_osci_inc_step);
 }
 
 int main(int argc, char *argv[])

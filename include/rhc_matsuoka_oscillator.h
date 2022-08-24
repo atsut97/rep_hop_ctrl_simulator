@@ -53,6 +53,7 @@ double mtoka_osci_neuron_dvdt(mtoka_osci_neuron_t *self);
 typedef struct{
   int n_neuron;
   double t;
+  int step;
   ode_t ode;
   vec_t x;
   vec_t y;
@@ -64,9 +65,12 @@ void mtoka_osci_destroy(mtoka_osci_t *self);
 
 #define mtoka_osci_n_neuron(self)           (self)->n_neuron
 #define mtoka_osci_time(self)               (self)->t
+#define mtoka_osci_step(self)               (self)->step
 #define mtoka_osci_membrane_potential(self) (self)->x
 #define mtoka_osci_firing_rate(self)        (self)->y
 #define mtoka_osci_adapt_property(self)     (self)->v
+
+#define mtoka_osci_inc_step(self)           ( mtoka_osci_step(self)++ )
 
 vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v);
 
