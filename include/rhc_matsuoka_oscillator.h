@@ -1,6 +1,7 @@
 #ifndef __RHC_MATSUOKA_OSCILLATOR_H__
 #define __RHC_MATSUOKA_OSCILLATOR_H__
 
+#include "rhc_ode.h"
 #include "rhc_vec.h"
 
 typedef struct{
@@ -48,5 +49,25 @@ void mtoka_osci_neuron_destroy(mtoka_osci_neuron_t *self);
 
 double mtoka_osci_neuron_dxdt(mtoka_osci_neuron_t *self, vec_t y);
 double mtoka_osci_neuron_dvdt(mtoka_osci_neuron_t *self);
+
+typedef struct{
+  int n_neuron;
+  double t;
+  ode_t ode;
+  vec_t x;
+  vec_t y;
+  vec_t v;
+} mtoka_osci_t;
+
+mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron);
+void mtoka_osci_destroy(mtoka_osci_t *self);
+
+#define mtoka_osci_n_neuron(self)           (self)->n_neuron
+#define mtoka_osci_time(self)               (self)->t
+#define mtoka_osci_membrane_potential(self) (self)->x
+#define mtoka_osci_firing_rate(self)        (self)->y
+#define mtoka_osci_adapt_property(self)     (self)->v
+
+vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v);
 
 #endif /* __RHC_MATSUOKA_OSCILLATOR_H__ */
