@@ -64,3 +64,9 @@ vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v)
 {
   return x;
 }
+
+void mtoka_osci_update_time(mtoka_osci_t *self, double dt)
+{
+  mtoka_osci_inc_step( self );
+  mtoka_osci_time(self) = mtoka_osci_step(self) * dt;
+}

@@ -232,6 +232,18 @@ TEST(test_mtoka_osci_inc_step)
   ASSERT_EQ( 3, mtoka_osci_step(&osci) );
 }
 
+TEST(test_mtoka_osci_update_time)
+{
+  double dt = 0.01;
+  ASSERT_DOUBLE_EQ( 0.0, mtoka_osci_time(&osci) );
+  mtoka_osci_update_time( &osci, dt );
+  ASSERT_DOUBLE_EQ( 0.01, mtoka_osci_time(&osci) );
+  mtoka_osci_update_time( &osci, dt );
+  ASSERT_DOUBLE_EQ( 0.02, mtoka_osci_time(&osci) );
+  mtoka_osci_update_time( &osci, dt );
+  ASSERT_DOUBLE_EQ( 0.03, mtoka_osci_time(&osci) );
+}
+
 TEST(test_mtoka_osci)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -239,6 +251,7 @@ TEST(test_mtoka_osci)
   RUN_TEST(test_mtoka_osci_init_specify_n_neuron);
   RUN_TEST(test_mtoka_osci_destroy);
   RUN_TEST(test_mtoka_osci_inc_step);
+  RUN_TEST(test_mtoka_osci_update_time);
 }
 
 int main(int argc, char *argv[])
