@@ -37,6 +37,8 @@ mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
       !( mtoka_osci_membrane_potential(self) = vec_create( n_neuron ) ) ||
       !( mtoka_osci_firing_rate(self) = vec_create( n_neuron ) ) ||
       !( mtoka_osci_adapt_property(self) = vec_create( n_neuron ) ) ||
+      !( mtoka_osci_tonic_input(self) = vec_create( n_neuron ) ) ||
+      !( mtoka_osci_sensory_feedback(self) = vec_create( n_neuron ) ) ||
       !( self->xv = vec_create( 2 * n_neuron ) ) ){
     ALLOC_ERR();
     return NULL;
@@ -58,6 +60,10 @@ void mtoka_osci_destroy(mtoka_osci_t *self)
   mtoka_osci_firing_rate(self) = NULL;
   vec_destroy( mtoka_osci_adapt_property(self) );
   mtoka_osci_adapt_property(self) = NULL;
+  vec_destroy( mtoka_osci_tonic_input(self) );
+  mtoka_osci_tonic_input(self) = NULL;
+  vec_destroy( mtoka_osci_sensory_feedback(self) );
+  mtoka_osci_sensory_feedback(self) = NULL;
   vec_destroy( self->xv );
   self->xv = NULL;
   if( self->ode._ws )

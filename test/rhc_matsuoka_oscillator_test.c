@@ -155,6 +155,8 @@ TEST(test_mtoka_osci_init)
   ASSERT_EQ( 2, vec_size(mtoka_osci_membrane_potential(&osci)) );
   ASSERT_EQ( 2, vec_size(mtoka_osci_firing_rate(&osci)) );
   ASSERT_EQ( 2, vec_size(mtoka_osci_adapt_property(&osci)) );
+  ASSERT_EQ( 2, vec_size(mtoka_osci_tonic_input(&osci)) );
+  ASSERT_EQ( 2, vec_size(mtoka_osci_sensory_feedback(&osci)) );
   ASSERT_EQ( 4, vec_size(osci.xv) );
   ASSERT_PTREQ( mtoka_osci_dp, osci.ode.f );
   ASSERT_PTRNE( NULL, osci.ode._ws );
@@ -173,6 +175,8 @@ TEST(test_mtoka_osci_init_specify_n_neuron)
   ASSERT_EQ( n, vec_size(mtoka_osci_membrane_potential(&osci_n)) );
   ASSERT_EQ( n, vec_size(mtoka_osci_firing_rate(&osci_n)) );
   ASSERT_EQ( n, vec_size(mtoka_osci_adapt_property(&osci_n)) );
+  ASSERT_EQ( n, vec_size(mtoka_osci_tonic_input(&osci_n)) );
+  ASSERT_EQ( n, vec_size(mtoka_osci_sensory_feedback(&osci_n)) );
   ASSERT_EQ( 2*n, vec_size(osci_n.xv) );
   ASSERT_PTREQ( mtoka_osci_dp, osci_n.ode.f );
   ASSERT_PTRNE( NULL, osci_n.ode._ws );
@@ -188,6 +192,8 @@ TEST(test_mtoka_osci_destroy)
   ASSERT_PTREQ( NULL, mtoka_osci_membrane_potential(&osci) );
   ASSERT_PTREQ( NULL, mtoka_osci_firing_rate(&osci) );
   ASSERT_PTREQ( NULL, mtoka_osci_adapt_property(&osci) );
+  ASSERT_PTREQ( NULL, mtoka_osci_tonic_input(&osci) );
+  ASSERT_PTREQ( NULL, mtoka_osci_sensory_feedback(&osci) );
   ASSERT_PTREQ( NULL, osci.xv );
   ASSERT_PTREQ( NULL, osci.ode._ws );
 }

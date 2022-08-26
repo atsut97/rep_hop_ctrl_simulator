@@ -43,6 +43,8 @@ typedef struct{
   vec_t x;
   vec_t y;
   vec_t v;
+  vec_t c;
+  vec_t s;
   vec_t xv;
 } mtoka_osci_t;
 
@@ -56,6 +58,8 @@ void mtoka_osci_destroy(mtoka_osci_t *self);
 #define mtoka_osci_membrane_potential(self) (self)->x
 #define mtoka_osci_firing_rate(self)        (self)->y
 #define mtoka_osci_adapt_property(self)     (self)->v
+#define mtoka_osci_tonic_input(self)        (self)->c
+#define mtoka_osci_sensory_feedback(self)   (self)->s
 
 #define mtoka_osci_inc_step(self)           ( mtoka_osci_step(self)++ )
 
