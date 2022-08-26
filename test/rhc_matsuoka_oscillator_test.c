@@ -216,34 +216,29 @@ TEST(test_mtoka_osci_reset)
   register int i;
 
   mtoka_osci_update_time( &osci, dt );
-  for( i=0; i<2; i++ ){
-    mtoka_osci_neuron(&osci,i)->x = 0.8;
-    mtoka_osci_neuron(&osci,i)->y = 8.5;
-    mtoka_osci_neuron(&osci,i)->v = 7.1;
-  }
   vec_copy( p, mtoka_osci_membrane_potential(&osci) );
   vec_copy( p, mtoka_osci_firing_rate(&osci) );
   vec_copy( p, mtoka_osci_adapt_property(&osci) );
+  vec_copy( p, mtoka_osci_tonic_input(&osci) );
+  vec_copy( p, mtoka_osci_sensory_feedback(&osci) );
   ASSERT_NE( 0.0, mtoka_osci_time( &osci ) );
   ASSERT_NE( 0, mtoka_osci_step( &osci ) );
   for( i=0; i<2; i++ ){
-    ASSERT_NE( 0.0, mtoka_osci_neuron_membrane_potential(mtoka_osci_neuron(&osci,i)));
-    ASSERT_NE( 0.0, mtoka_osci_neuron_firing_rate(mtoka_osci_neuron(&osci,i)));
-    ASSERT_NE( 0.0, mtoka_osci_neuron_adapt_property(mtoka_osci_neuron(&osci,i)));
     ASSERT_NE( 0.0, vec_elem(mtoka_osci_membrane_potential(&osci), i) );
     ASSERT_NE( 0.0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
     ASSERT_NE( 0.0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
+    ASSERT_NE( 0.0, vec_elem(mtoka_osci_tonic_input(&osci), i) );
+    ASSERT_NE( 0.0, vec_elem(mtoka_osci_sensory_feedback(&osci), i) );
   }
   ASSERT_TRUE( mtoka_osci_reset( &osci ) );
   ASSERT_EQ( 0.0, mtoka_osci_time( &osci ) );
   ASSERT_EQ( 0, mtoka_osci_step( &osci ) );
   for( i=0; i<2; i++ ){
-    ASSERT_EQ( 0.0, mtoka_osci_neuron_membrane_potential(mtoka_osci_neuron(&osci,i)));
-    ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_rate(mtoka_osci_neuron(&osci,i)));
-    ASSERT_EQ( 0.0, mtoka_osci_neuron_adapt_property(mtoka_osci_neuron(&osci,i)));
     ASSERT_EQ( 0.0, vec_elem(mtoka_osci_membrane_potential(&osci), i) );
     ASSERT_EQ( 0.0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
     ASSERT_EQ( 0.0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
+    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_tonic_input(&osci), i) );
+    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_sensory_feedback(&osci), i) );
   }
   vec_destroy( p );
 }

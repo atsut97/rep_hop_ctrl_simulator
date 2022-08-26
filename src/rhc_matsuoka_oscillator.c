@@ -78,15 +78,13 @@ vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v)
 
 bool mtoka_osci_reset(mtoka_osci_t *self)
 {
-  register int i;
-
   mtoka_osci_time(self) = 0.0;
   mtoka_osci_step(self) = 0;
   vec_clear( mtoka_osci_membrane_potential(self) );
   vec_clear( mtoka_osci_firing_rate(self) );
   vec_clear( mtoka_osci_adapt_property(self) );
-  for( i=0; i<mtoka_osci_n_neuron(self); i++ )
-    mtoka_osci_neuron_reset( mtoka_osci_neuron(self, i) );
+  vec_clear( mtoka_osci_tonic_input(self) );
+  vec_clear( mtoka_osci_sensory_feedback(self) );
   return true;
 }
 
