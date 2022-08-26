@@ -24,11 +24,6 @@ TEST(test_mtoka_osci_neuron_init)
   ASSERT_EQ( 0.0, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(&neuron), 1) );
   ASSERT_EQ( 0.0, mtoka_osci_neuron_steady_firing_rate(&neuron) );
   ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_threshold(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_tonic_input(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_sensory_feedback(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_membrane_potential(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_rate(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_adapt_property(&neuron) );
 }
 
 TEST(test_mtoka_osci_neuron_destroy)
@@ -77,47 +72,6 @@ TEST(test_mtoka_osci_neuron_set_firing_threshold)
   }
 }
 
-TEST(test_mtoka_osci_neuron_set_tonic_input)
-{
-  double cases[] = {7.5, 6.0, 4.9, 0};
-  double *c;
-  for( c=cases; *c>0; c++ ){
-    mtoka_osci_neuron_set_tonic_input( &neuron, *c );
-    ASSERT_EQ( *c, mtoka_osci_neuron_tonic_input(&neuron) );
-  }
-}
-
-TEST(test_mtoka_osci_neuron_set_sensory_feedback)
-{
-  double cases[] = {4.1, 0.8, 8.1, 0};
-  double *c;
-  for( c=cases; *c>0; c++ ){
-    mtoka_osci_neuron_set_sensory_feedback( &neuron, *c );
-    ASSERT_EQ( *c, mtoka_osci_neuron_sensory_feedback(&neuron) );
-  }
-}
-
-TEST(test_mtoka_osci_neuron_reset)
-{
-  mtoka_osci_neuron_set_tonic_input( &neuron, 8.7 );
-  mtoka_osci_neuron_set_sensory_feedback( &neuron, 8.5 );
-  mtoka_osci_neuron_membrane_potential(&neuron) = 7.6;
-  mtoka_osci_neuron_firing_rate(&neuron) = 3.6;
-  mtoka_osci_neuron_adapt_property(&neuron) = 2.0;
-  ASSERT_NE( 0.0, mtoka_osci_neuron_tonic_input(&neuron) );
-  ASSERT_NE( 0.0, mtoka_osci_neuron_sensory_feedback(&neuron) );
-  ASSERT_NE( 0.0, mtoka_osci_neuron_membrane_potential(&neuron) );
-  ASSERT_NE( 0.0, mtoka_osci_neuron_firing_rate(&neuron) );
-  ASSERT_NE( 0.0, mtoka_osci_neuron_adapt_property(&neuron) );
-  mtoka_osci_neuron_reset( &neuron );
-
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_tonic_input(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_sensory_feedback(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_membrane_potential(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_rate(&neuron) );
-  ASSERT_EQ( 0.0, mtoka_osci_neuron_adapt_property(&neuron) );
-}
-
 TEST(test_mtoka_osci_neuron_dxdt)
 {
   struct case_t {
@@ -135,17 +89,11 @@ TEST(test_mtoka_osci_neuron_dxdt)
   y = vec_create( 2 );
   for( c=cases; c->tau>0; c++ ){
     mtoka_osci_neuron_set_rise_time_const( &neuron, c->tau );
-    /* mtoka_osci_neuron_set_adapt_time_const( &neuron, c->T ); */
     vec_set_elem( mtoka_osci_neuron_mutual_inhibit_weights(&neuron), 1, c->a );
     mtoka_osci_neuron_set_steady_firing_rate( &neuron, c->b );
-    mtoka_osci_neuron_set_tonic_input( &neuron, c->c );
-    mtoka_osci_neuron_set_sensory_feedback( &neuron, c->s );
-    mtoka_osci_neuron_membrane_potential(&neuron) = c->x;
-    mtoka_osci_neuron_firing_rate(&neuron) = c->y;
-    mtoka_osci_neuron_adapt_property(&neuron) = c->v;
     dxdt = ( -c->x + c->c - c->a * c->y - c->b * c->v + c->s ) / c->tau;
     vec_set_elem_list( y, 0.0, c->y );
-    ASSERT_DOUBLE_EQ( dxdt, mtoka_osci_neuron_dxdt( &neuron, y ) );
+    ASSERT_DOUBLE_EQ( dxdt, mtoka_osci_neuron_dxdt( &neuron, c->x, c->v, y, c->c, c->s ) );
   }
   vec_destroy( y );
 }
@@ -164,10 +112,8 @@ TEST(test_mtoka_osci_neuron_dvdt)
 
   for( c=cases; c->T>0; c++ ){
     mtoka_osci_neuron_set_adapt_time_const( &neuron, c->T );
-    mtoka_osci_neuron_firing_rate(&neuron) = c->y;
-    mtoka_osci_neuron_adapt_property(&neuron) = c->v;
     dvdt = ( -c->v + c->y ) / c->T;
-    ASSERT_DOUBLE_EQ( dvdt, mtoka_osci_neuron_dvdt( &neuron ) );
+    ASSERT_DOUBLE_EQ( dvdt, mtoka_osci_neuron_dvdt( &neuron, c->v, c->y ) );
   }
 }
 
@@ -180,9 +126,6 @@ TEST(test_mtoka_osci_neuron)
   RUN_TEST(test_mtoka_osci_neuron_set_adapt_time_const);
   RUN_TEST(test_mtoka_osci_neuron_set_steady_firing_rate);
   RUN_TEST(test_mtoka_osci_neuron_set_firing_threshold);
-  RUN_TEST(test_mtoka_osci_neuron_set_tonic_input);
-  RUN_TEST(test_mtoka_osci_neuron_set_sensory_feedback);
-  RUN_TEST(test_mtoka_osci_neuron_reset);
   RUN_TEST(test_mtoka_osci_neuron_dxdt);
   RUN_TEST(test_mtoka_osci_neuron_dvdt);
 }

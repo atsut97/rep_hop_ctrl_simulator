@@ -11,34 +11,23 @@ mtoka_osci_neuron_t *mtoka_osci_neuron_init(mtoka_osci_neuron_t *self, int n)
   vec_clear( self->a );
   self->b = 0.0;
   self->th = 0.0;
-  mtoka_osci_neuron_reset( self );
   return self;
 }
 
 void mtoka_osci_neuron_destroy(mtoka_osci_neuron_t *self)
 {
-  mtoka_osci_neuron_reset( self );
   vec_destroy( mtoka_osci_neuron_mutual_inhibit_weights(self) );
   mtoka_osci_neuron_mutual_inhibit_weights(self) = NULL;
 }
 
-void mtoka_osci_neuron_reset(mtoka_osci_neuron_t *self)
+double mtoka_osci_neuron_dxdt(mtoka_osci_neuron_t *self, double x, double v, vec_t y, double c, double s)
 {
-  self->c = 0.0;
-  self->s = 0.0;
-  self->x = 0.0;
-  self->y = 0.0;
-  self->v = 0.0;
+  return ( -x + c - vec_dot( self->a, y ) - self->b * v + s ) / self->tau;
 }
 
-double mtoka_osci_neuron_dxdt(mtoka_osci_neuron_t *self, vec_t y)
+double mtoka_osci_neuron_dvdt(mtoka_osci_neuron_t *self, double v, double y)
 {
-  return ( -self->x + self->c - vec_dot( self->a, y ) - self->b * self->v + self->s ) / self->tau;
-}
-
-double mtoka_osci_neuron_dvdt(mtoka_osci_neuron_t *self)
-{
-  return ( -self->v + self->y ) / self->T;
+  return ( -v + y ) / self->T;
 }
 
 mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
