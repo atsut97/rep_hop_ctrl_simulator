@@ -16,6 +16,9 @@ inline double sqr(double x){ return x * x; }
 #define PI_2 1.57079632679489661923
 /* gravitational acceleration */
 #define G  9.806652
+/* min / max */
+#define min(a,b) ( ( (a) < (b) ) ? (a) : (b) )
+#define max(a,b) ( ( (a) > (b) ) ? (a) : (b) )
 
 /* for dynamic memory allocation */
 #define nalloc(t,n) ( (n) == 0 ? NULL : (t *)calloc( (n), sizeof(t) ) )
