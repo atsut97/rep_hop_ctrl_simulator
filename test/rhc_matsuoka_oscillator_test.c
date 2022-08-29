@@ -149,6 +149,9 @@ typedef struct{
 
 TEST(test_mtoka_osci_init)
 {
+  mtoka_osci_neuron_t *np;
+  register int i;
+
   ASSERT_EQ( 2, mtoka_osci_n_neuron(&osci) );
   ASSERT_PTRNE( NULL, osci.neurons );
   ASSERT_EQ( 0.0, mtoka_osci_time(&osci) );
@@ -161,12 +164,26 @@ TEST(test_mtoka_osci_init)
   ASSERT_PTREQ( mtoka_osci_dp, osci.ode.f );
   ASSERT_PTRNE( NULL, osci.ode._ws );
   ASSERT_EQ( 4, vec_size(((_ode_rk4 *)osci.ode._ws)->x) );
+
+  for( i=0; i<2; i++ ){
+    np = mtoka_osci_neuron( &osci, i );
+    ASSERT_EQ( 1.0, mtoka_osci_neuron_rise_time_const(np) );
+    ASSERT_EQ( 1.0, mtoka_osci_neuron_adapt_time_const(np) );
+    ASSERT_EQ( 2, vec_size(mtoka_osci_neuron_mutual_inhibit_weights(np)) );
+    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), 0) );
+    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), 1) );
+    ASSERT_EQ( 0.0, mtoka_osci_neuron_steady_firing_rate(np) );
+    ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_threshold(np) );
+  }
 }
 
 TEST(test_mtoka_osci_init_specify_n_neuron)
 {
   int n = 3;
   mtoka_osci_t osci_n;
+  mtoka_osci_neuron_t *np;
+  register int i;
+
   mtoka_osci_init( &osci_n, n );
   ASSERT_EQ( n, mtoka_osci_n_neuron(&osci_n) );
   ASSERT_PTRNE( NULL, osci.neurons );
@@ -181,6 +198,18 @@ TEST(test_mtoka_osci_init_specify_n_neuron)
   ASSERT_PTREQ( mtoka_osci_dp, osci_n.ode.f );
   ASSERT_PTRNE( NULL, osci_n.ode._ws );
   ASSERT_EQ( 2*n, vec_size(((_ode_rk4 *)osci_n.ode._ws)->x) );
+
+  for( i=0; i<2; i++ ){
+    np = mtoka_osci_neuron( &osci_n, i );
+    ASSERT_EQ( 1.0, mtoka_osci_neuron_rise_time_const(np) );
+    ASSERT_EQ( 1.0, mtoka_osci_neuron_adapt_time_const(np) );
+    ASSERT_EQ( n, vec_size(mtoka_osci_neuron_mutual_inhibit_weights(np)) );
+    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), 0) );
+    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), 1) );
+    ASSERT_EQ( 0.0, mtoka_osci_neuron_steady_firing_rate(np) );
+    ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_threshold(np) );
+  }
+
   mtoka_osci_destroy( &osci_n );
 }
 

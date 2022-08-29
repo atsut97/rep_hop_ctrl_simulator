@@ -7,7 +7,7 @@ mtoka_osci_neuron_t *mtoka_osci_neuron_init(mtoka_osci_neuron_t *self, int n)
 {
   self->tau = 1.0;
   self->T = 1.0;
-  self->a = vec_create(n);
+  self->a = vec_create( n );
   vec_clear( self->a );
   self->b = 0.0;
   self->th = 0.0;
@@ -32,6 +32,8 @@ double mtoka_osci_neuron_dvdt(mtoka_osci_neuron_t *self, double v, double y)
 
 mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
 {
+  register int i;
+
   mtoka_osci_n_neuron(self) = n_neuron;
   if( !( self->neurons = nalloc( mtoka_osci_neuron_t, n_neuron ) ) ||
       !( mtoka_osci_membrane_potential(self) = vec_create( n_neuron ) ) ||
@@ -47,6 +49,9 @@ mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
   if( !ode_init( &self->ode, 2 * n_neuron, mtoka_osci_dp ) ){
     ALLOC_ERR();
     return NULL;
+  }
+  for( i=0; i<n_neuron; i++ ){
+    mtoka_osci_neuron_init( mtoka_osci_neuron( self, i ), n_neuron );
   }
   mtoka_osci_reset( self );
   return self;
