@@ -198,6 +198,50 @@ TEST(test_mtoka_osci_destroy)
   ASSERT_PTREQ( NULL, osci.ode._ws );
 }
 
+TEST(test_mtoka_osci_set_tonic_input)
+{
+  struct case_t{
+    double c1, c2;
+  } cases[] = {
+    { 0.3, 9.4 },
+    { 2.8, 4.5 },
+    { 0.3, 6.8 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+  vec_t v = vec_create( 2 );
+
+  for( c=cases; c->c1>0; c++ ){
+    vec_set_elem_list( v, c->c1, c->c2 );
+    mtoka_osci_set_tonic_input( &osci, v );
+    ASSERT_EQ( c->c1, vec_elem(mtoka_osci_tonic_input(&osci), 0) );
+    ASSERT_EQ( c->c2, vec_elem(mtoka_osci_tonic_input(&osci), 1) );
+  }
+  vec_destroy( v );
+}
+
+TEST(test_mtoka_osci_set_sensory_feedback)
+{
+  struct case_t{
+    double c1, c2;
+  } cases[] = {
+    { 6.1, 9.7 },
+    { 7.0, 2.2 },
+    { 9.3, 3.0 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+  vec_t v = vec_create( 2 );
+
+  for( c=cases; c->c1>0; c++ ){
+    vec_set_elem_list( v, c->c1, c->c2 );
+    mtoka_osci_set_sensory_feedback( &osci, v );
+    ASSERT_EQ( c->c1, vec_elem(mtoka_osci_sensory_feedback(&osci), 0) );
+    ASSERT_EQ( c->c2, vec_elem(mtoka_osci_sensory_feedback(&osci), 1) );
+  }
+  vec_destroy( v );
+}
+
 TEST(test_mtoka_osci_inc_step)
 {
   ASSERT_EQ( 0, mtoka_osci_step(&osci) );
@@ -261,6 +305,8 @@ TEST(test_mtoka_osci)
   RUN_TEST(test_mtoka_osci_init);
   RUN_TEST(test_mtoka_osci_init_specify_n_neuron);
   RUN_TEST(test_mtoka_osci_destroy);
+  RUN_TEST(test_mtoka_osci_set_tonic_input);
+  RUN_TEST(test_mtoka_osci_set_sensory_feedback);
   RUN_TEST(test_mtoka_osci_inc_step);
   RUN_TEST(test_mtoka_osci_reset);
   RUN_TEST(test_mtoka_osci_update_time);

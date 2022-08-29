@@ -61,6 +61,9 @@ void mtoka_osci_destroy(mtoka_osci_t *self);
 #define mtoka_osci_tonic_input(self)        (self)->c
 #define mtoka_osci_sensory_feedback(self)   (self)->s
 
+#define mtoka_osci_set_tonic_input(self,c)      vec_copy( c, mtoka_osci_tonic_input(self) )
+#define mtoka_osci_set_sensory_feedback(self,s) vec_copy( s, mtoka_osci_sensory_feedback(self) )
+
 #define mtoka_osci_inc_step(self)           ( mtoka_osci_step(self)++ )
 
 vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v);
