@@ -76,9 +76,29 @@ void mtoka_osci_destroy(mtoka_osci_t *self)
   sfree( self->neurons );
 }
 
-vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v)
+vec_t mtoka_osci_dp(double t, vec_t xv, void *util, vec_t dxv)
 {
-  return x;
+  mtoka_osci_t *self = util;
+  int n = self->n_neuron;
+  mtoka_osci_neuron_t *neuron;
+  double x, v, c, s;
+  vec_t y;
+  double dxdt, dvdt;
+  register int i;
+
+  y = mtoka_osci_firing_rate(self);
+  for( i=0; i<n; i++){
+    neuron = mtoka_osci_neuron(self, i);
+    x = vec_elem(xv, i);
+    v = vec_elem(xv, n+i);
+    c = vec_elem(mtoka_osci_tonic_input(self), i);
+    s = vec_elem(mtoka_osci_sensory_feedback(self), i);
+    dxdt = mtoka_osci_neuron_dxdt( neuron, x, v, y, c, s );
+    dvdt = mtoka_osci_neuron_dvdt( neuron, v, vec_elem(y, i) );
+    vec_set_elem( dxv, i, dxdt );
+    vec_set_elem( dxv, n + i, dvdt );
+  }
+  return dxv;
 }
 
 bool mtoka_osci_reset(mtoka_osci_t *self)
@@ -109,4 +129,14 @@ void mtoka_osci_update_time(mtoka_osci_t *self, double dt)
 {
   mtoka_osci_inc_step( self );
   mtoka_osci_time(self) = mtoka_osci_step(self) * dt;
+}
+
+bool mtoka_osci_update(mtoka_osci_t *self, vec_t c, vec_t s, double dt)
+{
+  mtoka_osci_set_tonic_input( self, c );
+  mtoka_osci_set_sensory_feedback( self, s );
+  ode_update( &self->ode, mtoka_osci_time(self), self->xv, dt, self );
+  mtoka_osci_update_state( self );
+  mtoka_osci_update_time( self, dt );
+  return true;
 }

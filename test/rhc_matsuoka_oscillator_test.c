@@ -343,6 +343,33 @@ TEST(test_mtoka_osci_update_time)
   ASSERT_DOUBLE_EQ( 0.03, mtoka_osci_time(&osci) );
 }
 
+TEST(test_mtoka_osci_update)
+{
+  double dt = 0.01;
+  vec_t c = vec_create( 2 );
+  vec_t s = vec_create( 2 );
+  register int i;
+
+  vec_set_elem_list( c, 5.0, 5.0 );
+  vec_clear( s );
+  for( i=0; i<2; i++ ){
+    ASSERT_EQ( 0, vec_elem(mtoka_osci_membrane_potential(&osci), i) );
+    ASSERT_EQ( 0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
+    ASSERT_EQ( 0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
+  }
+  for( i=0; i<3; i++ )
+    mtoka_osci_update( &osci, c, s, dt );
+  ASSERT_EQ( 3, mtoka_osci_step(&osci) );
+  ASSERT_DOUBLE_EQ( 0.03, mtoka_osci_time(&osci) );
+  for( i=0; i<2; i++ ){
+    ASSERT_NE( 0, vec_elem(mtoka_osci_membrane_potential(&osci), i) );
+    ASSERT_NE( 0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
+    ASSERT_NE( 0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
+  }
+  vec_destroy( c );
+  vec_destroy( s );
+}
+
 TEST(test_mtoka_osci)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -355,6 +382,7 @@ TEST(test_mtoka_osci)
   RUN_TEST(test_mtoka_osci_reset);
   RUN_TEST(test_mtoka_osci_update_state);
   RUN_TEST(test_mtoka_osci_update_time);
+  RUN_TEST(test_mtoka_osci_update);
 }
 
 int main(int argc, char *argv[])
