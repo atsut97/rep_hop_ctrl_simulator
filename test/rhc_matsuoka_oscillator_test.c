@@ -287,6 +287,21 @@ TEST(test_mtoka_osci_reset)
   vec_destroy( p );
 }
 
+TEST(test_mtoka_osci_update_state)
+{
+  vec_elem(osci.xv, 0) = 5.7;
+  vec_elem(osci.xv, 1) = -4.9;
+  vec_elem(osci.xv, 2) = 0.6;
+  vec_elem(osci.xv, 3) = 7.2;
+  mtoka_osci_update_state( &osci );
+  ASSERT_EQ( 5.7, vec_elem(mtoka_osci_membrane_potential(&osci), 0) );
+  ASSERT_EQ( -4.9, vec_elem(mtoka_osci_membrane_potential(&osci), 1) );
+  ASSERT_EQ( 0.6, vec_elem(mtoka_osci_adapt_property(&osci), 0) );
+  ASSERT_EQ( 7.2, vec_elem(mtoka_osci_adapt_property(&osci), 1) );
+  ASSERT_EQ( 5.7, vec_elem(mtoka_osci_firing_rate(&osci), 0) );
+  ASSERT_EQ( 0.0, vec_elem(mtoka_osci_firing_rate(&osci), 1) );
+}
+
 TEST(test_mtoka_osci_update_time)
 {
   double dt = 0.01;
@@ -309,6 +324,7 @@ TEST(test_mtoka_osci)
   RUN_TEST(test_mtoka_osci_set_sensory_feedback);
   RUN_TEST(test_mtoka_osci_inc_step);
   RUN_TEST(test_mtoka_osci_reset);
+  RUN_TEST(test_mtoka_osci_update_state);
   RUN_TEST(test_mtoka_osci_update_time);
 }
 

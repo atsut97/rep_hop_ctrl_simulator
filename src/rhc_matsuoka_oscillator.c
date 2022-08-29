@@ -88,6 +88,18 @@ bool mtoka_osci_reset(mtoka_osci_t *self)
   return true;
 }
 
+void mtoka_osci_update_state(mtoka_osci_t *self)
+{
+  int n = self->n_neuron;
+  register int i;
+
+  for( i=0; i<n; i++ ){
+    vec_elem(mtoka_osci_membrane_potential(self), i) = vec_elem(self->xv, i);
+    vec_elem(mtoka_osci_adapt_property(self), i) = vec_elem(self->xv, n + i);
+    vec_elem(mtoka_osci_firing_rate(self), i) = max( vec_elem(self->xv, i), 0.0 );
+  }
+}
+
 void mtoka_osci_update_time(mtoka_osci_t *self, double dt)
 {
   mtoka_osci_inc_step( self );
