@@ -19,6 +19,7 @@ typedef _vec_t * vec_t;
 #define vec_elem(v,n)      vec_buf(v)[n]
 #define vec_set_elem(v,n,e) ( vec_elem(v,n) = (e) )
 vec_t vec_set_elem_list(vec_t v, ... );
+vec_t vec_set_elem_array(vec_t v, double array[]);
 
 /* fill with a value */
 vec_t vec_fill(vec_t v, double val);

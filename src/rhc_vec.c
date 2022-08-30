@@ -20,6 +20,12 @@ vec_t vec_set_elem_list(vec_t v, ... )
   return v;
 }
 
+vec_t vec_set_elem_array(vec_t v, double array[])
+{
+  memcpy( vec_buf( v ), array, sizeof(double)*vec_size( v ) );
+  return v;
+}
+
 vec_t vec_fill(vec_t v, double val)
 {
   register size_t i;
@@ -73,7 +79,7 @@ vec_t vec_create_array(size_t size, double array[])
 
   if( ( v = vec_create( size ) ) == NULL )
     return NULL;
-  memcpy( vec_buf( v ), array, sizeof(double)*size );
+  vec_set_elem_array( v, array );
   return v;
 }
 
