@@ -22,13 +22,15 @@ void mtoka_osci_neuron_destroy(mtoka_osci_neuron_t *self);
 #define mtoka_osci_neuron_steady_firing_rate(self)     (self)->b
 #define mtoka_osci_neuron_firing_threshold(self)       (self)->th
 
-#define mtoka_osci_neuron_set_rise_time_const(self,tau)     \
+#define mtoka_osci_neuron_set_rise_time_const(self,tau)      \
   ( mtoka_osci_neuron_rise_time_const(self) = (tau) )
-#define mtoka_osci_neuron_set_adapt_time_const(self,T)      \
+#define mtoka_osci_neuron_set_adapt_time_const(self,T)       \
   ( mtoka_osci_neuron_adapt_time_const(self) = (T) )
-#define mtoka_osci_neuron_set_steady_firing_rate(self,b)    \
+#define mtoka_osci_neuron_set_mutual_inhibit_weights(self,a) \
+  vec_copy( a, mtoka_osci_neuron_mutual_inhibit_weights(self) )
+#define mtoka_osci_neuron_set_steady_firing_rate(self,b)     \
   ( mtoka_osci_neuron_steady_firing_rate(self) = (b) )
-#define mtoka_osci_neuron_set_firing_threshold(self,th)     \
+#define mtoka_osci_neuron_set_firing_threshold(self,th)      \
   ( mtoka_osci_neuron_firing_threshold(self) = (th) )
 
 double mtoka_osci_neuron_dxdt(mtoka_osci_neuron_t *self, double x, double v, vec_t y, double c, double s);

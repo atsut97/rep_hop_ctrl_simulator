@@ -52,6 +52,29 @@ TEST(test_mtoka_osci_neuron_set_adapt_time_const)
   }
 }
 
+TEST(test_mtoka_osci_neuron_set_mutual_inhibit_weights)
+{
+  struct case_t{
+    double a11, a12;
+  } cases[] = {
+    { 8.9, 3.6 },
+    { 2.1, 5.8 },
+    { 4.9, 5.3 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+  vec_t a1;
+
+  a1 = vec_create( 2 );
+  for( c=cases; c->a11>0; c++ ){
+    vec_set_elem_list( a1, c->a11, c->a12 );
+    mtoka_osci_neuron_set_mutual_inhibit_weights( &neuron, a1 );
+    ASSERT_EQ( c->a11, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(&neuron), 0) );
+    ASSERT_EQ( c->a12, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(&neuron), 1) );
+  }
+  vec_destroy( a1 );
+}
+
 TEST(test_mtoka_osci_neuron_set_steady_firing_rate)
 {
   double cases[] = {0.7, 3.5, 6.6, 0};
@@ -124,6 +147,7 @@ TEST(test_mtoka_osci_neuron)
   RUN_TEST(test_mtoka_osci_neuron_destroy);
   RUN_TEST(test_mtoka_osci_neuron_set_rise_time_const);
   RUN_TEST(test_mtoka_osci_neuron_set_adapt_time_const);
+  RUN_TEST(test_mtoka_osci_neuron_set_mutual_inhibit_weights);
   RUN_TEST(test_mtoka_osci_neuron_set_steady_firing_rate);
   RUN_TEST(test_mtoka_osci_neuron_set_firing_threshold);
   RUN_TEST(test_mtoka_osci_neuron_dxdt);
