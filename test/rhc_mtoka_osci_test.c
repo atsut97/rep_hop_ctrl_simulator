@@ -251,6 +251,114 @@ TEST(test_mtoka_osci_destroy)
   ASSERT_PTREQ( NULL, osci.ode._ws );
 }
 
+TEST(test_mtoka_osci_set_rise_time_const)
+{
+  struct case_t{
+    double tau1, tau2;
+  } cases[] = {
+    { 6.8, 1.9 },
+    { 5.1, 8.7 },
+    { 4.7, 7.4 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->tau1>0; c++ ){
+    mtoka_osci_set_rise_time_const( &osci, 0, c->tau1 );
+    mtoka_osci_set_rise_time_const( &osci, 1, c->tau2 );
+    ASSERT_EQ( c->tau1, mtoka_osci_rise_time_const( &osci, 0 ) );
+    ASSERT_EQ( c->tau2, mtoka_osci_rise_time_const( &osci, 1 ) );
+  }
+}
+
+TEST(test_mtoka_osci_set_adapt_time_const)
+{
+  struct case_t{
+    double T1, T2;
+  } cases[] = {
+    { 0.1, 7.5 },
+    { 3.2, 0.1 },
+    { 0.1, 5.4 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->T1>0; c++ ){
+    mtoka_osci_set_adapt_time_const( &osci, 0, c->T1 );
+    mtoka_osci_set_adapt_time_const( &osci, 1, c->T2 );
+    ASSERT_EQ( c->T1, mtoka_osci_adapt_time_const( &osci, 0 ) );
+    ASSERT_EQ( c->T2, mtoka_osci_adapt_time_const( &osci, 1 ) );
+  }
+}
+
+TEST(test_mtoka_osci_set_mutual_inhibit_weights)
+{
+  struct case_t{
+    double a[4];
+  } cases[] = {
+    { { 5.4, 3.8, 5.8, 9.8 } },
+    { { 7.7, 4.0, 2.3, 8.0 } },
+    { { 2.9, 4.5, 3.7, 6.6 } },
+    { { 0, 0, 0, 0 } },
+  };
+  struct case_t *c;
+  vec_t a1 = vec_create( 2 );
+  vec_t a2 = vec_create( 2 );
+
+  for( c=cases; c->a[0]>0; c++ ){
+    vec_set_elem_list( a1, c->a[0], c->a[1] );
+    vec_set_elem_list( a2, c->a[2], c->a[3] );
+    mtoka_osci_set_mutual_inhibit_weights( &osci, 0, a1 );
+    mtoka_osci_set_mutual_inhibit_weights( &osci, 1, a2 );
+    ASSERT_EQ( c->a[0], vec_elem(mtoka_osci_mutual_inhibit_weights(&osci,0), 0) );
+    ASSERT_EQ( c->a[1], vec_elem(mtoka_osci_mutual_inhibit_weights(&osci,0), 1) );
+    ASSERT_EQ( c->a[2], vec_elem(mtoka_osci_mutual_inhibit_weights(&osci,1), 0) );
+    ASSERT_EQ( c->a[3], vec_elem(mtoka_osci_mutual_inhibit_weights(&osci,1), 1) );
+  }
+  vec_destroy( a1 );
+  vec_destroy( a2 );
+}
+
+TEST(test_mtoka_osci_set_steady_firing_rate)
+{
+  struct case_t{
+    double b1, b2;
+  } cases[] = {
+    { 9.8, 0.6 },
+    { 3.0, 2.7 },
+    { 1.4, 7.2 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->b1>0; c++ ){
+    mtoka_osci_set_steady_firing_rate( &osci, 0, c->b1 );
+    mtoka_osci_set_steady_firing_rate( &osci, 1, c->b2 );
+    ASSERT_EQ( c->b1, mtoka_osci_steady_firing_rate( &osci, 0 ) );
+    ASSERT_EQ( c->b2, mtoka_osci_steady_firing_rate( &osci, 1 ) );
+  }
+}
+
+TEST(test_mtoka_osci_set_firing_threshold)
+{
+  struct case_t{
+    double th1, th2;
+  } cases[] = {
+    { 7.3, 9.8 },
+    { 1.3, 4.0 },
+    { 6.9, 1.8 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->th1>0; c++ ){
+    mtoka_osci_set_firing_threshold( &osci, 0, c->th1 );
+    mtoka_osci_set_firing_threshold( &osci, 1, c->th2 );
+    ASSERT_EQ( c->th1, mtoka_osci_firing_threshold( &osci, 0 ) );
+    ASSERT_EQ( c->th2, mtoka_osci_firing_threshold( &osci, 1 ) );
+  }
+}
+
 TEST(test_mtoka_osci_set_tonic_input)
 {
   struct case_t{
@@ -400,6 +508,11 @@ TEST(test_mtoka_osci)
   RUN_TEST(test_mtoka_osci_init);
   RUN_TEST(test_mtoka_osci_init_specify_n_neuron);
   RUN_TEST(test_mtoka_osci_destroy);
+  RUN_TEST(test_mtoka_osci_set_rise_time_const);
+  RUN_TEST(test_mtoka_osci_set_adapt_time_const);
+  RUN_TEST(test_mtoka_osci_set_mutual_inhibit_weights);
+  RUN_TEST(test_mtoka_osci_set_steady_firing_rate);
+  RUN_TEST(test_mtoka_osci_set_firing_threshold);
   RUN_TEST(test_mtoka_osci_set_tonic_input);
   RUN_TEST(test_mtoka_osci_set_sensory_feedback);
   RUN_TEST(test_mtoka_osci_inc_step);

@@ -63,6 +63,27 @@ void mtoka_osci_destroy(mtoka_osci_t *self);
 #define mtoka_osci_tonic_input(self)        (self)->c
 #define mtoka_osci_sensory_feedback(self)   (self)->s
 
+#define mtoka_osci_rise_time_const(self,i)        \
+  mtoka_osci_neuron_rise_time_const(mtoka_osci_neuron(self,i))
+#define mtoka_osci_adapt_time_const(self,i)       \
+  mtoka_osci_neuron_adapt_time_const(mtoka_osci_neuron(self,i))
+#define mtoka_osci_mutual_inhibit_weights(self,i) \
+  mtoka_osci_neuron_mutual_inhibit_weights(mtoka_osci_neuron(self,i))
+#define mtoka_osci_steady_firing_rate(self,i)     \
+  mtoka_osci_neuron_steady_firing_rate(mtoka_osci_neuron(self,i))
+#define mtoka_osci_firing_threshold(self,i)       \
+  mtoka_osci_neuron_firing_threshold(mtoka_osci_neuron(self,i))
+
+#define mtoka_osci_set_rise_time_const(self,i,tau)      \
+  mtoka_osci_neuron_set_rise_time_const(mtoka_osci_neuron(self,i), tau)
+#define mtoka_osci_set_adapt_time_const(self,i,T)       \
+  mtoka_osci_neuron_set_adapt_time_const(mtoka_osci_neuron(self,i), T)
+#define mtoka_osci_set_mutual_inhibit_weights(self,i,a) \
+  mtoka_osci_neuron_set_mutual_inhibit_weights(mtoka_osci_neuron(self,i), a)
+#define mtoka_osci_set_steady_firing_rate(self,i,b)     \
+  mtoka_osci_neuron_set_steady_firing_rate(mtoka_osci_neuron(self,i), b)
+#define mtoka_osci_set_firing_threshold(self,i,th)      \
+  mtoka_osci_neuron_set_firing_threshold(mtoka_osci_neuron(self,i), th)
 #define mtoka_osci_set_tonic_input(self,c)      vec_copy( c, mtoka_osci_tonic_input(self) )
 #define mtoka_osci_set_sensory_feedback(self,s) vec_copy( s, mtoka_osci_sensory_feedback(self) )
 
