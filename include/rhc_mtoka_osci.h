@@ -1,6 +1,7 @@
 #ifndef __RHC_MATSUOKA_OSCILLATOR_H__
 #define __RHC_MATSUOKA_OSCILLATOR_H__
 
+#include "rhc_misc.h"
 #include "rhc_ode.h"
 #include "rhc_vec.h"
 
@@ -86,8 +87,19 @@ void mtoka_osci_destroy(mtoka_osci_t *self);
   mtoka_osci_neuron_set_firing_threshold(mtoka_osci_neuron(self,i), th)
 #define mtoka_osci_set_tonic_input(self,c)      vec_copy( c, mtoka_osci_tonic_input(self) )
 #define mtoka_osci_set_sensory_feedback(self,s) vec_copy( s, mtoka_osci_sensory_feedback(self) )
+#define mtoka_osci_clear_tonic_input(self)      vec_clear( mtoka_osci_tonic_input(self) )
+#define mtoka_osci_clear_sensory_feedback(self) vec_clear( mtoka_osci_sensory_feedback(self) )
 
 #define mtoka_osci_inc_step(self)           ( mtoka_osci_step(self)++ )
+
+mtoka_osci_t *mtoka_osci_fill_rise_time_const(mtoka_osci_t *self, double tau);
+mtoka_osci_t *mtoka_osci_fill_adapt_time_const(mtoka_osci_t *self, double T);
+mtoka_osci_t *mtoka_osci_set_mutual_inhibit_weights_list(mtoka_osci_t *self, int i, ... );
+mtoka_osci_t *mtoka_osci_set_mutual_inhibit_weights_array(mtoka_osci_t *self, int i, double a[]);
+mtoka_osci_t *mtoka_osci_fill_steady_firing_rate(mtoka_osci_t *self, double b);
+mtoka_osci_t *mtoka_osci_fill_tonic_input(mtoka_osci_t *self, double c);
+mtoka_osci_t *mtoka_osci_fill_sensory_feedback(mtoka_osci_t *self, double s);
+mtoka_osci_t *mtoka_osci_fill_firing_threshold(mtoka_osci_t *self, double th);
 
 vec_t mtoka_osci_dp(double t, vec_t x, void *util, vec_t v);
 bool mtoka_osci_reset(mtoka_osci_t *self);

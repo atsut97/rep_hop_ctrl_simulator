@@ -76,6 +76,87 @@ void mtoka_osci_destroy(mtoka_osci_t *self)
   sfree( self->neurons );
 }
 
+mtoka_osci_t *mtoka_osci_fill_rise_time_const(mtoka_osci_t *self, double tau)
+{
+  register int i;
+
+  for( i=0; i<mtoka_osci_n_neuron(self); i++ )
+    mtoka_osci_set_rise_time_const( self, i, tau );
+  return self;
+}
+
+mtoka_osci_t *mtoka_osci_fill_adapt_time_const(mtoka_osci_t *self, double T)
+{
+  register int i;
+
+  for( i=0; i<mtoka_osci_n_neuron(self); i++ )
+    mtoka_osci_set_adapt_time_const( self, i, T );
+  return self;
+}
+
+static mtoka_osci_t *_mtoka_osci_set_mutual_inhibit_weights_list(mtoka_osci_t *self, int i, va_list args);
+mtoka_osci_t *_mtoka_osci_set_mutual_inhibit_weights_list(mtoka_osci_t *self, int i, va_list args)
+{
+  vec_t a;
+  register int j;
+
+  a = mtoka_osci_mutual_inhibit_weights(self, i);
+  for( j=0; j<mtoka_osci_n_neuron(self); j++ )
+    vec_set_elem( a, j, (double)va_arg( args, double ) );
+  return self;
+}
+
+mtoka_osci_t *mtoka_osci_set_mutual_inhibit_weights_list(mtoka_osci_t *self, int i, ... )
+{
+  va_list args;
+
+  va_start( args, i );
+  _mtoka_osci_set_mutual_inhibit_weights_list( self, i, args );
+  va_end( args );
+  return self;
+}
+
+mtoka_osci_t *mtoka_osci_set_mutual_inhibit_weights_array(mtoka_osci_t *self, int i, double a[])
+{
+  vec_t v;
+  register int j;
+
+  v = mtoka_osci_mutual_inhibit_weights( self, i );
+  for( j=0; j<mtoka_osci_n_neuron(self); j++ )
+    vec_set_elem_array( v, a );
+  return self;
+}
+
+mtoka_osci_t *mtoka_osci_fill_steady_firing_rate(mtoka_osci_t *self, double b)
+{
+  register int i;
+
+  for( i=0; i<mtoka_osci_n_neuron(self); i++ )
+    mtoka_osci_set_steady_firing_rate( self, i, b );
+  return self;
+}
+
+mtoka_osci_t *mtoka_osci_fill_tonic_input(mtoka_osci_t *self, double c)
+{
+  vec_fill( mtoka_osci_tonic_input(self), c );
+  return self;
+}
+
+mtoka_osci_t *mtoka_osci_fill_sensory_feedback(mtoka_osci_t *self, double s)
+{
+  vec_fill( mtoka_osci_sensory_feedback(self), s );
+  return self;
+}
+
+mtoka_osci_t *mtoka_osci_fill_firing_threshold(mtoka_osci_t *self, double th)
+{
+  register int i;
+
+  for( i=0; i<mtoka_osci_n_neuron(self); i++ )
+    mtoka_osci_set_firing_threshold( self, i, th );
+  return self;
+}
+
 vec_t mtoka_osci_dp(double t, vec_t xv, void *util, vec_t dxv)
 {
   mtoka_osci_t *self = util;
