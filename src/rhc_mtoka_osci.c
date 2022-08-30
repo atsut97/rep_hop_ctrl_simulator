@@ -212,10 +212,8 @@ void mtoka_osci_update_time(mtoka_osci_t *self, double dt)
   mtoka_osci_time(self) = mtoka_osci_step(self) * dt;
 }
 
-bool mtoka_osci_update(mtoka_osci_t *self, vec_t c, vec_t s, double dt)
+bool mtoka_osci_update(mtoka_osci_t *self, double dt)
 {
-  mtoka_osci_set_tonic_input( self, c );
-  mtoka_osci_set_sensory_feedback( self, s );
   ode_update( &self->ode, mtoka_osci_time(self), self->xv, dt, self );
   mtoka_osci_update_state( self );
   mtoka_osci_update_time( self, dt );

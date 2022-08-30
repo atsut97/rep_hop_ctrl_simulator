@@ -662,19 +662,16 @@ TEST(test_mtoka_osci_update_time)
 TEST(test_mtoka_osci_update)
 {
   double dt = 0.01;
-  vec_t c = vec_create( 2 );
-  vec_t s = vec_create( 2 );
   register int i;
 
-  vec_set_elem_list( c, 5.0, 5.0 );
-  vec_clear( s );
   for( i=0; i<2; i++ ){
     ASSERT_EQ( 0, vec_elem(mtoka_osci_membrane_potential(&osci), i) );
     ASSERT_EQ( 0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
     ASSERT_EQ( 0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
   }
+  mtoka_osci_fill_tonic_input( &osci, 5.0 );
   for( i=0; i<3; i++ )
-    mtoka_osci_update( &osci, c, s, dt );
+    mtoka_osci_update( &osci, dt );
   ASSERT_EQ( 3, mtoka_osci_step(&osci) );
   ASSERT_DOUBLE_EQ( 0.03, mtoka_osci_time(&osci) );
   for( i=0; i<2; i++ ){
@@ -682,8 +679,6 @@ TEST(test_mtoka_osci_update)
     ASSERT_NE( 0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
     ASSERT_NE( 0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
   }
-  vec_destroy( c );
-  vec_destroy( s );
 }
 
 TEST(test_mtoka_osci)
