@@ -1,4 +1,4 @@
-#include "rhc_matsuoka_oscillator.h"
+#include "rhc_mtoka_osci.h"
 #include "rhc_misc.h"
 #include "rhc_ode.h"
 #include "rhc_vec.h"
