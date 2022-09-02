@@ -610,6 +610,7 @@ TEST(test_mtoka_osci_reset)
   vec_copy( p, mtoka_osci_adapt_property(&osci) );
   vec_copy( p, mtoka_osci_tonic_input(&osci) );
   vec_copy( p, mtoka_osci_sensory_feedback(&osci) );
+  vec_set_elem_list( osci.xv, 6.4, 1.3, 1.8, 4.6 );
   ASSERT_NE( 0.0, mtoka_osci_time( &osci ) );
   ASSERT_NE( 0, mtoka_osci_step( &osci ) );
   for( i=0; i<2; i++ ){
@@ -618,17 +619,25 @@ TEST(test_mtoka_osci_reset)
     ASSERT_NE( 0.0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
     ASSERT_NE( 0.0, vec_elem(mtoka_osci_tonic_input(&osci), i) );
     ASSERT_NE( 0.0, vec_elem(mtoka_osci_sensory_feedback(&osci), i) );
+    ASSERT_NE( 0.0, vec_elem(osci.xv, i) );
+    ASSERT_NE( 0.0, vec_elem(osci.xv, i + osci.n_neuron) );
   }
   ASSERT_TRUE( mtoka_osci_reset( &osci ) );
   ASSERT_EQ( 0.0, mtoka_osci_time( &osci ) );
   ASSERT_EQ( 0, mtoka_osci_step( &osci ) );
   for( i=0; i<2; i++ ){
-    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_membrane_potential(&osci), i) );
-    ASSERT_EQ( 0.0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
     ASSERT_EQ( 0.0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
     ASSERT_EQ( 0.0, vec_elem(mtoka_osci_tonic_input(&osci), i) );
     ASSERT_EQ( 0.0, vec_elem(mtoka_osci_sensory_feedback(&osci), i) );
+    ASSERT_EQ( 0.0, vec_elem(osci.xv, i + osci.n_neuron) );
   }
+  ASSERT_EQ( 0.5, vec_elem(mtoka_osci_membrane_potential(&osci), 0) );
+  ASSERT_EQ( 0.0, vec_elem(mtoka_osci_membrane_potential(&osci), 1) );
+  ASSERT_EQ( 0.5, vec_elem(mtoka_osci_firing_rate(&osci), 0) );
+  ASSERT_EQ( 0.0, vec_elem(mtoka_osci_firing_rate(&osci), 1) );
+  ASSERT_EQ( 0.5, vec_elem(osci.xv, 0) );
+  ASSERT_EQ( 0.0, vec_elem(osci.xv, 1) );
+
   vec_destroy( p );
 }
 
@@ -664,11 +673,12 @@ TEST(test_mtoka_osci_update)
   double dt = 0.01;
   register int i;
 
-  for( i=0; i<2; i++ ){
-    ASSERT_EQ( 0, vec_elem(mtoka_osci_membrane_potential(&osci), i) );
-    ASSERT_EQ( 0, vec_elem(mtoka_osci_adapt_property(&osci), i) );
-    ASSERT_EQ( 0, vec_elem(mtoka_osci_firing_rate(&osci), i) );
-  }
+  ASSERT_EQ( 0.5, vec_elem(mtoka_osci_membrane_potential(&osci), 0) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_membrane_potential(&osci), 1) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_adapt_property(&osci), 0) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_adapt_property(&osci), 1) );
+  ASSERT_EQ( 0.5, vec_elem(mtoka_osci_firing_rate(&osci), 0) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_firing_rate(&osci), 1) );
   mtoka_osci_fill_tonic_input( &osci, 5.0 );
   for( i=0; i<3; i++ )
     mtoka_osci_update( &osci, dt );

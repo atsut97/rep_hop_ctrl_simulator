@@ -186,9 +186,9 @@ bool mtoka_osci_reset(mtoka_osci_t *self)
 {
   mtoka_osci_time(self) = 0.0;
   mtoka_osci_step(self) = 0;
-  vec_clear( mtoka_osci_membrane_potential(self) );
-  vec_clear( mtoka_osci_firing_rate(self) );
-  vec_clear( mtoka_osci_adapt_property(self) );
+  vec_clear( self->xv );
+  vec_set_elem( self->xv, 0, 0.5 );
+  mtoka_osci_update_state( self );
   vec_clear( mtoka_osci_tonic_input(self) );
   vec_clear( mtoka_osci_sensory_feedback(self) );
   return true;
