@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include "rhc_cmd.h"
 #include "rhc_test.h"
 
@@ -14,22 +15,31 @@ void teardown()
   cmd_destroy( &cmd );
 }
 
-void set_rand(cmd_t *cmd)
+int set_rand(cmd_t *cmd)
 {
-  cmd->zd = rand();
-  cmd->z0 = rand();
-  cmd->zb = rand();
-  cmd->raibert.delta = rand();
-  cmd->raibert.tau = rand();
-  cmd->raibert.gamma = rand();
-  cmd->raibert.yeta1 = rand();
-  cmd->raibert.zr = rand();
-  cmd->raibert.mu = rand();
+  int rnd = open("/dev/urandom", O_RDONLY);
+  if( rnd < 0 ){
+    RUNTIME_ERR("opening \"/dev/urandom\" has failed");
+    return 1;
+  } else {
+    size_t len = 0;
+    while( len < sizeof(cmd_t) ){
+      ssize_t result = read( rnd, cmd + len, sizeof(cmd_t) - len );
+      if( result < 0 ){
+        RUNTIME_ERR("reading file handler \"rnd\" has failed");
+        close( rnd );
+        return 1;
+      }
+      len += result;
+    }
+    close( rnd );
+  }
+  return 0;
 }
 
 TEST(test_cmd_init)
 {
-  set_rand( &cmd );
+  ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
   cmd_init( &cmd );
   ASSERT_EQ( 0, cmd.zd );
   ASSERT_EQ( 0, cmd.z0 );
@@ -38,7 +48,7 @@ TEST(test_cmd_init)
 
 TEST(test_cmd_init_regulator)
 {
-  set_rand( &cmd );
+  ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
   cmd_init( &cmd );
   ASSERT_EQ( 0, cmd.regulator.q1 );
   ASSERT_EQ( 0, cmd.regulator.q2 );
@@ -46,7 +56,7 @@ TEST(test_cmd_init_regulator)
 
 TEST(test_cmd_init_raibert)
 {
-  set_rand( &cmd );
+  ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
   cmd_init( &cmd );
   ASSERT_EQ( 0, cmd.raibert.delta );
   ASSERT_EQ( 0, cmd.raibert.tau );
@@ -56,9 +66,24 @@ TEST(test_cmd_init_raibert)
   ASSERT_EQ( 0, cmd.raibert.mu );
 }
 
+TEST(test_cmd_init_mtoka)
+{
+  ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
+  cmd_init( &cmd );
+  ASSERT_EQ( 0, cmd.mtoka.tau );
+  ASSERT_EQ( 0, cmd.mtoka.T );
+  ASSERT_EQ( 0, cmd.mtoka.a );
+  ASSERT_EQ( 0, cmd.mtoka.b );
+  ASSERT_EQ( 0, cmd.mtoka.c );
+  ASSERT_EQ( 0, cmd.mtoka.th );
+  ASSERT_EQ( 0, cmd.mtoka.mu );
+  ASSERT_EQ( 0, cmd.mtoka.rho );
+  ASSERT_EQ( 0, cmd.mtoka.lam );
+}
+
 TEST(test_cmd_default_init)
 {
-  set_rand( &cmd );
+  ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
   cmd_default_init( &cmd );
   ASSERT_EQ( 0.28, cmd.zd );
   ASSERT_EQ( 0.26, cmd.z0 );
@@ -68,7 +93,7 @@ TEST(test_cmd_default_init)
 
 TEST(test_cmd_destroy)
 {
-  set_rand( &cmd );
+  ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
   cmd_destroy( &cmd );
   ASSERT_EQ( 0, cmd.zd );
   ASSERT_EQ( 0, cmd.z0 );
@@ -81,6 +106,7 @@ TEST_SUITE(test_cmd)
   RUN_TEST(test_cmd_init);
   RUN_TEST(test_cmd_init_regulator);
   RUN_TEST(test_cmd_init_raibert);
+  RUN_TEST(test_cmd_init_mtoka);
   RUN_TEST(test_cmd_default_init);
   RUN_TEST(test_cmd_destroy);
 }

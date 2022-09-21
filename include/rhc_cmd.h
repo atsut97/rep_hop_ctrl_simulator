@@ -14,6 +14,9 @@ typedef struct{
     struct _raibert {
       double delta, tau, gamma, yeta1, zr, mu;
     } raibert;
+    struct _mtoka {
+      double tau, T, a, b, c, th, mu, rho, lam;
+    } mtoka;
   };
 } cmd_t;
 
