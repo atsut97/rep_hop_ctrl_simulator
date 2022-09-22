@@ -2,6 +2,11 @@
 #define __RHC_CTRL_MTOKA_H__
 
 #include "rhc_ctrl.h"
+#include "rhc_mtoka_osci.h"
+
+typedef struct{
+  mtoka_osci_t osci;
+} ctrl_mtoka_prp;
 
 ctrl_t *ctrl_mtoka_create(ctrl_t *self, cmd_t *cmd, model_t *model);
 void ctrl_mtoka_destroy(ctrl_t *self);
@@ -17,5 +22,7 @@ void ctrl_mtoka_writer(FILE *fp, ctrl_t *self, void *util);
 #define ctrl_mtoka_feedback_gain(self)          ( ctrl_cmd(self)->mtoka.mu )
 #define ctrl_mtoka_sensory_gain(self)           ( ctrl_cmd(self)->mtoka.rho )
 #define ctrl_mtoka_saturation_gain(self)        ( ctrl_cmd(self)->mtoka.lam )
+#define ctrl_mtoka_get_prp(self)                ( (ctrl_mtoka_prp*)((self)->prp) )
+#define ctrl_mtoka_osci(self)                   ( &(ctrl_mtoka_get_prp(self)->osci) )
 
 #endif /* __RHC_CTRL_MTOKA_H__ */
