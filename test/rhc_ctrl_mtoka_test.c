@@ -51,10 +51,22 @@ TEST(test_ctrl_mtoka_create)
 
 }
 
+TEST(test_ctrl_mtoka_destroy)
+{
+  ctrl_mtoka_create( &ctrl, &cmd, &model );
+  ctrl_mtoka_destroy( &ctrl );
+  ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
+  ASSERT_PTREQ( NULL, ctrl_model( &ctrl ) );
+  /* ASSERT_PTREQ( NULL, ctrl.prp ); */
+  ASSERT_EQ( 0, ctrl_n( &ctrl ) );
+  ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
+}
+
 TEST_SUITE(test_ctrl_mtoka)
 {
   CONFIGURE_SUITE(setup, teardown);
   RUN_TEST(test_ctrl_mtoka_create);
+  RUN_TEST(test_ctrl_mtoka_destroy);
 }
 
 int main(int argc, char *argv[])

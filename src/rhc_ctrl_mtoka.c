@@ -11,7 +11,10 @@ ctrl_t *ctrl_mtoka_create(ctrl_t *self, cmd_t *cmd, model_t *model)
 }
 
 void ctrl_mtoka_destroy(ctrl_t *self)
-{}
+{
+  /* sfree( self->prp ); */
+  ctrl_destroy_default( self );
+}
 
 ctrl_t *ctrl_mtoka_update(ctrl_t *self, double t, vec_t p)
 {
