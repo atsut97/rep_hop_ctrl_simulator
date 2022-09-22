@@ -48,3 +48,14 @@ ctrl_t *ctrl_mtoka_set_params(ctrl_t *self, double tau, double T, double a, doub
   ctrl_mtoka_set_saturation_gain(self, lam);
   return self;
 }
+
+ctrl_t *ctrl_mtoka_update_params(ctrl_t *self)
+{
+  mtoka_osci_fill_rise_time_const( ctrl_mtoka_osci(self), ctrl_mtoka_rise_time_const(self) );
+  mtoka_osci_fill_adapt_time_const( ctrl_mtoka_osci(self), ctrl_mtoka_adapt_time_const(self) );
+  mtoka_osci_set_mutual_inhibit_weights_list( ctrl_mtoka_osci(self), 0, 0.0, ctrl_mtoka_mutual_inhibit_weights(self) );
+  mtoka_osci_set_mutual_inhibit_weights_list( ctrl_mtoka_osci(self), 1, ctrl_mtoka_mutual_inhibit_weights(self), 0.0 );
+  mtoka_osci_fill_steady_firing_rate( ctrl_mtoka_osci(self), ctrl_mtoka_steady_firing_rate(self) );
+  mtoka_osci_fill_firing_threshold( ctrl_mtoka_osci(self), ctrl_mtoka_firing_threshold(self) );
+  return self;
+}

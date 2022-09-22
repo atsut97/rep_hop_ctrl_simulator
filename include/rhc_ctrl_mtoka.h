@@ -35,5 +35,6 @@ void ctrl_mtoka_writer(FILE *fp, ctrl_t *self, void *util);
 #define ctrl_mtoka_set_saturation_gain(self,val)        ( ctrl_mtoka_saturation_gain(self)        = (val) )
 
 ctrl_t *ctrl_mtoka_set_params(ctrl_t *self, double tau, double T, double a, double b, double th, double mu, double rho, double lam);
+ctrl_t *ctrl_mtoka_update_params(ctrl_t *self);
 
 #endif /* __RHC_CTRL_MTOKA_H__ */

@@ -157,6 +157,35 @@ TEST(test_ctrl_mtoka_set_params)
   }
 }
 
+TEST(test_ctrl_mtoka_update_params)
+{
+  struct case_t{
+    double tau, T, a, b, th, mu, rho, lam;
+  } cases[] = {
+    { frand(), frand(), frand(), frand(), frand(), frand(), frand(), frand() },
+    { frand(), frand(), frand(), frand(), frand(), frand(), frand(), frand() },
+    { frand(), frand(), frand(), frand(), frand(), frand(), frand(), frand() },
+    { 0, 0, 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+  register int i;
+  mtoka_osci_neuron_t *np;
+
+  for( c=cases; c->tau>0; c++ ){
+    ctrl_mtoka_set_params( &ctrl, c->tau, c->T, c->a, c->b, c->th, c->mu, c->rho, c->lam );
+    ctrl_mtoka_update_params( &ctrl );
+    for( i=0; i<2; i++ ){
+      np = mtoka_osci_neuron( ctrl_mtoka_osci(&ctrl), i );
+      ASSERT_EQ( c->tau, mtoka_osci_neuron_rise_time_const(np) );
+      ASSERT_EQ( c->T, mtoka_osci_neuron_adapt_time_const(np) );
+      ASSERT_EQ( c->a, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), i ? 0:1) );
+      ASSERT_EQ( 0, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), i) );
+      ASSERT_EQ( c->b, mtoka_osci_neuron_steady_firing_rate(np) );
+      ASSERT_EQ( c->th, mtoka_osci_neuron_firing_threshold(np) );
+    }
+  }
+}
+
 TEST_SUITE(test_ctrl_mtoka)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -171,6 +200,7 @@ TEST_SUITE(test_ctrl_mtoka)
   RUN_TEST(test_ctrl_mtoka_set_sensory_gain);
   RUN_TEST(test_ctrl_mtoka_set_saturation_gain);
   RUN_TEST(test_ctrl_mtoka_set_params);
+  RUN_TEST(test_ctrl_mtoka_update_params);
 }
 
 int main(int argc, char *argv[])
