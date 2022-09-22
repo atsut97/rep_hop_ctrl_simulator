@@ -186,6 +186,50 @@ TEST(test_ctrl_mtoka_update_params)
   }
 }
 
+TEST(test_ctrl_mtoka_calc_sensory_feedback)
+{
+  struct case_t{
+    double rho, lam, phase, expected;
+  } cases[] = {
+    { 1.0, 1.0, 1.0, tanh(1.0) },
+    { 2.0, 1.0, 1.5, 2.0*tanh(1.5) },
+    { 2.0, 0.5, 2.0, 2.0*tanh(1.0) },
+    { 0.5, 0.5, 3.0, 0.5*tanh(1.5) },
+    { 0.0, 0.0, 0.0, 0.0 },
+  };
+  struct case_t *c;
+  double s;
+
+  for( c=cases; c->rho>0; c++ ){
+    ctrl_mtoka_set_sensory_gain( &ctrl, c->rho );
+    ctrl_mtoka_set_saturation_gain( &ctrl, c->lam );
+    s = ctrl_mtoka_calc_sensory_feedback( &ctrl, c->phase );
+    ASSERT_EQ( c->expected, s );
+  }
+}
+
+TEST(test_ctrl_mtoka_calc_fz)
+{
+  double mg = model.m * G;
+  struct case_t{
+    double y1, y2, mu, expected;
+  } cases[] = {
+    { 1.0, 0.0, 1.0, 1.0 + mg },
+    { 1.0, 0.5, 0.5, 0.25 + mg },
+    { 0.8, 0.4, 0.4, 0.16 + mg },
+    { 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+  double fz;
+
+  for( c=cases; c->expected>0; c++ ){
+    vec_set_elem_list( mtoka_osci_firing_rate( ctrl_mtoka_osci(&ctrl) ), c->y1, c->y2 );
+    ctrl_mtoka_set_feedback_gain( &ctrl, c->mu );
+    fz = ctrl_mtoka_calc_fz( &ctrl, 0, p );
+    ASSERT_DOUBLE_EQ( c->expected, fz );
+  }
+}
+
 TEST_SUITE(test_ctrl_mtoka)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -201,6 +245,8 @@ TEST_SUITE(test_ctrl_mtoka)
   RUN_TEST(test_ctrl_mtoka_set_saturation_gain);
   RUN_TEST(test_ctrl_mtoka_set_params);
   RUN_TEST(test_ctrl_mtoka_update_params);
+  RUN_TEST(test_ctrl_mtoka_calc_sensory_feedback);
+  RUN_TEST(test_ctrl_mtoka_calc_fz);
 }
 
 int main(int argc, char *argv[])

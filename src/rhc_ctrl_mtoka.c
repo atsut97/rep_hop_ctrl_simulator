@@ -1,4 +1,5 @@
 #include "rhc_ctrl_mtoka.h"
+#include "rhc_model.h"
 #include "rhc_mtoka_osci.h"
 
 ctrl_t *ctrl_mtoka_create(ctrl_t *self, cmd_t *cmd, model_t *model)
@@ -58,4 +59,24 @@ ctrl_t *ctrl_mtoka_update_params(ctrl_t *self)
   mtoka_osci_fill_steady_firing_rate( ctrl_mtoka_osci(self), ctrl_mtoka_steady_firing_rate(self) );
   mtoka_osci_fill_firing_threshold( ctrl_mtoka_osci(self), ctrl_mtoka_firing_threshold(self) );
   return self;
+}
+
+double ctrl_mtoka_calc_sensory_feedback(ctrl_t *self, double phase)
+{
+  double rho, lambda;
+
+  rho = ctrl_mtoka_sensory_gain(self);
+  lambda = ctrl_mtoka_saturation_gain(self);
+  return rho * tanh( lambda * phase );
+}
+
+double ctrl_mtoka_calc_fz(ctrl_t *self, double t, vec_t p)
+{
+  vec_t y;
+  double mu, mg;
+
+  y = mtoka_osci_firing_rate( ctrl_mtoka_osci(self) );
+  mu = ctrl_mtoka_feedback_gain(self);
+  mg = model_mass(ctrl_model(self)) * model_gravity(ctrl_model(self));
+  return mu * (vec_elem(y, 0) - vec_elem(y, 1)) + mg;
 }

@@ -37,4 +37,7 @@ void ctrl_mtoka_writer(FILE *fp, ctrl_t *self, void *util);
 ctrl_t *ctrl_mtoka_set_params(ctrl_t *self, double tau, double T, double a, double b, double th, double mu, double rho, double lam);
 ctrl_t *ctrl_mtoka_update_params(ctrl_t *self);
 
+double ctrl_mtoka_calc_sensory_feedback(ctrl_t *self, double phase);
+double ctrl_mtoka_calc_fz(ctrl_t *self, double t, vec_t p);
+
 #endif /* __RHC_CTRL_MTOKA_H__ */
