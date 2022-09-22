@@ -15,6 +15,7 @@ void setup()
 {
   cmd_default_init( &cmd );
   model_init( &model, 10 );
+  ctrl_mtoka_create( &ctrl, &cmd, &model );
   p = vec_create( 2 );
 }
 
@@ -30,7 +31,6 @@ TEST(test_ctrl_mtoka_create)
   register int i;
   mtoka_osci_neuron_t *np;
 
-  ctrl_mtoka_create( &ctrl, &cmd, &model );
   ASSERT_PTREQ( ctrl_cmd( &ctrl ), &cmd );
   ASSERT_PTREQ( ctrl_model( &ctrl ), &model );
   ASSERT_PTREQ( ctrl_mtoka_update, ctrl._update );
@@ -62,7 +62,6 @@ TEST(test_ctrl_mtoka_create)
 
 TEST(test_ctrl_mtoka_destroy)
 {
-  ctrl_mtoka_create( &ctrl, &cmd, &model );
   ctrl_mtoka_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl_model( &ctrl ) );
