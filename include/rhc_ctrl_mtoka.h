@@ -25,4 +25,15 @@ void ctrl_mtoka_writer(FILE *fp, ctrl_t *self, void *util);
 #define ctrl_mtoka_get_prp(self)                ( (ctrl_mtoka_prp*)((self)->prp) )
 #define ctrl_mtoka_osci(self)                   ( &(ctrl_mtoka_get_prp(self)->osci) )
 
+#define ctrl_mtoka_set_rise_time_const(self,val)        ( ctrl_mtoka_rise_time_const(self)        = (val) )
+#define ctrl_mtoka_set_adapt_time_const(self,val)       ( ctrl_mtoka_adapt_time_const(self)       = (val) )
+#define ctrl_mtoka_set_mutual_inhibit_weights(self,val) ( ctrl_mtoka_mutual_inhibit_weights(self) = (val) )
+#define ctrl_mtoka_set_steady_firing_rate(self,val)     ( ctrl_mtoka_steady_firing_rate(self)     = (val) )
+#define ctrl_mtoka_set_firing_threshold(self,val)       ( ctrl_mtoka_firing_threshold(self)       = (val) )
+#define ctrl_mtoka_set_feedback_gain(self,val)          ( ctrl_mtoka_feedback_gain(self)          = (val) )
+#define ctrl_mtoka_set_sensory_gain(self,val)           ( ctrl_mtoka_sensory_gain(self)           = (val) )
+#define ctrl_mtoka_set_saturation_gain(self,val)        ( ctrl_mtoka_saturation_gain(self)        = (val) )
+
+ctrl_t *ctrl_mtoka_set_params(ctrl_t *self, double tau, double T, double a, double b, double th, double mu, double rho, double lam);
+
 #endif /* __RHC_CTRL_MTOKA_H__ */
