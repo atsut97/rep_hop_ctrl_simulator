@@ -230,6 +230,62 @@ TEST(test_ctrl_mtoka_calc_fz)
   }
 }
 
+TEST(test_ctrl_mtoka_update_check_params)
+{
+  struct case_t{
+    double tau, T, a, b, th, mu, rho, lam;
+  } cases[] = {
+    { frand(), frand(), frand(), frand(), frand(), frand(), frand(), frand() },
+    { frand(), frand(), frand(), frand(), frand(), frand(), frand(), frand() },
+    { frand(), frand(), frand(), frand(), frand(), frand(), frand(), frand() },
+    { 0, 0, 0, 0, 0, 0, 0, 0 },
+  };
+  struct case_t *c;
+  register int i;
+  mtoka_osci_neuron_t *np;
+
+  for( c=cases; c->tau > 0; c++ ){
+    ctrl_mtoka_set_params( &ctrl, c->tau, c->T, c->a, c->b, c->th, c->mu, c->rho, c->lam );
+    ctrl_mtoka_update( &ctrl, 0, p );
+    for( i=0; i<2; i++ ){
+      np = mtoka_osci_neuron( ctrl_mtoka_osci(&ctrl), i );
+      ASSERT_EQ( c->tau, mtoka_osci_neuron_rise_time_const(np) );
+      ASSERT_EQ( c->T, mtoka_osci_neuron_adapt_time_const(np) );
+      ASSERT_EQ( c->a, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), i ? 0:1) );
+      ASSERT_EQ( 0, vec_elem(mtoka_osci_neuron_mutual_inhibit_weights(np), i) );
+      ASSERT_EQ( c->b, mtoka_osci_neuron_steady_firing_rate(np) );
+      ASSERT_EQ( c->th, mtoka_osci_neuron_firing_threshold(np) );
+    }
+  }
+}
+
+TEST(test_ctrl_mtoka_update_check_sensory_feedback)
+{
+  struct case_t{
+    double rho, lam;
+    double zd, z0, zb, z, v;
+    double expected;
+  } cases[] = {
+    { 1.0, 1.0, 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), tanh(PI_2)},          /* touchdown */
+    { 1.5, 1.0, 0.28, 0.26, 0.24, 0.24, -0.0, 1.5*tanh(PI) },                /* bottom */
+    { 1.5, 0.5, 0.28, 0.26, 0.24, 0.26, sqrt(0.04*G), 1.5*tanh(-0.5*PI_2) }, /* lift-off */
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+  };
+  struct case_t *c;
+  double s1, s2;
+
+  for( c=cases; c->rho>0; c++ ){
+    ctrl_mtoka_set_sensory_gain( &ctrl, c->rho );
+    ctrl_mtoka_set_saturation_gain( &ctrl, c->lam );
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_mtoka_update( &ctrl, 0, p );
+    s1 = vec_elem( mtoka_osci_sensory_feedback(ctrl_mtoka_osci(&ctrl)), 0 );
+    s2 = vec_elem( mtoka_osci_sensory_feedback(ctrl_mtoka_osci(&ctrl)), 1 );
+    ASSERT_EQ( c->expected, s1 );
+    ASSERT_EQ( -c->expected, s2 );
+  }
+}
+
 TEST_SUITE(test_ctrl_mtoka)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -247,6 +303,8 @@ TEST_SUITE(test_ctrl_mtoka)
   RUN_TEST(test_ctrl_mtoka_update_params);
   RUN_TEST(test_ctrl_mtoka_calc_sensory_feedback);
   RUN_TEST(test_ctrl_mtoka_calc_fz);
+  RUN_TEST(test_ctrl_mtoka_update_check_params);
+  RUN_TEST(test_ctrl_mtoka_update_check_sensory_feedback);
 }
 
 int main(int argc, char *argv[])

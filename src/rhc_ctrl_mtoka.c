@@ -1,3 +1,4 @@
+#include "rhc_ctrl.h"
 #include "rhc_ctrl_mtoka.h"
 #include "rhc_model.h"
 #include "rhc_mtoka_osci.h"
@@ -26,8 +27,26 @@ void ctrl_mtoka_destroy(ctrl_t *self)
   ctrl_destroy_default( self );
 }
 
+ctrl_t *ctrl_mtoka_set_sensory_feedback(ctrl_t *self, double s1)
+{
+  vec_t s;
+
+  s = mtoka_osci_sensory_feedback(ctrl_mtoka_osci(self));
+  vec_set_elem( s, 0 ,s1 );
+  vec_set_elem( s, 1, -s1);
+  return self;
+}
+
+
 ctrl_t *ctrl_mtoka_update(ctrl_t *self, double t, vec_t p)
 {
+  double s;
+
+  ctrl_update_default( self, t, p );
+  ctrl_mtoka_update_params( self );
+  s = ctrl_mtoka_calc_sensory_feedback( self, ctrl_phi(self) );
+  ctrl_mtoka_set_sensory_feedback( self, s );
+  self->fz = ctrl_mtoka_calc_fz( self, t, p );
   return self;
 }
 
