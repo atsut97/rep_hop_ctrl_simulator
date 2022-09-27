@@ -46,13 +46,13 @@ ctrl_t *ctrl_mtoka_update(ctrl_t *self, double t, vec_t p)
 
   ctrl_update_default( self, t, p );
   ctrl_mtoka_update_params( self );
-  s = ctrl_mtoka_calc_sensory_feedback( self, ctrl_phi(self) );
-  ctrl_mtoka_set_sensory_feedback( self, s );
   dt = t - ctrl_mtoka_get_prp(self)->t_prev;
   if( dt > 0 ){
     mtoka_osci_update( ctrl_mtoka_osci(self), dt );
     ctrl_mtoka_get_prp(self)->t_prev = t;
   }
+  s = ctrl_mtoka_calc_sensory_feedback( self, ctrl_phi(self) );
+  ctrl_mtoka_set_sensory_feedback( self, s );
   self->fz = ctrl_mtoka_calc_fz( self, t, p );
   return self;
 }

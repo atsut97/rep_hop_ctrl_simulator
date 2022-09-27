@@ -312,6 +312,40 @@ TEST(test_ctrl_mtoka_update_check_dt)
   ASSERT_DOUBLE_EQ( t, mtoka_osci_time(ctrl_mtoka_osci(&ctrl)) );
 }
 
+TEST(test_ctrl_mtoka_update_check_osci_update)
+{
+  double dt = 0.01;
+  mtoka_osci_t *osci;
+  double mg = model_mass(&model) * G;
+
+  ctrl_mtoka_set_params( &ctrl, 0.25, 0.5, 2.5, 2.5, 0.0, 0.1, 0.1, 0.1 );
+  osci = ctrl_mtoka_osci(&ctrl);
+  ASSERT_EQ( 0.5, vec_elem(mtoka_osci_membrane_potential(osci), 0) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_membrane_potential(osci), 1) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_adapt_property(osci), 0) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_adapt_property(osci), 1) );
+  ASSERT_EQ( 0.5, vec_elem(mtoka_osci_firing_rate(osci), 0) );
+  ASSERT_EQ( 0, vec_elem(mtoka_osci_firing_rate(osci), 1) );
+
+  /* Update several times. */
+  vec_set_elem_list( p, 0.26, -sqrt(0.04*G) );  /* touchdown */
+  ctrl_mtoka_update( &ctrl, 0, p );
+  vec_set_elem_list( p, 0.255, -sqrt(0.03*G) );
+  ctrl_mtoka_update( &ctrl, dt, p );
+  vec_set_elem_list( p, 0.250, -sqrt(0.02*G) );
+  ctrl_mtoka_update( &ctrl, 2.0*dt, p );
+  vec_set_elem_list( p, 0.245, -sqrt(0.01*G) );
+  ctrl_mtoka_update( &ctrl, 3.0*dt, p );
+
+  ASSERT_EQ( 3, mtoka_osci_step(osci) );
+  ASSERT_DOUBLE_EQ( 0.03, mtoka_osci_time(osci) );
+  /* Check only neuron #1 since #2 is inactive with these params. */
+  ASSERT_NE( 0.5, vec_elem(mtoka_osci_membrane_potential(osci), 0) );
+  ASSERT_NE( 0, vec_elem(mtoka_osci_adapt_property(osci), 0) );
+  ASSERT_NE( 0, vec_elem(mtoka_osci_firing_rate(osci), 0) );
+  ASSERT_NE( mg, ctrl_fz(&ctrl) );
+}
+
 TEST_SUITE(test_ctrl_mtoka)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -332,6 +366,7 @@ TEST_SUITE(test_ctrl_mtoka)
   RUN_TEST(test_ctrl_mtoka_update_check_params);
   RUN_TEST(test_ctrl_mtoka_update_check_sensory_feedback);
   RUN_TEST(test_ctrl_mtoka_update_check_dt);
+  RUN_TEST(test_ctrl_mtoka_update_check_osci_update);
 }
 
 int main(int argc, char *argv[])
