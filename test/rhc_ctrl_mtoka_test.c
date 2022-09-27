@@ -64,6 +64,7 @@ TEST(test_ctrl_mtoka_create)
     ASSERT_EQ( 0.0, mtoka_osci_neuron_steady_firing_rate(np) );
     ASSERT_EQ( 0.0, mtoka_osci_neuron_firing_threshold(np) );
   }
+  ASSERT_EQ( 0, ctrl_mtoka_get_prp(&ctrl)->t_prev );
 }
 
 TEST(test_ctrl_mtoka_destroy)
@@ -286,6 +287,31 @@ TEST(test_ctrl_mtoka_update_check_sensory_feedback)
   }
 }
 
+TEST(test_ctrl_mtoka_update_check_dt)
+{
+  double dt = 0.01;
+  double t = 0;
+
+  ctrl_mtoka_update( &ctrl, t, p );
+  ASSERT_EQ( 0, ctrl_mtoka_get_prp(&ctrl)->t_prev );
+  ASSERT_EQ( t, mtoka_osci_time(ctrl_mtoka_osci(&ctrl)) );
+
+  t += dt;
+  ctrl_mtoka_update( &ctrl, t, p );
+  ASSERT_DOUBLE_EQ( t, ctrl_mtoka_get_prp(&ctrl)->t_prev );
+  ASSERT_DOUBLE_EQ( t, mtoka_osci_time(ctrl_mtoka_osci(&ctrl)) );
+
+  t += dt;
+  ctrl_mtoka_update( &ctrl, t, p );
+  ASSERT_DOUBLE_EQ( t, ctrl_mtoka_get_prp(&ctrl)->t_prev );
+  ASSERT_DOUBLE_EQ( t, mtoka_osci_time(ctrl_mtoka_osci(&ctrl)) );
+
+  t += dt;
+  ctrl_mtoka_update( &ctrl, t, p );
+  ASSERT_DOUBLE_EQ( t, ctrl_mtoka_get_prp(&ctrl)->t_prev );
+  ASSERT_DOUBLE_EQ( t, mtoka_osci_time(ctrl_mtoka_osci(&ctrl)) );
+}
+
 TEST_SUITE(test_ctrl_mtoka)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -305,6 +331,7 @@ TEST_SUITE(test_ctrl_mtoka)
   RUN_TEST(test_ctrl_mtoka_calc_fz);
   RUN_TEST(test_ctrl_mtoka_update_check_params);
   RUN_TEST(test_ctrl_mtoka_update_check_sensory_feedback);
+  RUN_TEST(test_ctrl_mtoka_update_check_dt);
 }
 
 int main(int argc, char *argv[])

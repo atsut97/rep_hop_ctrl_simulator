@@ -16,6 +16,7 @@ ctrl_t *ctrl_mtoka_create(ctrl_t *self, cmd_t *cmd, model_t *model)
     return NULL;
   }
   mtoka_osci_init( ctrl_mtoka_osci(self), 2 );
+  ((ctrl_mtoka_prp *)self->prp)->t_prev = 0;
   return self;
 }
 
@@ -41,11 +42,17 @@ ctrl_t *ctrl_mtoka_set_sensory_feedback(ctrl_t *self, double s1)
 ctrl_t *ctrl_mtoka_update(ctrl_t *self, double t, vec_t p)
 {
   double s;
+  double dt;
 
   ctrl_update_default( self, t, p );
   ctrl_mtoka_update_params( self );
   s = ctrl_mtoka_calc_sensory_feedback( self, ctrl_phi(self) );
   ctrl_mtoka_set_sensory_feedback( self, s );
+  dt = t - ctrl_mtoka_get_prp(self)->t_prev;
+  if( dt > 0 ){
+    mtoka_osci_update( ctrl_mtoka_osci(self), dt );
+    ctrl_mtoka_get_prp(self)->t_prev = t;
+  }
   self->fz = ctrl_mtoka_calc_fz( self, t, p );
   return self;
 }

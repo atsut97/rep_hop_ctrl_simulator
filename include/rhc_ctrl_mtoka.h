@@ -6,6 +6,7 @@
 
 typedef struct{
   mtoka_osci_t osci;
+  double t_prev;
 } ctrl_mtoka_prp;
 
 ctrl_t *ctrl_mtoka_create(ctrl_t *self, cmd_t *cmd, model_t *model);
