@@ -58,10 +58,46 @@ ctrl_t *ctrl_mtoka_update(ctrl_t *self, double t, vec_t p)
 }
 
 void ctrl_mtoka_header(FILE *fp, void *util)
-{}
+{
+  /* parameters for Matsuoka oscillator */
+  fprintf( fp, ",tau,T,a,b,th,mu,rho,lam" );
+  /* variables in neuron #1 */
+  fprintf( fp, ",x1,y1,v1,c1,s1" );
+  /* variables in neuron #2 */
+  fprintf( fp, ",x2,y2,v2,c2,s2" );
+  fprintf( fp, "\n" );
+}
 
 void ctrl_mtoka_writer(FILE *fp, ctrl_t *self, void *util)
-{}
+{
+  mtoka_osci_t *osci = ctrl_mtoka_osci(self);
+
+  /* parameters for Matsuoka oscillator */
+  fprintf( fp, ",%f,%f,%f,%f,%f,%f,%f,%f",
+           ctrl_mtoka_rise_time_const(self),
+           ctrl_mtoka_adapt_time_const(self),
+           ctrl_mtoka_mutual_inhibit_weights(self),
+           ctrl_mtoka_steady_firing_rate(self),
+           ctrl_mtoka_firing_threshold(self),
+           ctrl_mtoka_feedback_gain(self),
+           ctrl_mtoka_sensory_gain(self),
+           ctrl_mtoka_saturation_gain(self) );
+  /* variables in neuron #1 */
+  fprintf( fp, ",%f,%f,%f,%f,%f",
+           vec_elem( mtoka_osci_membrane_potential(osci), 0 ),
+           vec_elem( mtoka_osci_firing_rate(osci), 0 ),
+           vec_elem( mtoka_osci_adapt_property(osci), 0 ),
+           vec_elem( mtoka_osci_tonic_input(osci), 0 ),
+           vec_elem( mtoka_osci_sensory_feedback(osci), 0 ) );
+  /* variables in neuron #2 */
+  fprintf( fp, ",%f,%f,%f,%f,%f",
+           vec_elem( mtoka_osci_membrane_potential(osci), 1 ),
+           vec_elem( mtoka_osci_firing_rate(osci), 1 ),
+           vec_elem( mtoka_osci_adapt_property(osci), 1 ),
+           vec_elem( mtoka_osci_tonic_input(osci), 1 ),
+           vec_elem( mtoka_osci_sensory_feedback(osci), 1 ) );
+  fprintf( fp, "\n" );
+}
 
 ctrl_t *ctrl_mtoka_set_params(ctrl_t *self, double tau, double T, double a, double b, double th, double mu, double rho, double lam)
 {
