@@ -1,1 +1,13 @@
-DisableFormat: true
+---
+Language:        Cpp
+BasedOnStyle:  LLVM
+AlignConsecutiveMacros:
+  Enabled:         true
+  AcrossEmptyLines: false
+  AcrossComments:  false
+AlignEscapedNewlines: Left
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
+BreakBeforeBraces: WebKit
+IndentPPDirectives: AfterHash
+...
