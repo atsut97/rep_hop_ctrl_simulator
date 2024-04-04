@@ -66,6 +66,14 @@ TEST(test_cmd_init_raibert)
   ASSERT_EQ( 0, cmd.raibert.mu );
 }
 
+TEST(test_cmd_init_arl)
+{
+  ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
+  cmd_init( &cmd );
+  ASSERT_EQ( 0, cmd.arl.k );
+  ASSERT_EQ( 0, cmd.arl.beta );
+}
+
 TEST(test_cmd_init_mtoka)
 {
   ASSERT(!set_rand( &cmd ), "Fail randomizing cmd_t instance" );
@@ -106,6 +114,7 @@ TEST_SUITE(test_cmd)
   RUN_TEST(test_cmd_init);
   RUN_TEST(test_cmd_init_regulator);
   RUN_TEST(test_cmd_init_raibert);
+  RUN_TEST(test_cmd_init_arl);
   RUN_TEST(test_cmd_init_mtoka);
   RUN_TEST(test_cmd_default_init);
   RUN_TEST(test_cmd_destroy);
