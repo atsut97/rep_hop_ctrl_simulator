@@ -12,6 +12,7 @@ enum ctrl_arl_types{
 typedef struct {
   enum ctrl_arl_types type; /* controller type */
   double c;
+  double R2;
 } ctrl_arl_prp;
 
 ctrl_t *ctrl_arl_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_arl_types type);
