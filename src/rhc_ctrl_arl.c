@@ -38,9 +38,14 @@ ctrl_t *ctrl_arl_update(ctrl_t *self, double t, vec_t p)
 
 void ctrl_arl_header(FILE *fp, void *util)
 {
-  fprintf( fp, "\n" );
+  fprintf( fp, ",type,k,beta,c\n" );
 }
+
 void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util)
 {
-  fprintf( fp, "\n" );
+  fprintf( fp, ",%d,%f,%f,%f\n",
+           ctrl_arl_type(self),
+           ctrl_arl_k(self),
+           ctrl_arl_beta(self),
+           ctrl_arl_c(self) );
 }
