@@ -62,6 +62,27 @@ TEST(test_ctrl_arl_set_beta)
   ASSERT_EQ( beta, ctrl_arl_beta(&ctrl) );
 }
 
+TEST(test_ctrl_arl_set_params)
+{
+  struct case_t {
+    double k, beta;
+  } cases[] = {
+    { 82.8, 73.8 },
+    { 31.0, 15.1 },
+    { 30.2, 89.9 },
+    { 0, 0 },
+  };
+  struct case_t *c;
+
+  for ( c=cases; c->k>0; c++ ){
+    ctrl_arl_create( &ctrl, &cmd, &model, none );
+    ctrl_arl_set_params( &ctrl, c->k, c->beta );
+    ASSERT_EQ( c->k, ctrl_arl_k(&ctrl) );
+    ASSERT_EQ( c->beta, ctrl_arl_beta(&ctrl) );
+    ctrl_arl_destroy( &ctrl );
+  }
+}
+
 TEST_SUITE(test_ctrl_arl)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -69,6 +90,7 @@ TEST_SUITE(test_ctrl_arl)
   RUN_TEST(test_ctrl_arl_destroy);
   RUN_TEST(test_ctrl_arl_set_k);
   RUN_TEST(test_ctrl_arl_set_beta);
+  RUN_TEST(test_ctrl_arl_set_params);
 }
 
 int main(int argc, char *argv[])

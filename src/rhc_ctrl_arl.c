@@ -24,6 +24,13 @@ void ctrl_arl_destroy(ctrl_t *self)
   ctrl_destroy_default( self );
 }
 
+ctrl_t *ctrl_arl_set_params(ctrl_t *self, double k, double beta)
+{
+  ctrl_arl_set_k( self, k );
+  ctrl_arl_set_beta( self, beta );
+  return self;
+}
+
 ctrl_t *ctrl_arl_update(ctrl_t *self, double t, vec_t p)
 {
   return self;
