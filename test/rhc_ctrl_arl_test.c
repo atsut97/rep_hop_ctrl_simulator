@@ -46,11 +46,29 @@ TEST(test_ctrl_arl_destroy)
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
+TEST(test_ctrl_arl_set_k)
+{
+  double k = 10.0;
+  ctrl_arl_create( &ctrl, &cmd, &model, none );
+  ctrl_arl_set_k( &ctrl, k );
+  ASSERT_EQ( k, ctrl_arl_k(&ctrl) );
+}
+
+TEST(test_ctrl_arl_set_beta)
+{
+  double beta = 500.0;
+  ctrl_arl_create( &ctrl, &cmd, &model, none );
+  ctrl_arl_set_beta( &ctrl, beta );
+  ASSERT_EQ( beta, ctrl_arl_beta(&ctrl) );
+}
+
 TEST_SUITE(test_ctrl_arl)
 {
   CONFIGURE_SUITE(setup, teardown);
   RUN_TEST(test_ctrl_arl_create);
   RUN_TEST(test_ctrl_arl_destroy);
+  RUN_TEST(test_ctrl_arl_set_k);
+  RUN_TEST(test_ctrl_arl_set_beta);
 }
 
 int main(int argc, char *argv[])

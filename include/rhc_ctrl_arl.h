@@ -27,7 +27,7 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util);
 #define ctrl_arl_c(self)       ( ctrl_arl_get_prp(self)->c )
 
 #define ctrl_arl_set_k(self,val)     ( ctrl_arl_k(self) = (val) )
-#define ctrl_arl_set_beta(self,val)  ( ctrl_arl_beta(self)   = (val) )
+#define ctrl_arl_set_beta(self,val)  ( ctrl_arl_beta(self) = (val) )
 
 ctrl_t *ctrl_arl_set_params(ctrl_t *self, double k, double beta);
 
