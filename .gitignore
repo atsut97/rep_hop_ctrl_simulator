@@ -57,3 +57,4 @@ __pypackages__/
 # pdm
 .pdm.toml
 pdm.lock
+.pdm-python
