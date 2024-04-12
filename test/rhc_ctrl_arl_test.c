@@ -10,6 +10,7 @@ static vec_t p;
 void setup() {
   cmd_default_init( &cmd );
   model_init( &model, 10 );
+  ctrl_arl_create( &ctrl, &cmd, &model, none );
   p = vec_create( 2 );
 }
 
@@ -85,6 +86,68 @@ TEST(test_ctrl_arl_set_params)
   }
 }
 
+TEST(test_ctrl_arl_calc_sqr_R0)
+{
+  struct case_t {
+    double m, k, z0, zd;
+    double expected_sqr_R0;
+  } cases[] = {
+    { 1.0, G, 0.26, 0.28, 1.0804 },
+    { 1.0, G, 0.25, 0.28, 1.1209 },
+    { 1.0, G, 0.25, 0.29, 1.1616 },
+    { 0.0, 0.0, 0.0, 0.0, 0.0 },
+  };
+  struct case_t *c;
+  double sqr_R0;
+
+  for( c=cases; c->m>0; c++ ){
+    sqr_R0 = ctrl_arl_calc_sqr_R0( c->m, c->k, c->z0, c->zd );
+    ASSERT_NEAR( c->expected_sqr_R0, sqr_R0, 1e-10 );
+  }
+}
+
+TEST(test_ctrl_arl_calc_sqr_R)
+{
+  struct case_t {
+    double m, k, z, v, z0;
+    double expected_sqr_R;
+  } cases[] = {
+    { 1.0, G, 0.24,     0.0, 0.26, 0.9604 }, /* bottom */
+    { 1.0, G, 0.26, sqrt(G), 0.26, 2.0 },    /* lift-off */
+    { 1.0, G, 0.26,-sqrt(G), 0.26, 2.0 },    /* touch-down */
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+  };
+  struct case_t *c;
+  double sqr_R;
+
+  for( c=cases; c->m>0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    sqr_R = ctrl_arl_calc_sqr_R( p, c->m, c->k, c->z0 );
+    ASSERT_NEAR( c->expected_sqr_R, sqr_R, 1e-10 );
+  }
+}
+
+TEST(test_ctrl_arl_calc_delta)
+{
+  struct case_t {
+    double m, k, z, v, beta, z0, zd;
+    double expected_delta;
+  } cases[] = {
+    { 1.0, G, 0.24,     0.0, 1.0, 0.26, 0.28, 0.0 }, /* bottom */
+    { 1.0, G, 0.26, sqrt(G), 1.5, 0.26, 0.28, 0.0 },    /* lift-off */
+    { 1.0, G, 0.26,-sqrt(G), 2.0, 0.26, 0.28, 0.0 },    /* touch-down */
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+  };
+  struct case_t *c;
+  double delta;
+
+  for( c=cases; c->m>0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    delta = ctrl_arl_calc_delta( p, c->m, c->k, c->beta, c->z0, c->zd );
+    ASSERT_NEAR( c->expected_delta, delta, 1e-10 );
+  }
+}
+
 TEST_SUITE(test_ctrl_arl)
 {
   CONFIGURE_SUITE(setup, teardown);
@@ -93,6 +156,9 @@ TEST_SUITE(test_ctrl_arl)
   RUN_TEST(test_ctrl_arl_set_k);
   RUN_TEST(test_ctrl_arl_set_beta);
   RUN_TEST(test_ctrl_arl_set_params);
+  RUN_TEST(test_ctrl_arl_calc_sqr_R0);
+  RUN_TEST(test_ctrl_arl_calc_sqr_R);
+  RUN_TEST(test_ctrl_arl_calc_delta);
 }
 
 int main(int argc, char *argv[])
