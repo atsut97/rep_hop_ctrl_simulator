@@ -11,7 +11,9 @@ enum ctrl_arl_types{
 
 typedef struct {
   enum ctrl_arl_types type; /* controller type */
-  double c;
+  double sqr_R0;
+  double sqr_R;
+  double delta;
 } ctrl_arl_prp;
 
 ctrl_t *ctrl_arl_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_arl_types type);
@@ -24,7 +26,9 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util);
 #define ctrl_arl_beta(self)    ( ctrl_cmd(self)->arl.beta )
 #define ctrl_arl_get_prp(self) ( (ctrl_arl_prp*)((self)->prp) )
 #define ctrl_arl_type(self)    ( ctrl_arl_get_prp(self)->type )
-#define ctrl_arl_c(self)       ( ctrl_arl_get_prp(self)->c )
+#define ctrl_arl_sqr_R0(self)  ( ctrl_arl_get_prp(self)->sqr_R0 )
+#define ctrl_arl_sqr_R(self)   ( ctrl_arl_get_prp(self)->sqr_R0 )
+#define ctrl_arl_delta(self)   ( ctrl_arl_get_prp(self)->sqr_R0 )
 
 #define ctrl_arl_set_k(self,val)     ( ctrl_arl_k(self) = (val) )
 #define ctrl_arl_set_beta(self,val)  ( ctrl_arl_beta(self) = (val) )

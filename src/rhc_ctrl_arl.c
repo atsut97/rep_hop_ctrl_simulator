@@ -14,7 +14,9 @@ ctrl_t *ctrl_arl_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_arl_
     return NULL;
   }
   ((ctrl_arl_prp *)(self->prp))->type = type;
-  ((ctrl_arl_prp *)(self->prp))->c = 0;
+  ((ctrl_arl_prp *)(self->prp))->sqr_R0 = 0;
+  ((ctrl_arl_prp *)(self->prp))->sqr_R = 0;
+  ((ctrl_arl_prp *)(self->prp))->delta = 0;
   return self;
 }
 
@@ -38,14 +40,17 @@ ctrl_t *ctrl_arl_update(ctrl_t *self, double t, vec_t p)
 
 void ctrl_arl_header(FILE *fp, void *util)
 {
-  fprintf( fp, ",type,k,beta,c\n" );
+  fprintf( fp, ",type,k,beta,c,sqr_R0,sqr_R,delta\n" );
 }
 
 void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util)
 {
-  fprintf( fp, ",%d,%f,%f,%f\n",
+  fprintf( fp, ",%d,%f,%f,%f,%f,%f\n",
            ctrl_arl_type(self),
            ctrl_arl_k(self),
            ctrl_arl_beta(self),
-           ctrl_arl_c(self) );
+           ctrl_arl_sqr_R0(self),
+           ctrl_arl_sqr_R(self),
+           ctrl_arl_delta(self) );
+}
 }

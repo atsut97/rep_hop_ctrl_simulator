@@ -32,7 +32,9 @@ TEST(test_ctrl_arl_create)
   ASSERT_EQ( 0, ctrl_arl_beta(&ctrl) );
   ASSERT_PTRNE( NULL, ctrl.prp );
   ASSERT_EQ( none, ((ctrl_arl_prp*)ctrl.prp)->type );
-  ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->c );
+  ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->sqr_R0 );
+  ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->sqr_R );
+  ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->delta );
 }
 
 TEST(test_ctrl_arl_destroy)
