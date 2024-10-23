@@ -1,7 +1,7 @@
 #ifndef __RHC_TEST_UTIL_H__
 #define __RHC_TEST_UTIL_H__
 
-#include "rhc_test.h"
+#include <stdio.h>
 
 int set_spurious_values(void *object, size_t size);
 

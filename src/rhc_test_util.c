@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <unistd.h>
 #include "rhc_test_util.h"
 #include "rhc_misc.h"
 
