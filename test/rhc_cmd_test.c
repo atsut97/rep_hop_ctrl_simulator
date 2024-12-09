@@ -102,6 +102,21 @@ TEST(test_cmd_destroy)
   ASSERT_EQ( 0, cmd.zmin );
 }
 
+TEST(test_cmd_copy)
+{
+  cmd_t cmd1, cmd2;
+  SHAM( &cmd1, cmd_t);
+  SHAM( &cmd2, cmd_t);
+
+  ASSERT_PTREQ( &cmd2, cmd_copy( &cmd1, &cmd2 ) );
+  ASSERT_EQ( cmd1.za, cmd2.za );
+  ASSERT_EQ( cmd1.zh, cmd2.zh );
+  ASSERT_EQ( cmd1.zm, cmd2.zm );
+  ASSERT_EQ( cmd1.zb, cmd2.zb );
+  ASSERT_EQ( cmd1.zmax, cmd2.zmax );
+  ASSERT_EQ( cmd1.zmin, cmd2.zmin );
+}
+
 TEST_SUITE(test_cmd)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -113,6 +128,7 @@ TEST_SUITE(test_cmd)
   RUN_TEST(test_cmd_init_mtoka);
   RUN_TEST(test_cmd_default_init);
   RUN_TEST(test_cmd_destroy);
+  RUN_TEST(test_cmd_copy);
 }
 
 int main(int argc, char *argv[])

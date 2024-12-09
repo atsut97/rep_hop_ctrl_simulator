@@ -33,4 +33,6 @@ cmd_t *cmd_init(cmd_t *self);
 cmd_t *cmd_default_init(cmd_t *self);
 void cmd_destroy(cmd_t *self);
 
+cmd_t *cmd_copy(cmd_t *src, cmd_t *dst);
+
 #endif /* __RHC_CMD_H__ */

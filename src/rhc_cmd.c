@@ -28,3 +28,9 @@ void cmd_destroy(cmd_t *self)
 {
   cmd_init( self );
 }
+
+cmd_t *cmd_copy(cmd_t *src, cmd_t *dst)
+{
+  memcpy(dst, src, sizeof(cmd_t));
+  return dst;
+}
