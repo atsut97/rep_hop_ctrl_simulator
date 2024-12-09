@@ -354,7 +354,7 @@ TEST(test_ctrl_raibert_is_in_thrust)
   vec_t p;
 
   p = vec_create( 2 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
@@ -395,7 +395,7 @@ TEST(test_ctrl_raibert_is_in_thrust_start_from_bottom)
   vec_t p;
 
   p = vec_create( 2 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
@@ -436,7 +436,7 @@ TEST(test_ctrl_raibert_is_in_thrust_2)
   vec_t p;
 
   p = vec_create( 2 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
@@ -490,7 +490,7 @@ TEST(test_ctrl_raibert_end_of_thrust)
   vec_t p;
 
   p = vec_create( 2 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
@@ -530,7 +530,7 @@ TEST(test_ctrl_raibert_end_of_thrust_edge_case)
   vec_t p;
 
   p = vec_create( 2 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create( &ctrl, &cmd, &model, none );
@@ -568,7 +568,7 @@ TEST(test_ctrl_raibert_calc_fz_full_nonlinear)
 
   p = vec_create( 2 );
   model_set_mass( &model, 1 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create_full_nonlinear( &ctrl, &cmd, &model, 0.1, 41.86, 2.33, 5.81, 1 );
@@ -603,7 +603,7 @@ TEST(test_ctrl_raibert_calc_fz_simplified_nonlinear)
 
   p = vec_create( 2 );
   model_set_mass( &model, 1 );
-  cmd.zd = 1.15;
+  cmd.za = 1.15;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model, 41.86, 5.81 );
@@ -638,7 +638,7 @@ TEST(test_ctrl_raibert_calc_fz_simplified_nonlinear_start_from_bottom)
 
   p = vec_create( 2 );
   model_set_mass( &model, 1 );
-  cmd.zd = 1.15;
+  cmd.za = 1.15;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create_simplified_nonlinear( &ctrl, &cmd, &model, 41.86, 5.81 );
@@ -675,7 +675,7 @@ TEST(test_ctrl_raibert_calc_fz_full_linear)
 
   p = vec_create( 2 );
   model_set_mass( &model, 1 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create_full_linear( &ctrl, &cmd, &model, 0.05, 41.86, 2.33, 46.5, 1.0, 1 );
@@ -713,7 +713,7 @@ TEST(test_ctrl_raibert_calc_fz_simplified_linear)
 
   p = vec_create( 2 );
   model_set_mass( &model, 1 );
-  cmd.zd = 0.8;
+  cmd.za = 0.8;
   cmd.z0 = 0.5;
   cmd.zb = 0.19;
   ctrl_raibert_create_simplified_linear( &ctrl, &cmd, &model, 0.05, 41.86, 0.58, 46.5, 0.6 );

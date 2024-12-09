@@ -49,7 +49,7 @@ TEST(test_ctrl_slip_update)
 TEST(test_ctrl_slip_update_phase)
 {
   struct case_t {
-    double zd, z0, zb;
+    double za, z0, zb;
     double z, v;
     int expct_n;
     double expct_phi;
@@ -71,7 +71,7 @@ TEST(test_ctrl_slip_update_phase)
   double t;
 
   t = 0;
-  for( c=cases; c->zd>0; c++ ){
+  for( c=cases; c->za>0; c++ ){
     vec_set_elem_list( p, 2, c->z, c->v );
     ctrl_update( &ctrl, t, p );
     ASSERT_DOUBLE_EQ( c->expct_n, ctrl_n( &ctrl ) );
@@ -83,7 +83,7 @@ TEST(test_ctrl_slip_update_phase)
 TEST(test_ctrl_slip_update_flight_zero)
 {
   struct case_t {
-    double zd, z0, zb;
+    double za, z0, zb;
     double z, v;
     double expct_fz;
   } cases[] = {
@@ -102,7 +102,7 @@ TEST(test_ctrl_slip_update_flight_zero)
   double t;
 
   t = 0;
-  for( c=cases; c->zd>0; c++ ){
+  for( c=cases; c->za>0; c++ ){
     vec_set_elem_list( p, 2, c->z, c->v );
     ctrl_update( &ctrl, t, p );
     if( c->expct_fz == 0 )
@@ -124,7 +124,7 @@ TEST(test_ctrl_slip_destroy)
 TEST(test_ctrl_slip_calc_stiffness)
 {
   struct case_t{
-    double m, z0, zd, zb;
+    double m, z0, za, zb;
     double expected;
   } cases[] = {
     { 1, 0.26, 0.28, 0.24, 200*G },
@@ -137,14 +137,14 @@ TEST(test_ctrl_slip_calc_stiffness)
 
   f = ctrl_slip_calc_stiffness;
   for( c=cases; c->m>0; c++ ){
-    ASSERT_NEAR( c->expected, f( c->m, c->z0, c->zd, c->zb ), 1e-10 );
+    ASSERT_NEAR( c->expected, f( c->m, c->z0, c->za, c->zb ), 1e-10 );
   }
 }
 
 TEST(test_ctrl_slip_stiffness)
 {
   struct case_t{
-    double m, z0, zd, zb;
+    double m, z0, za, zb;
     double expected;
   } cases[] = {
     { 1, 0.26, 0.28, 0.24, 200*G },
@@ -157,7 +157,7 @@ TEST(test_ctrl_slip_stiffness)
   for( c=cases; c->m>0; c++ ){
     model_set_mass( &model, c->m );
     cmd.z0 = c->z0;
-    cmd.zd = c->zd;
+    cmd.za = c->za;
     cmd.zb = c->zb;
     ASSERT_NEAR( c->expected, ctrl_slip_stiffness( &ctrl ), 1e-10 );
   }

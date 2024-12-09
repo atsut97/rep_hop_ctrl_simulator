@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   simulator_set_default_logger( &sim, &logger );
   p0 = vec_create( 2 );
 
-  for( z0 = cmd.z0 - 0.005; z0 < cmd.zd + 0.1; z0 += 0.005 ) {
+  for( z0 = cmd.z0 - 0.005; z0 < cmd.za + 0.1; z0 += 0.005 ) {
     vec_set_elem_list( p0, z0, 0.0 );
     simulator_run( &sim, p0, T, DT, &logger, NULL );
   }

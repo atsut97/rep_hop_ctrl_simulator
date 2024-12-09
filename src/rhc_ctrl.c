@@ -30,22 +30,22 @@ void ctrl_events_destroy(ctrl_events_t *self)
   ctrl_events_init( self );
 }
 
-complex_t *ctrl_events_calc_phase_complex(double z0, double zd, double zb, vec_t p, complex_t *c)
+complex_t *ctrl_events_calc_phase_complex(double z0, double za, double zb, vec_t p, complex_t *c)
 {
   double z, v, v0;
 
   z = vec_elem( p, 0 );
   v = vec_elem( p, 1 );
-  v0 = ctrl_calc_v0( z0, zd );
+  v0 = ctrl_calc_v0( z0, za );
   complex_init( c, (z-z0)/(z0-zb), -v/v0 );
   return c;
 }
 
-double ctrl_events_calc_phi(double z0, double zd, double zb, vec_t p)
+double ctrl_events_calc_phi(double z0, double za, double zb, vec_t p)
 {
   complex_t c;
 
-  ctrl_events_calc_phase_complex( z0, zd, zb, p, &c );
+  ctrl_events_calc_phase_complex( z0, za, zb, p, &c );
   return complex_arg( &c );
 }
 
@@ -153,7 +153,7 @@ ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t 
   enum _ctrl_events_phases_t phase;
 
   if( ctrl_events_is_updated(self) ) return self;
-  phi = ctrl_events_calc_phi( cmd->z0, cmd->zd, cmd->zb, p );
+  phi = ctrl_events_calc_phi( cmd->z0, cmd->za, cmd->zb, p );
   if( ctrl_events_phi( self ) < 0 && phi >= 0 ) ctrl_events_n(self)++;
   phase = _ctrl_events_determine_phase( phi );
   _ctrl_events_update_event( self, phase, t, p, cmd );
@@ -186,9 +186,9 @@ void ctrl_destroy_default(ctrl_t *self)
   ctrl_events_destroy( ctrl_events( self ) );
 }
 
-double ctrl_calc_sqr_v0(double z0, double zd)
+double ctrl_calc_sqr_v0(double z0, double za)
 {
-  return 2.0 * G * ( zd - z0 );
+  return 2.0 * G * ( za - z0 );
 }
 
 ctrl_t *ctrl_reset_default(ctrl_t *self, void *util)

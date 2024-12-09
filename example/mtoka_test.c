@@ -19,7 +19,7 @@ simulator_t sim;
 void usage(int argc, const char *argv[])
 {
   fprintf( stderr, "Usage:\n" );
-  fprintf( stderr, "  %s <z0> <zd> <zb> <tau> <T> <a> <b> <th> <mu> <rho> <lam>\n", argv[0] );
+  fprintf( stderr, "  %s <z0> <za> <zb> <tau> <T> <a> <b> <th> <mu> <rho> <lam>\n", argv[0] );
 }
 
 void parse(int argc, const char *argv[])
@@ -48,7 +48,7 @@ void init()
 void setup_ctrl(const char *argv[])
 {
   cmd.z0 = atof( argv[1] );
-  cmd.zd = atof( argv[2] );
+  cmd.za = atof( argv[2] );
   cmd.zb = atof( argv[3] );
   ctrl_mtoka_create( &ctrl, &cmd, &model );
   ctrl_mtoka_rise_time_const(&ctrl)        = atof( argv[4] );
@@ -65,7 +65,7 @@ void run()
 {
   vec_t p0;
 
-  p0 = vec_create_list( 2, cmd.zd, 0.0 );
+  p0 = vec_create_list( 2, cmd.za, 0.0 );
   simulator_run( &sim, p0, TIME, DT, &logger, NULL );
   vec_destroy( p0 );
 }

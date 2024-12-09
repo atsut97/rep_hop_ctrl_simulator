@@ -14,10 +14,10 @@ def plot(dataset: DataSet) -> None:
         ax.set_title(dataset.datapath.name)
 
     # Plot constant parameters.
-    z0, zd, zb = dataset.param(["z0", "zd", "zb"])
+    z0, za, zb = dataset.param(["z0", "za", "zb"])
     ax.axvline(z0, ls="-", lw=1, c="k")
     ax.axhline(0, ls="-", lw=1, c="k")
-    ax.axvline(zd, ls="--", lw=1, c="k")
+    ax.axvline(za, ls="--", lw=1, c="k")
     ax.axvline(zb, ls="--", lw=1, c="k")
 
     # Plot solution curves.
@@ -26,7 +26,7 @@ def plot(dataset: DataSet) -> None:
 
     # Set misc.
     ax.grid()
-    ax.set_xlim([zb - 0.01, zd + 0.01])
+    ax.set_xlim([zb - 0.01, za + 0.01])
     ax.set_ylim([-0.8, 0.8])
 
 

@@ -4,9 +4,9 @@
 #include "rhc_misc.h"
 
 typedef struct{
-  double zd;       /* desired position */
-  double z0;       /* referential lift-off position */
-  double zb;       /* referential crounching position */
+  double za;       /* apex height */
+  double z0;       /* lift-off height */
+  double zb;       /* crouching height */
   union {
     struct _regulator {
       double q1, q2;

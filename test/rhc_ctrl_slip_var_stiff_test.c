@@ -44,7 +44,7 @@ TEST(test_ctrl_slip_var_stiff_destroy)
 TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp)
 {
   struct case_t{
-    double m, z, v, z0, zd, zb;
+    double m, z, v, z0, za, zb;
     double expected_k;
   } cases[] = {
     { 1, 0.24, 0, 0.26, 0.28, 0.24, 200*G },
@@ -62,7 +62,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp)
   for( c=cases; c->m>0; c++ ) {
     vec_set_elem_list( p, c->z, c->v );
     ASSERT_NEAR( c->expected_k,
-                 f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
+                 f( p, c->m, c->z0, c->za, c->zb ), 1e-10 );
   }
   vec_destroy( p );
 }
@@ -70,7 +70,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness_decomp)
 TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp)
 {
   struct case_t{
-    double m, z, v, z0, zd, zb;
+    double m, z, v, z0, za, zb;
     double expected_k;
   } cases[] = {
     { 1, 0.26, -0.2*sqrt(G), 0.26, 0.28, 0.24, 200*G },
@@ -87,7 +87,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp)
   for( c=cases; c->m>0; c++ ) {
     vec_set_elem_list( p, c->z, c->v );
     ASSERT_NEAR( c->expected_k,
-                 f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
+                 f( p, c->m, c->z0, c->za, c->zb ), 1e-10 );
   }
   vec_destroy( p );
 }
@@ -95,7 +95,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness_comp)
 TEST(test_ctrl_slip_var_stiff_calc_stiffness)
 {
   struct case_t{
-    double m, z, v, z0, zd, zb;
+    double m, z, v, z0, za, zb;
     double expected_k;
   } cases[] = {
     /* extension phases */
@@ -117,7 +117,7 @@ TEST(test_ctrl_slip_var_stiff_calc_stiffness)
   for( c=cases; c->m>0; c++ ) {
     vec_set_elem_list( p, c->z, c->v );
     ASSERT_NEAR( c->expected_k,
-                 f( p, c->m, c->z0, c->zd, c->zb ), 1e-10 );
+                 f( p, c->m, c->z0, c->za, c->zb ), 1e-10 );
   }
   vec_destroy( p );
 }

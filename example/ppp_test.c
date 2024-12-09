@@ -71,7 +71,7 @@ void make_initial_points(ppp_t *ppp)
 
   p0 = vec_create( 2 );
   cmd = ppp_cmd(ppp);
-  for( z0 = cmd->z0 - 0.005; z0 < cmd->zd + 0.1; z0 += 0.005 ) {
+  for( z0 = cmd->z0 - 0.005; z0 < cmd->za + 0.1; z0 += 0.005 ) {
     vec_set_elem_list( p0, z0, 0.0 );
     ppp_push_p0( ppp, p0 );
   }

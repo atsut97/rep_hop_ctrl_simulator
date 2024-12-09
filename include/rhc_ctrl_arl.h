@@ -11,7 +11,7 @@ enum ctrl_arl_types{
 
 typedef struct {
   enum ctrl_arl_types type; /* controller type */
-  double sqr_R0;
+  double sqr_R_des;
   double sqr_R;
   double delta;
 } ctrl_arl_prp;
@@ -32,15 +32,15 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util);
 
 ctrl_t *ctrl_arl_set_params(ctrl_t *self, double k, double beta);
 
-double ctrl_arl_calc_sqr_R0(double m, double k, double z0, double zd);
+double ctrl_arl_calc_sqr_R_des(double m, double k, double z0, double za);
 double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double z0);
-double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double z0, double zd);
-#define ctrl_arl_sqr_R0(self) \
-  ( ctrl_arl_calc_sqr_R0( ctrl_model(self)->m, ctrl_arl_k(self), ctrl_z0(self), ctrl_zd(self) ) )
+double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double z0, double za);
+#define ctrl_arl_sqr_R_des(self) \
+  ( ctrl_arl_calc_sqr_R_des( ctrl_model(self)->m, ctrl_arl_k(self), ctrl_z0(self), ctrl_za(self) ) )
 #define ctrl_arl_sqr_R(self,p) \
   ( ctrl_arl_calc_sqr_R( p, ctrl_model(self)->m, ctrl_arl_k(self), ctrl_z0(self) ) )
 #define ctrl_arl_delta(self,p) \
-  ( ctrl_arl_calc_delta( p, ctrl_model(self)->m, ctrl_arl_k(self), ctrl_arl_beta(self), ctrl_z0(self), ctrl_zd(self) ) )
+  ( ctrl_arl_calc_delta( p, ctrl_model(self)->m, ctrl_arl_k(self), ctrl_arl_beta(self), ctrl_z0(self), ctrl_za(self) ) )
 
 double ctrl_arl_calc_fz(ctrl_t *self, double t, vec_t p);
 

@@ -33,7 +33,7 @@ TEST(test_ctrl_arl_create)
   ASSERT_EQ( 0, ctrl_arl_beta(&ctrl) );
   ASSERT_PTRNE( NULL, ctrl.prp );
   ASSERT_EQ( none, ((ctrl_arl_prp*)ctrl.prp)->type );
-  ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->sqr_R0 );
+  ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->sqr_R_des );
   ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->sqr_R );
   ASSERT_EQ( 0, ((ctrl_arl_prp*)ctrl.prp)->delta );
 }
@@ -86,11 +86,11 @@ TEST(test_ctrl_arl_set_params)
   }
 }
 
-TEST(test_ctrl_arl_calc_sqr_R0)
+TEST(test_ctrl_arl_calc_sqr_R_des)
 {
   struct case_t {
-    double m, k, z0, zd;
-    double expected_sqr_R0;
+    double m, k, z0, za;
+    double expected_sqr_R_des;
   } cases[] = {
     { 1.0, G, 0.26, 0.28, 1.0804 },
     { 1.0, G, 0.25, 0.28, 1.1209 },
@@ -98,11 +98,11 @@ TEST(test_ctrl_arl_calc_sqr_R0)
     { 0.0, 0.0, 0.0, 0.0, 0.0 },
   };
   struct case_t *c;
-  double sqr_R0;
+  double sqr_R_des;
 
   for( c=cases; c->m>0; c++ ){
-    sqr_R0 = ctrl_arl_calc_sqr_R0( c->m, c->k, c->z0, c->zd );
-    ASSERT_NEAR( c->expected_sqr_R0, sqr_R0, 1e-10 );
+    sqr_R_des = ctrl_arl_calc_sqr_R_des( c->m, c->k, c->z0, c->za );
+    ASSERT_NEAR( c->expected_sqr_R_des, sqr_R_des, 1e-10 );
   }
 }
 
@@ -130,7 +130,7 @@ TEST(test_ctrl_arl_calc_sqr_R)
 TEST(test_ctrl_arl_calc_delta)
 {
   struct case_t {
-    double m, k, z, v, beta, z0, zd;
+    double m, k, z, v, beta, z0, za;
     double expected_delta;
   } cases[] = {
     { 1.0, G, 0.24,     0.0, 1.0, 0.26, 0.28, 0.0 }, /* bottom */
@@ -143,7 +143,7 @@ TEST(test_ctrl_arl_calc_delta)
 
   for( c=cases; c->m>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
-    delta = ctrl_arl_calc_delta( p, c->m, c->k, c->beta, c->z0, c->zd );
+    delta = ctrl_arl_calc_delta( p, c->m, c->k, c->beta, c->z0, c->za );
     ASSERT_NEAR( c->expected_delta, delta, 1e-10 );
   }
 }
@@ -156,7 +156,7 @@ TEST_SUITE(test_ctrl_arl)
   RUN_TEST(test_ctrl_arl_set_k);
   RUN_TEST(test_ctrl_arl_set_beta);
   RUN_TEST(test_ctrl_arl_set_params);
-  RUN_TEST(test_ctrl_arl_calc_sqr_R0);
+  RUN_TEST(test_ctrl_arl_calc_sqr_R_des);
   RUN_TEST(test_ctrl_arl_calc_sqr_R);
   RUN_TEST(test_ctrl_arl_calc_delta);
 }

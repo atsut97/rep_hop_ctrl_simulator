@@ -29,10 +29,10 @@ def plot(dataset: DataSet, tags: list[str]) -> None:
         ax.set_title(dataset.datapath.name)
 
     # Plot constant parameters.
-    z0, zd, zb = dataset.param(["z0", "zd", "zb"])
+    z0, za, zb = dataset.param(["z0", "za", "zb"])
     ax.axvline(z0, ls="-", lw=1, c="k")
     ax.axhline(0, ls="-", lw=1, c="k")
-    ax.axvline(zd, ls="--", lw=1, c="k")
+    ax.axvline(za, ls="--", lw=1, c="k")
     ax.axvline(zb, ls="--", lw=1, c="k")
 
     # Plot a specified trajectory.

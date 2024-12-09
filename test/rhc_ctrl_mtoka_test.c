@@ -264,7 +264,7 @@ TEST(test_ctrl_mtoka_update_check_sensory_feedback)
 {
   struct case_t{
     double rho, lam;
-    double zd, z0, zb, z, v;
+    double za, z0, zb, z, v;
     double expected;
   } cases[] = {
     { 1.0, 1.0, 0.28, 0.26, 0.24, 0.26, -sqrt(0.04*G), tanh(PI_2)},          /* touchdown */

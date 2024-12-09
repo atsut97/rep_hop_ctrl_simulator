@@ -46,13 +46,13 @@ void usage(int argc, const char *argv[])
   fprintf( stderr, "\n" );
   fprintf( stderr, "  List of controller types and required parameters:\n" );
   fprintf( stderr, "    full_nonlinear | fn\n" );
-  fprintf( stderr, "      $ %s fn <z0> <zl> <zd> <zb> <delta> <tau> <gamma> <yeta1> <g> <mu>\n", argv[0] );
+  fprintf( stderr, "      $ %s fn <z0> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <mu>\n", argv[0] );
   fprintf( stderr, "    simplified_nonlinear | sn\n" );
-  fprintf( stderr, "      $ %s sn <z0> <zl> <zd> <zb> <tau> <yeta1> <g>\n", argv[0] );
+  fprintf( stderr, "      $ %s sn <z0> <zl> <za> <zb> <tau> <yeta1> <g>\n", argv[0] );
   fprintf( stderr, "    full_linear | fl\n" );
-  fprintf( stderr, "      $ %s fl <z0> <zl> <zd> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr> <mu>\n", argv[0] );
+  fprintf( stderr, "      $ %s fl <z0> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr> <mu>\n", argv[0] );
   fprintf( stderr, "    simplified_linear | sl\n" );
-  fprintf( stderr, "      $ %s sl <z0> <zl> <zd> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr>\n", argv[0] );
+  fprintf( stderr, "      $ %s sl <z0> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr>\n", argv[0] );
 }
 
 void parse(int argc, const char *argv[])
@@ -147,7 +147,7 @@ void setup_ctrl(const char *argv[])
   if( preset_id == raibert_presets_custom ){
     z0_list = vec_create_list( 1, atof( argv[2] ) );
     cmd.z0 = atof( argv[3] );
-    cmd.zd = atof( argv[4] );
+    cmd.za = atof( argv[4] );
     cmd.zb = atof( argv[5] );
     ctrl_raibert_create( &ctrl, &cmd, &model, type_id );
     if( type_id == full_nonlinear ){
@@ -179,7 +179,7 @@ void setup_ctrl(const char *argv[])
     }
   } else {
     cmd.z0 = 0.5;
-    cmd.zd = 1.0;
+    cmd.za = 1.0;
     cmd.zb = 0.2;
     ctrl_raibert_create( &ctrl, &cmd, &model, type_id );
     if( preset_id == raibert_presets_full_nonlinear ){
@@ -200,14 +200,14 @@ void setup_ctrl(const char *argv[])
       z0_list = vec_create_list( 2, 0.91, 0.98 );
     } else if( preset_id == raibert_presets_tuned_simplified_linear ){
       cmd.z0 = 0;
-      cmd.zd = 0.5;
+      cmd.za = 0.5;
       cmd.zb = -0.3;
       ctrl_raibert_set_params_simplified_linear( &ctrl, 0.039, 41.86, 0.58, 46.5, 0.1 );
       model_set_gravity( ctrl_model(&ctrl), 5 );
       z0_list = vec_create_list( 2, 0.44, 0.5 );
     } else if( preset_id == raibert_presets_untuned_simplified_linear ){
       cmd.z0 = 0;
-      cmd.zd = 0.1;
+      cmd.za = 0.1;
       cmd.zb = -0.2;
       ctrl_raibert_set_params_simplified_linear( &ctrl, 0.05, 41.86, 2.33, 46.5, 0.215 );
       model_set_gravity( ctrl_model(&ctrl), 10 );

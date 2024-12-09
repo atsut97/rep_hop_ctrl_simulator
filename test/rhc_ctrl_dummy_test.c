@@ -36,7 +36,7 @@ TEST(test_ctrl_dummy_update)
 TEST(test_ctrl_dummy_update_phase)
 {
   struct case_t {
-    double zd, z0, zb;
+    double za, z0, zb;
     double z, v;
     int expct_n;
     double expct_phi;
@@ -58,7 +58,7 @@ TEST(test_ctrl_dummy_update_phase)
   double t;
 
   t = 0;
-  for( c=cases; c->zd>0; c++ ){
+  for( c=cases; c->za>0; c++ ){
     vec_set_elem_list( p, 2, c->z, c->v );
     ctrl_update( &ctrl, t, p );
     ASSERT_DOUBLE_EQ( c->expct_n, ctrl_n( &ctrl ) );
@@ -70,7 +70,7 @@ TEST(test_ctrl_dummy_update_phase)
 TEST(test_ctrl_dummy_update_flight_zero)
 {
   struct case_t {
-    double zd, z0, zb;
+    double za, z0, zb;
     double z, v;
     double expct_fz;
   } cases[] = {
@@ -89,7 +89,7 @@ TEST(test_ctrl_dummy_update_flight_zero)
   double t;
 
   t = 0;
-  for( c=cases; c->zd>0; c++ ){
+  for( c=cases; c->za>0; c++ ){
     vec_set_elem_list( p, 2, c->z, c->v );
     ctrl_update( &ctrl, t, p );
     ASSERT_DOUBLE_EQ( c->expct_fz, ctrl_fz( &ctrl ) );

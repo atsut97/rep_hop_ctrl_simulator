@@ -70,7 +70,7 @@ TEST(test_logger_close)
 }
 
 void header(FILE *fp, simulator_t *s, void *util) {
-  fprintf( fp, "t,x,y,z,fe,zd,z0,zb,m,az\n");
+  fprintf( fp, "t,x,y,z,fe,za,z0,zb,m,az\n");
 }
 
 void output(FILE *fp, simulator_t *s, void *util) {
@@ -80,7 +80,7 @@ void output(FILE *fp, simulator_t *s, void *util) {
   fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
            simulator_time(s),
            vec_elem(state,0), vec_elem(state,1), vec_elem(state,2),
-           simulator_fe(s), cmd->zd, cmd->z0, cmd->zb,
+           simulator_fe(s), cmd->za, cmd->z0, cmd->zb,
            model_mass(model), model_acc(model) );
 }
 
