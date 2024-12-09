@@ -59,6 +59,11 @@ mtoka_osci_t *mtoka_osci_init(mtoka_osci_t *self, int n_neuron)
 
 void mtoka_osci_destroy(mtoka_osci_t *self)
 {
+  register int i;
+
+  for( i=0; i<mtoka_osci_n_neuron(self); i++ ){
+    mtoka_osci_neuron_destroy( mtoka_osci_neuron(self,i) );
+  }
   vec_destroy( mtoka_osci_membrane_potential(self) );
   mtoka_osci_membrane_potential(self) = NULL;
   vec_destroy( mtoka_osci_firing_rate(self) );

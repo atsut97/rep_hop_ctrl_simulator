@@ -16,7 +16,6 @@ void teardown_neuron()
 
 TEST(test_mtoka_osci_neuron_init)
 {
-  mtoka_osci_neuron_init( &neuron, 2 );
   ASSERT_EQ( 1.0, mtoka_osci_neuron_rise_time_const(&neuron) );
   ASSERT_EQ( 1.0, mtoka_osci_neuron_adapt_time_const(&neuron) );
   ASSERT_EQ( 2, vec_size(mtoka_osci_neuron_mutual_inhibit_weights(&neuron)) );
@@ -239,16 +238,18 @@ TEST(test_mtoka_osci_init_specify_n_neuron)
 
 TEST(test_mtoka_osci_destroy)
 {
-  mtoka_osci_destroy( &osci );
-  ASSERT_EQ( 0.0, mtoka_osci_time(&osci) );
-  ASSERT_PTREQ( NULL, osci.neurons );
-  ASSERT_PTREQ( NULL, mtoka_osci_membrane_potential(&osci) );
-  ASSERT_PTREQ( NULL, mtoka_osci_firing_rate(&osci) );
-  ASSERT_PTREQ( NULL, mtoka_osci_adapt_property(&osci) );
-  ASSERT_PTREQ( NULL, mtoka_osci_tonic_input(&osci) );
-  ASSERT_PTREQ( NULL, mtoka_osci_sensory_feedback(&osci) );
-  ASSERT_PTREQ( NULL, osci.xv );
-  ASSERT_PTREQ( NULL, osci.ode._ws );
+  mtoka_osci_t local_osci;
+  mtoka_osci_init( &local_osci, 2 );
+  mtoka_osci_destroy( &local_osci );
+  ASSERT_EQ( 0.0, mtoka_osci_time(&local_osci) );
+  ASSERT_PTREQ( NULL, local_osci.neurons );
+  ASSERT_PTREQ( NULL, mtoka_osci_membrane_potential(&local_osci) );
+  ASSERT_PTREQ( NULL, mtoka_osci_firing_rate(&local_osci) );
+  ASSERT_PTREQ( NULL, mtoka_osci_adapt_property(&local_osci) );
+  ASSERT_PTREQ( NULL, mtoka_osci_tonic_input(&local_osci) );
+  ASSERT_PTREQ( NULL, mtoka_osci_sensory_feedback(&local_osci) );
+  ASSERT_PTREQ( NULL, local_osci.xv );
+  ASSERT_PTREQ( NULL, local_osci.ode._ws );
 }
 
 TEST(test_mtoka_osci_set_rise_time_const)
@@ -414,6 +415,7 @@ TEST(test_mtoka_osci_clear_tonic_input)
   mtoka_osci_clear_tonic_input( &osci );
   ASSERT_EQ( 0.0, vec_elem(mtoka_osci_tonic_input(&osci), 0) );
   ASSERT_EQ( 0.0, vec_elem(mtoka_osci_tonic_input(&osci), 1) );
+  vec_destroy(c);
 }
 
 TEST(test_mtoka_osci_clear_sensory_feedback)
@@ -427,6 +429,7 @@ TEST(test_mtoka_osci_clear_sensory_feedback)
   mtoka_osci_clear_sensory_feedback( &osci );
   ASSERT_EQ( 0.0, vec_elem(mtoka_osci_sensory_feedback(&osci), 0) );
   ASSERT_EQ( 0.0, vec_elem(mtoka_osci_sensory_feedback(&osci), 1) );
+  vec_destroy(s);
 }
 
 TEST(test_mtoka_osci_inc_step)
