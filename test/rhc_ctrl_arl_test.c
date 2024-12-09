@@ -22,7 +22,6 @@ void teardown() {
 
 TEST(test_ctrl_arl_create)
 {
-  ctrl_arl_create( &ctrl, &cmd, &model, none );
   ASSERT_PTREQ( ctrl_cmd( &ctrl ), &cmd );
   ASSERT_PTREQ( ctrl_model( &ctrl ), &model );
   ASSERT_PTREQ( ctrl_arl_update, ctrl._update );
@@ -40,7 +39,6 @@ TEST(test_ctrl_arl_create)
 
 TEST(test_ctrl_arl_destroy)
 {
-  ctrl_arl_create( &ctrl, &cmd, &model, none );
   ctrl_arl_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl_model( &ctrl ) );
@@ -52,7 +50,6 @@ TEST(test_ctrl_arl_destroy)
 TEST(test_ctrl_arl_set_k)
 {
   double k = 10.0;
-  ctrl_arl_create( &ctrl, &cmd, &model, none );
   ctrl_arl_set_k( &ctrl, k );
   ASSERT_EQ( k, ctrl_arl_k(&ctrl) );
 }
@@ -60,7 +57,6 @@ TEST(test_ctrl_arl_set_k)
 TEST(test_ctrl_arl_set_beta)
 {
   double beta = 500.0;
-  ctrl_arl_create( &ctrl, &cmd, &model, none );
   ctrl_arl_set_beta( &ctrl, beta );
   ASSERT_EQ( beta, ctrl_arl_beta(&ctrl) );
 }
@@ -76,13 +72,14 @@ TEST(test_ctrl_arl_set_params)
     { 0, 0 },
   };
   struct case_t *c;
+  ctrl_t local_ctrl;
 
   for ( c=cases; c->k>0; c++ ){
-    ctrl_arl_create( &ctrl, &cmd, &model, none );
-    ctrl_arl_set_params( &ctrl, c->k, c->beta );
-    ASSERT_EQ( c->k, ctrl_arl_k(&ctrl) );
-    ASSERT_EQ( c->beta, ctrl_arl_beta(&ctrl) );
-    ctrl_arl_destroy( &ctrl );
+    ctrl_arl_create( &local_ctrl, &cmd, &model, none );
+    ctrl_arl_set_params( &local_ctrl, c->k, c->beta );
+    ASSERT_EQ( c->k, ctrl_arl_k(&local_ctrl) );
+    ASSERT_EQ( c->beta, ctrl_arl_beta(&local_ctrl) );
+    ctrl_arl_destroy( &local_ctrl );
   }
 }
 
