@@ -6,7 +6,10 @@
 typedef struct{
   double za;       /* apex height */
   double zh;       /* lift-off height */
+  double zm;       /* standing height */
   double zb;       /* crouching height */
+  double zmax;     /* kinematic upper limit */
+  double zmin;     /* kinematic lower limit */
   union {
     struct _regulator {
       double q1, q2;

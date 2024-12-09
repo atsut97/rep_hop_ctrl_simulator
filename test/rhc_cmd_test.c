@@ -20,7 +20,10 @@ TEST(test_cmd_init)
   cmd_init( &cmd );
   ASSERT_EQ( 0, cmd.za );
   ASSERT_EQ( 0, cmd.zh );
+  ASSERT_EQ( 0, cmd.zm );
   ASSERT_EQ( 0, cmd.zb );
+  ASSERT_EQ( 0, cmd.zmax );
+  ASSERT_EQ( 0, cmd.zmin );
 }
 
 TEST(test_cmd_init_regulator)
@@ -72,7 +75,10 @@ TEST(test_cmd_default_init)
   cmd_default_init( &cmd );
   ASSERT_EQ( 0.28, cmd.za );
   ASSERT_EQ( 0.26, cmd.zh );
+  ASSERT_EQ( 0.25, cmd.zm );
   ASSERT_EQ( 0.24, cmd.zb );
+  ASSERT_EQ( 0.26, cmd.zmax );
+  ASSERT_EQ( 0.24, cmd.zmin );
 }
 
 
@@ -82,7 +88,10 @@ TEST(test_cmd_destroy)
   cmd_destroy( &cmd );
   ASSERT_EQ( 0, cmd.za );
   ASSERT_EQ( 0, cmd.zh );
+  ASSERT_EQ( 0, cmd.zm );
   ASSERT_EQ( 0, cmd.zb );
+  ASSERT_EQ( 0, cmd.zmax );
+  ASSERT_EQ( 0, cmd.zmin );
 }
 
 TEST_SUITE(test_cmd)
