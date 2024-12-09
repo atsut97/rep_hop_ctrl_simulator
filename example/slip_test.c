@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
   logger_t logger;
   simulator_t sim;
   vec_t p0;
-  double z0;
+  double zh;
 
   cmd_default_init( &cmd );
   model_init( &model, 10 );
@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
   simulator_set_default_logger( &sim, &logger );
   p0 = vec_create( 2 );
 
-  for( z0 = cmd.z0 - 0.005; z0 < cmd.za + 0.1; z0 += 0.005 ) {
-    vec_set_elem_list( p0, z0, 0.0 );
+  for( zh = cmd.zh - 0.005; zh < cmd.za + 0.1; zh += 0.005 ) {
+    vec_set_elem_list( p0, zh, 0.0 );
     simulator_run( &sim, p0, T, DT, &logger, NULL );
   }
 

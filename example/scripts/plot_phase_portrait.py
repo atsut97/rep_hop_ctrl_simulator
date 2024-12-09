@@ -14,8 +14,8 @@ def plot(dataset: DataSet) -> None:
         ax.set_title(dataset.datapath.name)
 
     # Plot constant parameters.
-    z0, za, zb = dataset.param(["z0", "za", "zb"])
-    ax.axvline(z0, ls="-", lw=1, c="k")
+    zh, za, zb = dataset.param(["zh", "za", "zb"])
+    ax.axvline(zh, ls="-", lw=1, c="k")
     ax.axhline(0, ls="-", lw=1, c="k")
     ax.axvline(za, ls="--", lw=1, c="k")
     ax.axvline(zb, ls="--", lw=1, c="k")

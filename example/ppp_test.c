@@ -65,14 +65,14 @@ void init()
 
 void make_initial_points(ppp_t *ppp)
 {
-  double z0;
+  double zh;
   vec_t p0;
   cmd_t *cmd;
 
   p0 = vec_create( 2 );
   cmd = ppp_cmd(ppp);
-  for( z0 = cmd->z0 - 0.005; z0 < cmd->za + 0.1; z0 += 0.005 ) {
-    vec_set_elem_list( p0, z0, 0.0 );
+  for( zh = cmd->zh - 0.005; zh < cmd->za + 0.1; zh += 0.005 ) {
+    vec_set_elem_list( p0, zh, 0.0 );
     ppp_push_p0( ppp, p0 );
   }
   vec_destroy( p0 );

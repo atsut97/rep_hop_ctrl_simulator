@@ -40,7 +40,7 @@ ctrl_t *ctrl_regulator_update(ctrl_t *self, double t, vec_t p)
 
   ctrl_update_default( self, t, p );
   prp = self->prp;
-  prp->xi = ctrl_regulator_calc_xi( ctrl_z0(self) );
+  prp->xi = ctrl_regulator_calc_xi( ctrl_zh(self) );
   self->fz = ctrl_regulator_calc_fz( self, p );
   if( ctrl_phase_in( self, flight ) ) self->fz = 0;
   return self;
@@ -58,23 +58,23 @@ void ctrl_regulator_writer(FILE *fp, ctrl_t *self, void *util)
            ctrl_regulator_xi(self) );
 }
 
-double ctrl_regulator_calc_sqr_xi(double z0)
+double ctrl_regulator_calc_sqr_xi(double zh)
 {
-  return G / z0;
+  return G / zh;
 }
 
 double ctrl_regulator_calc_fz(ctrl_t *self, vec_t p)
 {
-  double z0, q1, q2, m;
+  double zh, q1, q2, m;
   double xi2;
   double k1, k2;
 
-  z0 = ctrl_z0(self);
+  zh = ctrl_zh(self);
   q1 = ctrl_regulator_q1(self);
   q2 = ctrl_regulator_q2(self);
   m = ctrl_model(self)->m;
-  xi2 = ctrl_regulator_calc_sqr_xi( z0 );
+  xi2 = ctrl_regulator_calc_sqr_xi( zh );
   k1 = -m * xi2 * q1 * q2;
   k2 = -m * sqrt(xi2) * ( q1 + q2 );
-  return k1 * ( vec_elem( p, 0 ) - z0 ) + k2 * vec_elem( p, 1 ) + m * G;
+  return k1 * ( vec_elem( p, 0 ) - zh ) + k2 * vec_elem( p, 1 ) + m * G;
 }

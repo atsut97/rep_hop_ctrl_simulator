@@ -8,7 +8,7 @@
 
 typedef struct {
   /* Events are determined by the current position and velocity and
-   * the highest position when standing (z0). */
+   * the highest position when standing (zh). */
   struct _ctrl_events_tuple_t {
     double t, z, v;
   } ctrl_events_tuple_t;
@@ -63,8 +63,8 @@ bool ctrl_events_is_in_flight(ctrl_events_t *self);
 #define ctrl_events_phase(self) ( (self)->phase )
 #define ctrl_events_phi(self)   ( (self)->phi )
 #define ctrl_events_n(self)     ( (self)->n )
-complex_t *ctrl_events_calc_phase_complex(double z0, double za, double zb, vec_t p, complex_t *c);
-double ctrl_events_calc_phi(double z0, double za, double zb, vec_t p);
+complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, complex_t *c);
+double ctrl_events_calc_phi(double zh, double za, double zb, vec_t p);
 
 #define ctrl_events_is_updated(self)  ( (self)->is_updated )
 #define ctrl_events_update_next(self) ( ctrl_events_is_updated(self) = false )
@@ -85,7 +85,7 @@ typedef struct _ctrl_t{
 #define ctrl_cmd(self)    ((ctrl_t*)self)->cmd
 #define ctrl_model(self)  ((ctrl_t*)self)->model
 #define ctrl_fz(self)     ((ctrl_t*)self)->fz
-#define ctrl_z0(self)     ctrl_cmd(self)->z0
+#define ctrl_zh(self)     ctrl_cmd(self)->zh
 #define ctrl_za(self)     ctrl_cmd(self)->za
 #define ctrl_zb(self)     ctrl_cmd(self)->zb
 #define ctrl_n(self)      ctrl_events_n( ctrl_events(self) )
@@ -104,9 +104,9 @@ typedef struct _ctrl_t{
 
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model);
 
-double ctrl_calc_sqr_v0(double z0, double za);
-#define ctrl_calc_v0(z0,za) sqrt( ctrl_calc_sqr_v0( z0, za ) )
-#define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_z0(self), ctrl_za(self) )
+double ctrl_calc_sqr_v0(double zh, double za);
+#define ctrl_calc_v0(zh,za) sqrt( ctrl_calc_sqr_v0( zh, za ) )
+#define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_zh(self), ctrl_za(self) )
 #define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
 
 ctrl_t *ctrl_reset_default(ctrl_t *self, void *util);

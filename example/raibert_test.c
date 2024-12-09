@@ -28,7 +28,7 @@ logger_t logger;
 simulator_t sim;
 enum ctrl_raibert_types type_id = none;
 enum raibert_presets preset_id = raibert_presets_custom;
-vec_t z0_list;
+vec_t zh_list;
 
 void usage(int argc, const char *argv[])
 {
@@ -46,13 +46,13 @@ void usage(int argc, const char *argv[])
   fprintf( stderr, "\n" );
   fprintf( stderr, "  List of controller types and required parameters:\n" );
   fprintf( stderr, "    full_nonlinear | fn\n" );
-  fprintf( stderr, "      $ %s fn <z0> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <mu>\n", argv[0] );
+  fprintf( stderr, "      $ %s fn <zh> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <mu>\n", argv[0] );
   fprintf( stderr, "    simplified_nonlinear | sn\n" );
-  fprintf( stderr, "      $ %s sn <z0> <zl> <za> <zb> <tau> <yeta1> <g>\n", argv[0] );
+  fprintf( stderr, "      $ %s sn <zh> <zl> <za> <zb> <tau> <yeta1> <g>\n", argv[0] );
   fprintf( stderr, "    full_linear | fl\n" );
-  fprintf( stderr, "      $ %s fl <z0> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr> <mu>\n", argv[0] );
+  fprintf( stderr, "      $ %s fl <zh> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr> <mu>\n", argv[0] );
   fprintf( stderr, "    simplified_linear | sl\n" );
-  fprintf( stderr, "      $ %s sl <z0> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr>\n", argv[0] );
+  fprintf( stderr, "      $ %s sl <zh> <zl> <za> <zb> <delta> <tau> <gamma> <yeta1> <g> <zr>\n", argv[0] );
 }
 
 void parse(int argc, const char *argv[])
@@ -145,8 +145,8 @@ void init()
 void setup_ctrl(const char *argv[])
 {
   if( preset_id == raibert_presets_custom ){
-    z0_list = vec_create_list( 1, atof( argv[2] ) );
-    cmd.z0 = atof( argv[3] );
+    zh_list = vec_create_list( 1, atof( argv[2] ) );
+    cmd.zh = atof( argv[3] );
     cmd.za = atof( argv[4] );
     cmd.zb = atof( argv[5] );
     ctrl_raibert_create( &ctrl, &cmd, &model, type_id );
@@ -178,40 +178,40 @@ void setup_ctrl(const char *argv[])
       ctrl_raibert_zr(&ctrl)           = atof( argv[11] );
     }
   } else {
-    cmd.z0 = 0.5;
+    cmd.zh = 0.5;
     cmd.za = 1.0;
     cmd.zb = 0.2;
     ctrl_raibert_create( &ctrl, &cmd, &model, type_id );
     if( preset_id == raibert_presets_full_nonlinear ){
       ctrl_raibert_set_params_full_nonlinear( &ctrl, 0.01, 41.86, 2.33, 5.81, 1 );
       model_set_gravity( ctrl_model(&ctrl), 10 );
-      z0_list = vec_create_list( 2, 0.8, 0.9 );
+      zh_list = vec_create_list( 2, 0.8, 0.9 );
     } else if( preset_id == raibert_presets_simplified_nonlinear ){
       ctrl_raibert_set_params_simplified_nonlinear( &ctrl, 41.86, 5.81 );
       model_set_gravity( ctrl_model(&ctrl), 10 );
-      z0_list = vec_create_list( 2, 1.15, 1.4 );
+      zh_list = vec_create_list( 2, 1.15, 1.4 );
     } else if( preset_id == raibert_presets_simplified_nonlinear_limping ){
       ctrl_raibert_set_params_simplified_nonlinear( &ctrl, 41.86, 2.33 );
       model_set_gravity( ctrl_model(&ctrl), 10 );
-      z0_list = vec_create_list( 1, 0.02 );
+      zh_list = vec_create_list( 1, 0.02 );
     } else if( preset_id == raibert_presets_full_linear ){
       ctrl_raibert_set_params_full_linear( &ctrl, 0.05, 41.86, 2.33, 46.5, 1, 1 );
       model_set_gravity( ctrl_model(&ctrl), 10 );
-      z0_list = vec_create_list( 2, 0.91, 0.98 );
+      zh_list = vec_create_list( 2, 0.91, 0.98 );
     } else if( preset_id == raibert_presets_tuned_simplified_linear ){
-      cmd.z0 = 0;
+      cmd.zh = 0;
       cmd.za = 0.5;
       cmd.zb = -0.3;
       ctrl_raibert_set_params_simplified_linear( &ctrl, 0.039, 41.86, 0.58, 46.5, 0.1 );
       model_set_gravity( ctrl_model(&ctrl), 5 );
-      z0_list = vec_create_list( 2, 0.44, 0.5 );
+      zh_list = vec_create_list( 2, 0.44, 0.5 );
     } else if( preset_id == raibert_presets_untuned_simplified_linear ){
-      cmd.z0 = 0;
+      cmd.zh = 0;
       cmd.za = 0.1;
       cmd.zb = -0.2;
       ctrl_raibert_set_params_simplified_linear( &ctrl, 0.05, 41.86, 2.33, 46.5, 0.215 );
       model_set_gravity( ctrl_model(&ctrl), 10 );
-      z0_list = vec_create_list( 2, -0.16, -0.18 );
+      zh_list = vec_create_list( 2, -0.16, -0.18 );
     }
   }
 }
@@ -222,8 +222,8 @@ void run()
   register int i;
 
   p0 = vec_create( 2 );
-  for( i=0; i<vec_size( z0_list ); i++ ){
-    vec_set_elem_list( p0, vec_elem(z0_list, i), 0.0 );
+  for( i=0; i<vec_size( zh_list ); i++ ){
+    vec_set_elem_list( p0, vec_elem(zh_list, i), 0.0 );
     simulator_run( &sim, p0, T, DT, &logger, NULL );
   }
   vec_destroy( p0 );
@@ -231,7 +231,7 @@ void run()
 
 void destroy()
 {
-  vec_destroy( z0_list );
+  vec_destroy( zh_list );
   simulator_destroy( &sim );
   logger_destroy( &logger );
   ctrl_destroy( &ctrl );

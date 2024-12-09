@@ -19,7 +19,7 @@ simulator_t sim;
 void usage(int argc, const char *argv[])
 {
   fprintf( stderr, "Usage:\n" );
-  fprintf( stderr, "  %s <z0> <za> <zb> <tau> <T> <a> <b> <th> <mu> <rho> <lam>\n", argv[0] );
+  fprintf( stderr, "  %s <zh> <za> <zb> <tau> <T> <a> <b> <th> <mu> <rho> <lam>\n", argv[0] );
 }
 
 void parse(int argc, const char *argv[])
@@ -47,7 +47,7 @@ void init()
 
 void setup_ctrl(const char *argv[])
 {
-  cmd.z0 = atof( argv[1] );
+  cmd.zh = atof( argv[1] );
   cmd.za = atof( argv[2] );
   cmd.zb = atof( argv[3] );
   ctrl_mtoka_create( &ctrl, &cmd, &model );

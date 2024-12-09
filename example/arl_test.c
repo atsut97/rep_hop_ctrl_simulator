@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
   logger_t logger;
   simulator_t sim;
   vec_t p0;
-  double z0;
-  vec_t z0_list;
+  double zh;
+  vec_t zh_list;
   register int i;
 
   cmd_default_init( &cmd );
@@ -25,11 +25,11 @@ int main(int argc, char *argv[])
   simulator_init( &sim, &cmd, &ctrl, &model );
   simulator_set_default_logger( &sim, &logger );
   p0 = vec_create( 2 );
-  z0_list = vec_create_list( 3, 0.275, 0.28, 0.285 );
+  zh_list = vec_create_list( 3, 0.275, 0.28, 0.285 );
 
-  for( i=0; i<vec_size( z0_list ); i++ ){
-    z0 = vec_elem(z0_list, i);
-    vec_set_elem_list( p0, z0, 0.0 );
+  for( i=0; i<vec_size( zh_list ); i++ ){
+    zh = vec_elem(zh_list, i);
+    vec_set_elem_list( p0, zh, 0.0 );
     simulator_run( &sim, p0, T, DT, &logger, NULL );
   }
 

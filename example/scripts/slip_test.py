@@ -7,8 +7,8 @@ from pyplotutil.datautil import DataSet
 
 def plot(dataset: DataSet) -> None:
     data = dataset.get("sc00005")
-    z0, za, zb = data.param(["z0", "za", "zb"])
-    plt.axvline(z0, lw=1, c="k")  # type: ignore
+    zh, za, zb = data.param(["zh", "za", "zb"])
+    plt.axvline(zh, lw=1, c="k")  # type: ignore
     plt.axhline(0, lw=1, c="k")
     plt.xlim([zb - 0.01, za + 0.01])
     plt.ylim([-0.8, 0.8])

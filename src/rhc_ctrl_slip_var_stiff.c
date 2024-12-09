@@ -32,7 +32,7 @@ ctrl_t *ctrl_slip_var_stiff_update(ctrl_t *self, double t, vec_t p)
   ctrl_update_default( self, t, p );
   prp = self->prp;
   prp->k = ctrl_slip_var_stiff_stiffness( self, p );
-  self->fz = -prp->k * ( vec_elem(p,0) - ctrl_z0(self) );
+  self->fz = -prp->k * ( vec_elem(p,0) - ctrl_zh(self) );
   if( ctrl_phase_in( self, flight ) ) self->fz = 0;
   return self;
 }
@@ -50,26 +50,26 @@ void ctrl_slip_var_stiff_writer(FILE *fp, ctrl_t *self, void *util)
   fprintf( fp, ",%f\n", prp->k );
 }
 
-double ctrl_slip_var_stiff_calc_stiffness_decomp(vec_t p, double m, double z0, double za, double zb)
+double ctrl_slip_var_stiff_calc_stiffness_decomp(vec_t p, double m, double zh, double za, double zb)
 {
   double numer = 2. * G * ( za - vec_elem(p,0) ) - sqr( vec_elem(p,1) );
-  double denom = sqr( z0 - vec_elem(p,0) );
+  double denom = sqr( zh - vec_elem(p,0) );
   if( istiny( denom ) )
     return 0;
   return m * numer / denom;
 }
 
-double ctrl_slip_var_stiff_calc_stiffness_comp(vec_t p, double m, double z0, double za, double zb)
+double ctrl_slip_var_stiff_calc_stiffness_comp(vec_t p, double m, double zh, double za, double zb)
 {
   double numer = 2. * G * ( vec_elem(p,0) - zb ) + sqr( vec_elem(p,1) );
-  double denom = ( 2.*z0 - ( vec_elem(p,0) + zb ) ) * ( vec_elem(p,0) - zb );
+  double denom = ( 2.*zh - ( vec_elem(p,0) + zb ) ) * ( vec_elem(p,0) - zb );
   return m * numer / denom;
 }
 
-double ctrl_slip_var_stiff_calc_stiffness(vec_t p, double m, double z0, double za, double zb)
+double ctrl_slip_var_stiff_calc_stiffness(vec_t p, double m, double zh, double za, double zb)
 {
   if( vec_elem(p,1) > -1e-10 )
-    return ctrl_slip_var_stiff_calc_stiffness_decomp( p, m, z0, za, zb );
+    return ctrl_slip_var_stiff_calc_stiffness_decomp( p, m, zh, za, zb );
   else
-    return ctrl_slip_var_stiff_calc_stiffness_comp( p, m, z0, za, zb );
+    return ctrl_slip_var_stiff_calc_stiffness_comp( p, m, zh, za, zb );
 }

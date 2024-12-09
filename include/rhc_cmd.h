@@ -5,7 +5,7 @@
 
 typedef struct{
   double za;       /* apex height */
-  double z0;       /* lift-off height */
+  double zh;       /* lift-off height */
   double zb;       /* crouching height */
   union {
     struct _regulator {

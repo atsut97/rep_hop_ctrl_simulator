@@ -89,7 +89,7 @@ TEST(test_ctrl_arl_set_params)
 TEST(test_ctrl_arl_calc_sqr_R_des)
 {
   struct case_t {
-    double m, k, z0, za;
+    double m, k, zh, za;
     double expected_sqr_R_des;
   } cases[] = {
     { 1.0, G, 0.26, 0.28, 1.0804 },
@@ -101,7 +101,7 @@ TEST(test_ctrl_arl_calc_sqr_R_des)
   double sqr_R_des;
 
   for( c=cases; c->m>0; c++ ){
-    sqr_R_des = ctrl_arl_calc_sqr_R_des( c->m, c->k, c->z0, c->za );
+    sqr_R_des = ctrl_arl_calc_sqr_R_des( c->m, c->k, c->zh, c->za );
     ASSERT_NEAR( c->expected_sqr_R_des, sqr_R_des, 1e-10 );
   }
 }
@@ -109,7 +109,7 @@ TEST(test_ctrl_arl_calc_sqr_R_des)
 TEST(test_ctrl_arl_calc_sqr_R)
 {
   struct case_t {
-    double m, k, z, v, z0;
+    double m, k, z, v, zh;
     double expected_sqr_R;
   } cases[] = {
     { 1.0, G, 0.24,     0.0, 0.26, 0.9604 }, /* bottom */
@@ -122,7 +122,7 @@ TEST(test_ctrl_arl_calc_sqr_R)
 
   for( c=cases; c->m>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
-    sqr_R = ctrl_arl_calc_sqr_R( p, c->m, c->k, c->z0 );
+    sqr_R = ctrl_arl_calc_sqr_R( p, c->m, c->k, c->zh );
     ASSERT_NEAR( c->expected_sqr_R, sqr_R, 1e-10 );
   }
 }
@@ -130,7 +130,7 @@ TEST(test_ctrl_arl_calc_sqr_R)
 TEST(test_ctrl_arl_calc_delta)
 {
   struct case_t {
-    double m, k, z, v, beta, z0, za;
+    double m, k, z, v, beta, zh, za;
     double expected_delta;
   } cases[] = {
     { 1.0, G, 0.24,     0.0, 1.0, 0.26, 0.28, 0.0 }, /* bottom */
@@ -143,7 +143,7 @@ TEST(test_ctrl_arl_calc_delta)
 
   for( c=cases; c->m>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
-    delta = ctrl_arl_calc_delta( p, c->m, c->k, c->beta, c->z0, c->za );
+    delta = ctrl_arl_calc_delta( p, c->m, c->k, c->beta, c->zh, c->za );
     ASSERT_NEAR( c->expected_delta, delta, 1e-10 );
   }
 }

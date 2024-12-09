@@ -16,7 +16,7 @@ cmd_t *cmd_default_init(cmd_t *self)
 {
   cmd_init( self );
   self->za = 0.28;
-  self->z0 = 0.26;
+  self->zh = 0.26;
   self->zb = 0.24;
   return self;
 }

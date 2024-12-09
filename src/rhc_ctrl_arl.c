@@ -58,23 +58,23 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util)
            prp->delta );
 }
 
-double ctrl_arl_calc_sqr_R_des(double m, double k, double z0, double za)
+double ctrl_arl_calc_sqr_R_des(double m, double k, double zh, double za)
 {
   double v0, sqr_R_des;
   vec_t p;
 
-  v0 = ctrl_calc_v0( z0, za );
+  v0 = ctrl_calc_v0( zh, za );
   p = vec_create_list( 2, za, v0 );
-  sqr_R_des = ctrl_arl_calc_sqr_R( p, m, k, z0 );
+  sqr_R_des = ctrl_arl_calc_sqr_R( p, m, k, zh );
   vec_destroy( p );
   return sqr_R_des;
 }
 
-double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double z0)
+double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double zh)
 {
   double l, v, c;
 
-  l = vec_elem(p, 0) - z0;
+  l = vec_elem(p, 0) - zh;
   v = vec_elem(p, 1);
   c = m / k;
   /* Note: definition of c is different from the paper. */
@@ -82,14 +82,14 @@ double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double z0)
   return ( l + c * G ) * ( l + c * G ) + c * v * v;
 }
 
-double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double z0, double za)
+double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double zh, double za)
 {
   double l, v, sqr_R, sqr_R_des;
 
-  l = vec_elem(p, 0) - z0;
+  l = vec_elem(p, 0) - zh;
   v = vec_elem(p, 1);
-  sqr_R = ctrl_arl_calc_sqr_R( p, m, k, z0 );
-  sqr_R_des = ctrl_arl_calc_sqr_R_des( m, k, z0, za );
+  sqr_R = ctrl_arl_calc_sqr_R( p, m, k, zh );
+  sqr_R_des = ctrl_arl_calc_sqr_R_des( m, k, zh, za );
   return beta * l * v * ( sqr_R - sqr_R_des );
 }
 
@@ -100,7 +100,7 @@ double ctrl_arl_calc_fz(ctrl_t *self, double t, vec_t p)
   if( ctrl_phase_in( self, flight ) ) {
     fz = 0;
   } else {
-    l = vec_elem(p, 0) - ctrl_z0(self);
+    l = vec_elem(p, 0) - ctrl_zh(self);
     delta = ctrl_arl_delta( self, p );
     fz = -ctrl_arl_k(self) * l + ctrl_model(self)->m * delta;
   }

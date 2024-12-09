@@ -146,7 +146,7 @@ TEST(test_ctrl_events_set_liftoff)
 TEST(test_ctrl_events_calc_phase_complex)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     complex_t expected;
   } cases[] = {
@@ -162,7 +162,7 @@ TEST(test_ctrl_events_calc_phase_complex)
 
   for( c=cases; c->za>0; c++ ){
     vec_set_elem_list( p, 2, c->z, c->v );
-    ctrl_events_calc_phase_complex( c->z0, c->za, c->zb, p, &cp );
+    ctrl_events_calc_phase_complex( c->zh, c->za, c->zb, p, &cp );
     ASSERT_DOUBLE_EQ( c->expected.re, cp.re );
     ASSERT_DOUBLE_EQ( c->expected.im, cp.im );
   }
@@ -171,7 +171,7 @@ TEST(test_ctrl_events_calc_phase_complex)
 TEST(test_ctrl_events_calc_phi)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     double expected;
   } cases[] = {
@@ -186,18 +186,18 @@ TEST(test_ctrl_events_calc_phi)
 
   for( c=cases; c->za>0; c++ ){
     vec_set_elem_list( p, 2, c->z, c->v );
-    ASSERT_DOUBLE_EQ( c->expected, ctrl_events_calc_phi( c->z0, c->za, c->zb, p ) );
+    ASSERT_DOUBLE_EQ( c->expected, ctrl_events_calc_phi( c->zh, c->za, c->zb, p ) );
   }
 }
 
 TEST(test_ctrl_events_is_in_rising)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     bool expected;
   } cases[] = {
-    /* za ,  z0 ,  zb ,    z ,     v , expected */
+    /* za ,  zh ,  zb ,    z ,     v , expected */
     { 0.28, 0.26, 0.24, 0.280,  0.000, false },  /* initial */
     { 0.28, 0.26, 0.24, 0.270, -0.010, false },  /* falling */
     { 0.28, 0.26, 0.24, 0.260, -0.030, false },  /* touchdown */
@@ -216,7 +216,7 @@ TEST(test_ctrl_events_is_in_rising)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
@@ -231,11 +231,11 @@ TEST(test_ctrl_events_is_in_rising)
 TEST(test_ctrl_events_is_in_falling)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     bool expected;
   } cases[] = {
-    /* za ,  z0 ,  zb ,    z ,     v , expected */
+    /* za ,  zh ,  zb ,    z ,     v , expected */
     { 0.28, 0.26, 0.24, 0.280,  0.000, true  },  /* initial */
     { 0.28, 0.26, 0.24, 0.279, -0.001, true  },  /* falling */
     { 0.28, 0.26, 0.24, 0.270, -0.010, true  },  /* falling */
@@ -257,7 +257,7 @@ TEST(test_ctrl_events_is_in_falling)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
@@ -272,11 +272,11 @@ TEST(test_ctrl_events_is_in_falling)
 TEST(test_ctrl_events_is_in_flight)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     bool expected;
   } cases[] = {
-    /* za ,  z0 ,  zb ,    z ,     v , expected */
+    /* za ,  zh ,  zb ,    z ,     v , expected */
     { 0.28, 0.26, 0.24, 0.280,  0.000, true  },  /* initial */
     { 0.28, 0.26, 0.24, 0.279, -0.001, true  },  /* falling */
     { 0.28, 0.26, 0.24, 0.270, -0.010, true  },  /* falling */
@@ -300,7 +300,7 @@ TEST(test_ctrl_events_is_in_flight)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
@@ -315,11 +315,11 @@ TEST(test_ctrl_events_is_in_flight)
 TEST(test_ctrl_events_is_in_compression)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     bool expected;
   } cases[] = {
-    /* za ,  z0 ,  zb ,    z ,     v , expected */
+    /* za ,  zh ,  zb ,    z ,     v , expected */
     { 0.28, 0.26, 0.24, 0.280,  0.000, false },  /* initial */
     { 0.28, 0.26, 0.24, 0.270, -0.010, false },  /* falling */
     { 0.28, 0.26, 0.24, 0.260, -0.030, true  },  /* touchdown */
@@ -345,7 +345,7 @@ TEST(test_ctrl_events_is_in_compression)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
@@ -360,11 +360,11 @@ TEST(test_ctrl_events_is_in_compression)
 TEST(test_ctrl_events_is_in_extension)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     bool expected;
   } cases[] = {
-    /* za ,  z0 ,  zb ,    z ,     v , expected */
+    /* za ,  zh ,  zb ,    z ,     v , expected */
     { 0.28, 0.26, 0.24, 0.280,  0.000, false },  /* initial */
     { 0.28, 0.26, 0.24, 0.270, -0.010, false },  /* falling */
     { 0.28, 0.26, 0.24, 0.260, -0.030, false },  /* touchdown */
@@ -392,7 +392,7 @@ TEST(test_ctrl_events_is_in_extension)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
@@ -407,11 +407,11 @@ TEST(test_ctrl_events_is_in_extension)
 TEST(test_ctrl_events_update_phase)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     enum _ctrl_events_phases_t expected;
   } cases[] = {
-    /* za ,  z0 ,  zb ,    z ,     v , expected */
+    /* za ,  zh ,  zb ,    z ,     v , expected */
     { 0.28, 0.26, 0.24, 0.280,  0.000, falling     },  /* initial */
     { 0.28, 0.26, 0.24, 0.270, -0.010, falling     },  /* falling */
     { 0.28, 0.26, 0.24, 0.260, -0.030, compression },  /* touchdown */
@@ -435,7 +435,7 @@ TEST(test_ctrl_events_update_phase)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
@@ -447,11 +447,11 @@ TEST(test_ctrl_events_update_phase)
 TEST(test_ctrl_events_update_n)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     int expected;
   } cases[] = {
-    /* za ,  z0 ,  zb ,    z ,     v , expected */
+    /* za ,  zh ,  zb ,    z ,     v , expected */
     { 0.28, 0.26, 0.24, 0.280,  0.000, 0 },  /* initial */
     { 0.28, 0.26, 0.24, 0.270, -0.010, 0 },  /* falling */
     { 0.28, 0.26, 0.24, 0.260, -0.030, 0 },  /* touchdown */
@@ -499,7 +499,7 @@ TEST(test_ctrl_events_update_n)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd );
@@ -512,13 +512,13 @@ TEST(test_ctrl_events_update_apex_1)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t apex;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.300, 0.00 }, },  /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.300, 0.00 }, },  /* falling */
     { 0.30, 0.25, 0.20, 0.10, 0.250, -0.30, { 0.00, 0.300, 0.00 }, },  /* touchdown */
@@ -547,7 +547,7 @@ TEST(test_ctrl_events_update_apex_1)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -562,13 +562,13 @@ TEST(test_ctrl_events_update_apex_2)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t apex;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.300,  0.00 }, },  /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.300, -0.01, { 0.00, 0.300,  0.00 }, },  /* falling */
     { 0.30, 0.25, 0.20, 0.10, 0.250, -0.90, { 0.00, 0.300,  0.00 }, },  /* touchdown */
@@ -599,7 +599,7 @@ TEST(test_ctrl_events_update_apex_2)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -614,13 +614,13 @@ TEST(test_ctrl_events_update_apex_initial)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t apex;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v ,apx:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00, { 0.00, 0.300, 0.00 }, },  /* initial */
     { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
   };
@@ -628,7 +628,7 @@ TEST(test_ctrl_events_update_apex_initial)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -643,13 +643,13 @@ TEST(test_ctrl_events_update_touchdown_1)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t touchdown;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
                       { 0.00, 0.300,  0.00 }, },         /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
@@ -683,7 +683,7 @@ TEST(test_ctrl_events_update_touchdown_1)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -698,13 +698,13 @@ TEST(test_ctrl_events_update_touchdown_2)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t touchdown;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
                       { 0.00, 0.300,  0.00 }, },         /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
@@ -748,7 +748,7 @@ TEST(test_ctrl_events_update_touchdown_2)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -763,13 +763,13 @@ TEST(test_ctrl_events_update_touchdown_initial)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t touchdown;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v , td:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.250, -sqrt(0.1*G),
                       { 0.00, 0.250, -sqrt(0.1*G) }, },  /* touchdown */
     { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
@@ -778,7 +778,7 @@ TEST(test_ctrl_events_update_touchdown_initial)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -793,13 +793,13 @@ TEST(test_ctrl_events_update_bottom_1)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t bottom;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v ,btm:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v ,btm:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
                       { 0.00, 0.000,  0.00 }, },         /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
@@ -841,7 +841,7 @@ TEST(test_ctrl_events_update_bottom_1)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -856,13 +856,13 @@ TEST(test_ctrl_events_update_bottom_initial)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t bottom;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v ,btm:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v ,btm:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.200,  0.00,
                       { 0.00, 0.200,  0.00 }, },         /* bottom */
     { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00, { 0.00, 0.000, 0.00 }, },  /* terminator */
@@ -871,7 +871,7 @@ TEST(test_ctrl_events_update_bottom_initial)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -886,13 +886,13 @@ TEST(test_ctrl_events_update_bottom_2)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t bottom;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v ,btm:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v ,btm:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
                       { 0.00, 0.000,  0.00 }, },         /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
@@ -936,7 +936,7 @@ TEST(test_ctrl_events_update_bottom_2)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -951,13 +951,13 @@ TEST(test_ctrl_events_update_liftoff_1)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t liftoff;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
                       { 0.00, 0.000,  0.00 }, },         /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
@@ -999,7 +999,7 @@ TEST(test_ctrl_events_update_liftoff_1)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -1014,13 +1014,13 @@ TEST(test_ctrl_events_update_liftoff_2)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t liftoff;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
                       { 0.00, 0.000,  0.00 }, },         /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
@@ -1066,7 +1066,7 @@ TEST(test_ctrl_events_update_liftoff_2)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -1081,13 +1081,13 @@ TEST(test_ctrl_events_update_liftoff_initial)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t liftoff;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.250,  sqrt(0.1*G),
                       { 0.00, 0.250,  sqrt(0.1*G) }, },  /* lift-off */
     { 0.00, 0.00, 0.00, 0.00, 0.000,  0.00,
@@ -1097,7 +1097,7 @@ TEST(test_ctrl_events_update_liftoff_initial)
 
   for( c=cases; c->za>0; c++ ){
     cmd.za = c->za;
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.zb = c->zb;
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, c->t, p, &cmd );
@@ -1112,13 +1112,13 @@ TEST(test_ctrl_events_update_flag)
 {
   struct case_t {
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expected recorded events */
     struct _ctrl_events_tuple_t liftoff;
   } cases[] = {
-    /* za ,  z0 ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
+    /* za ,  zh ,  zb ,   t ,    z ,    v , lo:{ t,    z ,   v } */
     { 0.30, 0.25, 0.20, 0.00, 0.300,  0.00,
                       { 0.00, 0.000,  0.00 }, },         /* initial */
     { 0.30, 0.25, 0.20, 0.01, 0.299, -0.01,
@@ -1129,7 +1129,7 @@ TEST(test_ctrl_events_update_flag)
 
   c = cases;
   cmd.za = c->za;
-  cmd.z0 = c->z0;
+  cmd.zh = c->zh;
   cmd.zb = c->zb;
   vec_set_elem_list( p, c->z, c->v );
 
@@ -1222,14 +1222,14 @@ TEST(test_ctrl_destroy)
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
-TEST(test_ctrl_z0)
+TEST(test_ctrl_zh)
 {
   double cases[] = { 0.26, 0.28, 0.3, 0.0 };
   double *c;
 
   for( c=cases; *c>0; c++ ){
-    cmd.z0 = *c;
-    ASSERT_EQ( *c, ctrl_z0( &ctrl ) );
+    cmd.zh = *c;
+    ASSERT_EQ( *c, ctrl_zh( &ctrl ) );
   }
 }
 
@@ -1258,7 +1258,7 @@ TEST(test_ctrl_zb)
 TEST(test_ctrl_v0)
 {
   struct case_t {
-    double z0, za;
+    double zh, za;
     double expected;
   } cases[] = {
     { 0.26, 0.28, sqrt(0.04*G) },
@@ -1268,8 +1268,8 @@ TEST(test_ctrl_v0)
   };
   struct case_t *c;
 
-  for( c=cases; c->z0>0; c++ ){
-    cmd.z0 = c->z0;
+  for( c=cases; c->zh>0; c++ ){
+    cmd.zh = c->zh;
     cmd.za = c->za;
     ASSERT_DOUBLE_EQ( c->expected, ctrl_v0( &ctrl ) );
   }
@@ -1290,7 +1290,7 @@ TEST(test_ctrl_reset_default)
 TEST(test_ctrl_update_default)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     int expct_n;
     double expct_phi;
@@ -1326,7 +1326,7 @@ TEST(test_ctrl_phase)
   double v0 = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expectations */
@@ -1363,7 +1363,7 @@ TEST(test_ctrl_events_at_apex)
   double v0 = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expectations */
@@ -1396,7 +1396,7 @@ TEST(test_ctrl_events_at_touchdown)
   double v0 = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expectations */
@@ -1429,7 +1429,7 @@ TEST(test_ctrl_events_at_bottom)
   double v0 = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expectations */
@@ -1462,7 +1462,7 @@ TEST(test_ctrl_events_at_liftoff)
   double v0 = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
-    double za, z0, zb;
+    double za, zh, zb;
     /* states */
     double t, z, v;
     /* expectations */
@@ -1495,7 +1495,7 @@ TEST_SUITE(test_ctrl)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_init);
   RUN_TEST(test_ctrl_destroy);
-  RUN_TEST(test_ctrl_z0);
+  RUN_TEST(test_ctrl_zh);
   RUN_TEST(test_ctrl_za);
   RUN_TEST(test_ctrl_zb);
   RUN_TEST(test_ctrl_v0);

@@ -32,7 +32,7 @@ ctrl_t *ctrl_slip_update(ctrl_t *self, double t, vec_t p)
   ctrl_update_default( self, t, p );
   prp = self->prp;
   prp->k = ctrl_slip_stiffness( self );
-  self->fz = -prp->k * ( vec_elem(p,0) - ctrl_z0(self) );
+  self->fz = -prp->k * ( vec_elem(p,0) - ctrl_zh(self) );
   if( ctrl_phase_in( self, flight ) ) self->fz = 0;
   return self;
 }
@@ -50,7 +50,7 @@ void ctrl_slip_writer(FILE *fp, ctrl_t *self, void *util)
   fprintf( fp, ",%f\n", prp->k );
 }
 
-double ctrl_slip_calc_stiffness(double m, double z0, double za, double zb)
+double ctrl_slip_calc_stiffness(double m, double zh, double za, double zb)
 {
-  return 2. * m * G * ( za - zb ) / sqr( z0 - zb );
+  return 2. * m * G * ( za - zb ) / sqr( zh - zb );
 }

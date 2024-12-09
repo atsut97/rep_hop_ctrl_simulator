@@ -36,7 +36,7 @@ TEST(test_ctrl_dummy_update)
 TEST(test_ctrl_dummy_update_phase)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     int expct_n;
     double expct_phi;
@@ -70,7 +70,7 @@ TEST(test_ctrl_dummy_update_phase)
 TEST(test_ctrl_dummy_update_flight_zero)
 {
   struct case_t {
-    double za, z0, zb;
+    double za, zh, zb;
     double z, v;
     double expct_fz;
   } cases[] = {

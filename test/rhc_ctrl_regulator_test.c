@@ -49,35 +49,35 @@ TEST(test_ctrl_regulator_destroy)
 TEST(test_ctrl_regulator_calc_sqr_xi)
 {
   struct case_t{
-    double z0;
+    double zh;
     double expected;
   } cases[] = {
     { 1, G }, { G, 1 }, { 0.5*G, 2 }, { 0, 0 }
   };
   struct case_t *c;
-  for( c=cases; c->z0>0; c++ ){
-    ASSERT_NEAR( c->expected, ctrl_regulator_calc_sqr_xi(c->z0), 1e-10 );
+  for( c=cases; c->zh>0; c++ ){
+    ASSERT_NEAR( c->expected, ctrl_regulator_calc_sqr_xi(c->zh), 1e-10 );
   }
 }
 
 TEST(test_ctrl_regulator_calc_xi)
 {
   struct case_t{
-    double z0;
+    double zh;
     double expected;
   } cases[] = {
     { 1, sqrt(G) }, { G, 1 }, { 0.5*G, sqrt(2) }, { 0, 0 }
   };
   struct case_t *c;
-  for( c=cases; c->z0>0; c++ ){
-    ASSERT_NEAR( c->expected, ctrl_regulator_calc_xi(c->z0), 1e-10 );
+  for( c=cases; c->zh>0; c++ ){
+    ASSERT_NEAR( c->expected, ctrl_regulator_calc_xi(c->zh), 1e-10 );
   }
 }
 
 TEST(test_ctrl_regulator_calc_fz)
 {
   struct case_t{
-    double m, z0, q1, q2;
+    double m, zh, q1, q2;
     double z, v;
     double expected;
   } cases[] = {
@@ -91,7 +91,7 @@ TEST(test_ctrl_regulator_calc_fz)
 
   for( c=cases; c->m>0; c++ ){
     model_set_mass( &model, c->m );
-    cmd.z0 = c->z0;
+    cmd.zh = c->zh;
     cmd.regulator.q1 = c->q1;
     cmd.regulator.q2 = c->q2;
     vec_set_elem_list( p, c->z, c->v );
