@@ -1255,7 +1255,7 @@ TEST(test_ctrl_zb)
   }
 }
 
-TEST(test_ctrl_v0)
+TEST(test_ctrl_vh)
 {
   struct case_t {
     double zh, za;
@@ -1271,7 +1271,7 @@ TEST(test_ctrl_v0)
   for( c=cases; c->zh>0; c++ ){
     cmd.zh = c->zh;
     cmd.za = c->za;
-    ASSERT_DOUBLE_EQ( c->expected, ctrl_v0( &ctrl ) );
+    ASSERT_DOUBLE_EQ( c->expected, ctrl_vh( &ctrl ) );
   }
 }
 
@@ -1323,7 +1323,7 @@ TEST(test_ctrl_update_default)
 
 TEST(test_ctrl_phase)
 {
-  double v0 = sqrt( 0.04 * G );
+  double vh = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
     double za, zh, zb;
@@ -1335,11 +1335,11 @@ TEST(test_ctrl_phase)
   } cases[] = {
     { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, falling, true, true, false, false, false }, /* apex */
     { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, falling, true, true, false, false, false }, /* falling */
-    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   compression, false, false, true, false, false }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -vh,   compression, false, false, true, false, false }, /* touchdown */
     { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, compression, false, false, true, false, false }, /* compression */
     { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, extension, false, false, false, true, false }, /* bottom */
     { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, extension, false, false, false, true, false }, /* extension */
-    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   rising, true, false, false, false, true }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  vh,   rising, true, false, false, false, true }, /* lift-off */
     { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, rising, true, false, false, false, true }, /* rising */
     { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, falling, true, true, false, false, false }, /* apex */
     { 0, 0, 0, 0, 0, 0, invalid, false, false, false, false, false },
@@ -1360,7 +1360,7 @@ TEST(test_ctrl_phase)
 
 TEST(test_ctrl_events_at_apex)
 {
-  double v0 = sqrt( 0.04 * G );
+  double vh = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
     double za, zh, zb;
@@ -1371,11 +1371,11 @@ TEST(test_ctrl_events_at_apex)
   } cases[] = {
     { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.28,  0.00 } }, /* apex */
     { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.28,  0.00 } }, /* falling */
-    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.00, 0.28,  0.00 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -vh,   { 0.00, 0.28,  0.00 } }, /* touchdown */
     { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.00, 0.28,  0.00 } }, /* compression */
     { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.00, 0.28,  0.00 } }, /* bottom */
     { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.00, 0.28,  0.00 } }, /* extension */
-    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.36, 0.26,  v0   } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  vh,   { 0.36, 0.26,  vh   } }, /* lift-off */
     { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.42, 0.27,  0.30 } }, /* rising */
     { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.48, 0.28,  0.00 } }, /* apex */
     { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
@@ -1393,7 +1393,7 @@ TEST(test_ctrl_events_at_apex)
 
 TEST(test_ctrl_events_at_touchdown)
 {
-  double v0 = sqrt( 0.04 * G );
+  double vh = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
     double za, zh, zb;
@@ -1404,12 +1404,12 @@ TEST(test_ctrl_events_at_touchdown)
   } cases[] = {
     { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.28,  0.00 } }, /* apex */
     { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.06, 0.27, -0.30 } }, /* falling */
-    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.12, 0.26, -v0   } }, /* touchdown */
-    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.12, 0.26, -v0   } }, /* compression */
-    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.12, 0.26, -v0   } }, /* bottom */
-    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.12, 0.26, -v0   } }, /* extension */
-    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.12, 0.26, -v0   } }, /* lift-off */
-    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.12, 0.26, -v0   } }, /* rising */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -vh,   { 0.12, 0.26, -vh   } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.12, 0.26, -vh   } }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.12, 0.26, -vh   } }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.12, 0.26, -vh   } }, /* extension */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  vh,   { 0.12, 0.26, -vh   } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.12, 0.26, -vh   } }, /* rising */
     { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.48, 0.28,  0.00 } }, /* apex */
     { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
   };
@@ -1426,7 +1426,7 @@ TEST(test_ctrl_events_at_touchdown)
 
 TEST(test_ctrl_events_at_bottom)
 {
-  double v0 = sqrt( 0.04 * G );
+  double vh = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
     double za, zh, zb;
@@ -1437,11 +1437,11 @@ TEST(test_ctrl_events_at_bottom)
   } cases[] = {
     { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.00,  0.00 } }, /* apex */
     { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.00,  0.00 } }, /* falling */
-    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.12, 0.26, -v0   } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -vh,   { 0.12, 0.26, -vh   } }, /* touchdown */
     { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.18, 0.25, -0.30 } }, /* compression */
     { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.24, 0.24,  0.00 } }, /* bottom */
     { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.24, 0.24,  0.00 } }, /* extension */
-    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.24, 0.24,  0.00 } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  vh,   { 0.24, 0.24,  0.00 } }, /* lift-off */
     { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.24, 0.24,  0.00 } }, /* rising */
     { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.24, 0.24,  0.00 } }, /* apex */
     { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
@@ -1459,7 +1459,7 @@ TEST(test_ctrl_events_at_bottom)
 
 TEST(test_ctrl_events_at_liftoff)
 {
-  double v0 = sqrt( 0.04 * G );
+  double vh = sqrt( 0.04 * G );
   struct case_t{
     /* parameters */
     double za, zh, zb;
@@ -1470,13 +1470,13 @@ TEST(test_ctrl_events_at_liftoff)
   } cases[] = {
     { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, { 0.00, 0.00,  0.00 } }, /* apex */
     { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, { 0.00, 0.00,  0.00 } }, /* falling */
-    { 0.28, 0.26, 0.24, 0.12, 0.26, -v0,   { 0.00, 0.00,  0.00 } }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -vh,   { 0.00, 0.00,  0.00 } }, /* touchdown */
     { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, { 0.00, 0.00,  0.00 } }, /* compression */
     { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, { 0.24, 0.24,  0.00 } }, /* bottom */
     { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, { 0.30, 0.25,  0.30 } }, /* extension */
-    { 0.28, 0.26, 0.24, 0.36, 0.26,  v0,   { 0.36, 0.26,  v0   } }, /* lift-off */
-    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.36, 0.26,  v0   } }, /* rising */
-    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.36, 0.26,  v0   } }, /* apex */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  vh,   { 0.36, 0.26,  vh   } }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, { 0.36, 0.26,  vh   } }, /* rising */
+    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, { 0.36, 0.26,  vh   } }, /* apex */
     { 0, 0, 0, 0, 0, 0, { 0.00, 0.00,  0.00 } },
   };
   struct case_t *c;
@@ -1498,7 +1498,7 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_zh);
   RUN_TEST(test_ctrl_za);
   RUN_TEST(test_ctrl_zb);
-  RUN_TEST(test_ctrl_v0);
+  RUN_TEST(test_ctrl_vh);
   RUN_TEST(test_ctrl_reset_default);
   RUN_TEST(test_ctrl_update_default);
   RUN_TEST(test_ctrl_phase);

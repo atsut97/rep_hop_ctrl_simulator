@@ -32,12 +32,12 @@ void ctrl_events_destroy(ctrl_events_t *self)
 
 complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, complex_t *c)
 {
-  double z, v, v0;
+  double z, v, vh;
 
   z = vec_elem( p, 0 );
   v = vec_elem( p, 1 );
-  v0 = ctrl_calc_v0( zh, za );
-  complex_init( c, (z-zh)/(zh-zb), -v/v0 );
+  vh = ctrl_calc_vh( zh, za );
+  complex_init( c, (z-zh)/(zh-zb), -v/vh );
   return c;
 }
 
@@ -186,7 +186,7 @@ void ctrl_destroy_default(ctrl_t *self)
   ctrl_events_destroy( ctrl_events( self ) );
 }
 
-double ctrl_calc_sqr_v0(double zh, double za)
+double ctrl_calc_sqr_vh(double zh, double za)
 {
   return 2.0 * G * ( za - zh );
 }

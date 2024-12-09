@@ -104,10 +104,10 @@ typedef struct _ctrl_t{
 
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model);
 
-double ctrl_calc_sqr_v0(double zh, double za);
-#define ctrl_calc_v0(zh,za) sqrt( ctrl_calc_sqr_v0( zh, za ) )
-#define ctrl_sqr_v0(self) ctrl_calc_sqr_v0( ctrl_zh(self), ctrl_za(self) )
-#define ctrl_v0(self) sqrt( ctrl_sqr_v0( self ) )
+double ctrl_calc_sqr_vh(double zh, double za);
+#define ctrl_calc_vh(zh,za) sqrt( ctrl_calc_sqr_vh( zh, za ) )
+#define ctrl_sqr_vh(self) ctrl_calc_sqr_vh( ctrl_zh(self), ctrl_za(self) )
+#define ctrl_vh(self) sqrt( ctrl_sqr_vh( self ) )
 
 ctrl_t *ctrl_reset_default(ctrl_t *self, void *util);
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p);

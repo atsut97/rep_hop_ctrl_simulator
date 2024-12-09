@@ -60,11 +60,11 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util)
 
 double ctrl_arl_calc_sqr_R_des(double m, double k, double zh, double za)
 {
-  double v0, sqr_R_des;
+  double vh, sqr_R_des;
   vec_t p;
 
-  v0 = ctrl_calc_v0( zh, za );
-  p = vec_create_list( 2, za, v0 );
+  vh = ctrl_calc_vh( zh, za );
+  p = vec_create_list( 2, za, vh );
   sqr_R_des = ctrl_arl_calc_sqr_R( p, m, k, zh );
   vec_destroy( p );
   return sqr_R_des;
