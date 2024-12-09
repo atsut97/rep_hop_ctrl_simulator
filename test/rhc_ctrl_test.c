@@ -1222,17 +1222,6 @@ TEST(test_ctrl_destroy)
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
-TEST(test_ctrl_zh)
-{
-  double cases[] = { 0.26, 0.28, 0.3, 0.0 };
-  double *c;
-
-  for( c=cases; *c>0; c++ ){
-    cmd.zh = *c;
-    ASSERT_EQ( *c, ctrl_zh( &ctrl ) );
-  }
-}
-
 TEST(test_ctrl_za)
 {
   double cases[] = { 0.28, 0.3, 0.32, 0.0 };
@@ -1244,6 +1233,28 @@ TEST(test_ctrl_za)
   }
 }
 
+TEST(test_ctrl_zh)
+{
+  double cases[] = { 0.26, 0.28, 0.3, 0.0 };
+  double *c;
+
+  for( c=cases; *c>0; c++ ){
+    cmd.zh = *c;
+    ASSERT_EQ( *c, ctrl_zh( &ctrl ) );
+  }
+}
+
+TEST(test_ctrl_zm)
+{
+  double cases[] = { 0.26, 0.28, 0.3, 0.0 };
+  double *c;
+
+  for( c=cases; *c>0; c++ ){
+    cmd.zm = *c;
+    ASSERT_EQ( *c, ctrl_zm( &ctrl ) );
+  }
+}
+
 TEST(test_ctrl_zb)
 {
   double cases[] = { 0.24, 0.26, 0.28, 0.0 };
@@ -1252,6 +1263,28 @@ TEST(test_ctrl_zb)
   for( c=cases; *c>0; c++ ){
     cmd.zb = *c;
     ASSERT_EQ( *c, ctrl_zb( &ctrl ) );
+  }
+}
+
+TEST(test_ctrl_zmax)
+{
+  double cases[] = { 0.26, 0.28, 0.3, 0.0 };
+  double *c;
+
+  for( c=cases; *c>0; c++ ){
+    cmd.zmax = *c;
+    ASSERT_EQ( *c, ctrl_zmax( &ctrl ) );
+  }
+}
+
+TEST(test_ctrl_zmin)
+{
+  double cases[] = { 0.26, 0.28, 0.3, 0.0 };
+  double *c;
+
+  for( c=cases; *c>0; c++ ){
+    cmd.zmin = *c;
+    ASSERT_EQ( *c, ctrl_zmin( &ctrl ) );
   }
 }
 
@@ -1495,9 +1528,12 @@ TEST_SUITE(test_ctrl)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_init);
   RUN_TEST(test_ctrl_destroy);
-  RUN_TEST(test_ctrl_zh);
   RUN_TEST(test_ctrl_za);
+  RUN_TEST(test_ctrl_zh);
+  RUN_TEST(test_ctrl_zm);
   RUN_TEST(test_ctrl_zb);
+  RUN_TEST(test_ctrl_zmax);
+  RUN_TEST(test_ctrl_zmin);
   RUN_TEST(test_ctrl_vh);
   RUN_TEST(test_ctrl_reset_default);
   RUN_TEST(test_ctrl_update_default);

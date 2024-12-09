@@ -85,9 +85,12 @@ typedef struct _ctrl_t{
 #define ctrl_cmd(self)    ((ctrl_t*)self)->cmd
 #define ctrl_model(self)  ((ctrl_t*)self)->model
 #define ctrl_fz(self)     ((ctrl_t*)self)->fz
-#define ctrl_zh(self)     ctrl_cmd(self)->zh
 #define ctrl_za(self)     ctrl_cmd(self)->za
+#define ctrl_zh(self)     ctrl_cmd(self)->zh
+#define ctrl_zm(self)     ctrl_cmd(self)->zm
 #define ctrl_zb(self)     ctrl_cmd(self)->zb
+#define ctrl_zmax(self)   ctrl_cmd(self)->zmax
+#define ctrl_zmin(self)   ctrl_cmd(self)->zmin
 #define ctrl_n(self)      ctrl_events_n( ctrl_events(self) )
 #define ctrl_phi(self)    ctrl_events_phi( ctrl_events(self) )
 
