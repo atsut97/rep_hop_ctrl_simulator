@@ -171,9 +171,89 @@ TEST(test_ctrl_rep_hop_stand_calc_sqr_gamma)
   for( c=cases; c->expected>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
     sqr_gamma = ctrl_rep_hop_stand_calc_sqr_gamma( p, c->zh, c->zm, c->zb, G );
-    gamma = ctrl_rep_hop_stand_calc_gamma( p, c->zh, c->zm, c-> zb, G );
+    gamma = ctrl_rep_hop_stand_calc_gamma( p, c->zh, c->zm, c->zb, G );
     ASSERT_NEAR( c->expected, sqr_gamma, 1e-10 );
     ASSERT_NEAR( sqrt( c->expected ), gamma, 1e-10 );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_calc_za)
+{
+  struct case_t {
+    double zh, zm, zb;
+    double expected;
+  } cases[] = {
+    { 2.0, 1.5, 1.0, 2.0, },
+    { 3.0, 2.0, 1.0, 3.0, },
+    { 3.0, 2.0, 0.5, 3.625, },
+    { 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+  double za;
+
+  for( c=cases; c->expected>0; c++ ){
+    za = ctrl_rep_hop_stand_calc_za( c->zh, c->zm, c->zb );
+    ASSERT_NEAR( c->expected, za, 1e-10 );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_calc_zh)
+{
+  struct case_t {
+    double za, zm, zb;
+    double expected;
+  } cases[] = {
+    { 2.0, 1.5, 1.0, 2.0, },
+    { 3.0, 1.5, 1.0, 3.0 - sqrt(2.0), },
+    { 3.0, 1.5, 0.5, 3.0 - 0.5 * sqrt(5.0), },
+    { 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+  double zh;
+
+  for( c=cases; c->expected>0; c++ ){
+    zh = ctrl_rep_hop_stand_calc_zh( c->za, c->zm, c->zb );
+    ASSERT_NEAR( c->expected, zh, 1e-10 );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_calc_zm)
+{
+  struct case_t {
+    double za, zh, zb;
+    double expected;
+  } cases[] = {
+    { 2.0, 1.5, 1.0, 1.375, },
+    { 3.0, 2.0, 1.0, 1.75, },
+    { 3.0, 2.0, 0.5, 1.55, },
+    { 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+  double zm;
+
+  for( c=cases; c->expected>0; c++ ){
+    zm = ctrl_rep_hop_stand_calc_zm( c->za, c->zh, c->zb );
+    ASSERT_NEAR( c->expected, zm, 1e-10 );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_calc_zb)
+{
+  struct case_t {
+    double za, zh, zm;
+    double expected;
+  } cases[] = {
+    { 2.0, 1.5, 1.0, 1.0 - 0.5 * sqrt(3.0), },
+    { 3.0, 2.0, 1.0, 1.0 - sqrt(3.0), },
+    { 3.0, 2.0, 0.5, 0.5 - sqrt(1.5*3.5), },
+    { 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+  double zb;
+
+  for( c=cases; c->za>0.0; c++ ){
+    zb = ctrl_rep_hop_stand_calc_zb( c->za, c->zh, c->zm );
+    ASSERT_NEAR( c->expected, zb, 1e-10 );
   }
 }
 
@@ -188,6 +268,10 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   RUN_TEST(test_ctrl_rep_hop_stand_calc_r);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_sqr_vm);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_sqr_gamma);
+  RUN_TEST(test_ctrl_rep_hop_stand_calc_za);
+  RUN_TEST(test_ctrl_rep_hop_stand_calc_zh);
+  RUN_TEST(test_ctrl_rep_hop_stand_calc_zm);
+  RUN_TEST(test_ctrl_rep_hop_stand_calc_zb);
 }
 
 int main(int argc, char *argv[])

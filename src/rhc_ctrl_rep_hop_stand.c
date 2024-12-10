@@ -71,22 +71,26 @@ double ctrl_rep_hop_stand_calc_sqr_gamma(vec_t p, double zh, double zm, double z
 
 double ctrl_rep_hop_stand_calc_za(double zh, double zm, double zb)
 {
-  return 0;
+  return 0.5 * ( ( zm - zb ) * ( zm - zb ) / ( zh - zm ) + zh + zm );
 }
 
 double ctrl_rep_hop_stand_calc_zh(double za, double zm, double zb)
 {
-  return 0;
+  if( ( za + zb - 2.0 * zm ) < 0.0 ) {
+    RUNTIME_ERR( "rhc_ctrl_rep_hop_stand: za > 2*zm - zb must be satisfied\n" );
+    exit( 1 );
+  }
+  return za - sqrt( ( za - zb ) * ( za + zb - 2.0 * zm ) );
 }
 
 double ctrl_rep_hop_stand_calc_zm(double za, double zh, double zb)
 {
-  return 0;
+  return 0.5 * ( ( za + zb - ( za - zh ) * ( za - zh ) / ( za - zb ) ) );
 }
 
 double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
 {
-  return 0;
+  return zm - sqrt( ( zh - zm ) * ( 2.0 * za - zh - zm ) );
 }
 
 ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p){
