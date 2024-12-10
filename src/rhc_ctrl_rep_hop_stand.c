@@ -41,7 +41,12 @@ double ctrl_rep_hop_stand_calc_q1(double zh, double zm, double g)
 
 double ctrl_rep_hop_stand_calc_r(double zm, double zb)
 {
-  return zm - zb;
+  double r;
+
+  r = zm - zb;
+  if( istiny(r) )
+    RUNTIME_WARN( "rhc_ctrl_rep_hop_stand: zm and zb are too close!\n" );
+  return r;
 }
 
 double ctrl_rep_hop_stand_calc_sqr_vm(double zh, double zm, double zb, double g)
@@ -84,7 +89,9 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
   return 0;
 }
 
-ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p){}
+ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p){
+  return self;
+}
 void ctrl_rep_hop_stand_header(FILE *fp, void *util){}
 void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util){}
 double ctrl_rep_hop_stand_calc_fz(ctrl_t *self, vec_t p)
