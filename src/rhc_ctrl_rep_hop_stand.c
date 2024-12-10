@@ -34,9 +34,9 @@ void ctrl_rep_hop_stand_destroy(ctrl_t *self)
   ctrl_destroy_default( self );
 }
 
-double ctrl_rep_hop_stand_calc_q1(double zh, double zm)
+double ctrl_rep_hop_stand_calc_q1(double zh, double zm, double g)
 {
-  return 0;
+  return sqrt( g / ( zh - zm ) );
 }
 
 double ctrl_rep_hop_stand_calc_r(double zm, double zb)

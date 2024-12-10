@@ -42,7 +42,7 @@ typedef struct{
 #define ctrl_rep_hop_stand_params_zb(self)  ( ctrl_rep_hop_stand_params(self)->zb )
 #define ctrl_rep_hop_stand_params_rho(self) ( ctrl_rep_hop_stand_params(self)->rep_hop_stand.rho )
 
-double ctrl_rep_hop_stand_calc_q1(double zh, double zm);
+double ctrl_rep_hop_stand_calc_q1(double zh, double zm, double g);
 double ctrl_rep_hop_stand_calc_r(double zm, double zb);
 double ctrl_rep_hop_stand_calc_sqr_gamma(vec_t p, double zh, double zm, double zb);
 #define ctrl_rep_hop_stand_calc_gamma(zh) sqrt( ctrl_rep_hop_stand_calc_sqr_gamma( zh ) )
