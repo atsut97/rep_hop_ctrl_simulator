@@ -15,7 +15,7 @@ ctrl_t *ctrl_slip_update(ctrl_t *self, double t, vec_t p);
 void ctrl_slip_header(FILE *fp, void *util);
 void ctrl_slip_writer(FILE *fp, ctrl_t *self, void *util);
 
-double ctrl_slip_calc_stiffness(double m, double zh, double za, double zb);
-#define ctrl_slip_stiffness(self) ctrl_slip_calc_stiffness( ctrl_model(self)->m, ctrl_zh(self), ctrl_za(self), ctrl_zb(self) )
+double ctrl_slip_calc_stiffness(double m, double zh, double za, double zb, double g);
+#define ctrl_slip_stiffness(self) ctrl_slip_calc_stiffness( ctrl_model(self)->m, ctrl_zh(self), ctrl_za(self), ctrl_zb(self), ctrl_model(self)->gravity )
 
 #endif /* __RHC_CTRL_SLIP_H__ */

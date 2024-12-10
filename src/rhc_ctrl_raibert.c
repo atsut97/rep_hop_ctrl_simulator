@@ -82,7 +82,7 @@ void ctrl_raibert_update_events(ctrl_t *self, double t, vec_t p)
   bool is_in_thrust = false;
 
   /* check if current state is in thrust phase */
-  ctrl_events_update( ctrl_events(self), t, p, ctrl_cmd(self) );
+  ctrl_events_update( ctrl_events(self), t, p, ctrl_cmd(self), model_gravity( ctrl_model(self) ) );
   if( ctrl_phase_in( self, extension ) ){
     tb = ctrl_events_at( self, bottom )->t;
     if( ( tb <= t + TOL ) && ( t + TOL < tb + ctrl_raibert_delta(self) ) ){

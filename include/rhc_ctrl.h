@@ -31,7 +31,7 @@ typedef struct {
 } ctrl_events_t;
 
 ctrl_events_t *ctrl_events_init(ctrl_events_t *self);
-ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd);
+ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd, double g);
 void ctrl_events_destroy(ctrl_events_t *self);
 
 #define ctrl_events_event(self,event) ( &((self)->event) )
@@ -63,8 +63,8 @@ bool ctrl_events_is_in_flight(ctrl_events_t *self);
 #define ctrl_events_phase(self) ( (self)->phase )
 #define ctrl_events_phi(self)   ( (self)->phi )
 #define ctrl_events_n(self)     ( (self)->n )
-complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, complex_t *c);
-double ctrl_events_calc_phi(double zh, double za, double zb, vec_t p);
+complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, double g, complex_t *c);
+double ctrl_events_calc_phi(double zh, double za, double zb, vec_t p, double g);
 
 #define ctrl_events_is_updated(self)  ( (self)->is_updated )
 #define ctrl_events_update_next(self) ( ctrl_events_is_updated(self) = false )
@@ -107,9 +107,9 @@ typedef struct _ctrl_t{
 
 ctrl_t *ctrl_init(ctrl_t *self, cmd_t *cmd, model_t *model);
 
-double ctrl_calc_sqr_vh(double zh, double za);
-#define ctrl_calc_vh(zh,za) sqrt( ctrl_calc_sqr_vh( zh, za ) )
-#define ctrl_sqr_vh(self) ctrl_calc_sqr_vh( ctrl_zh(self), ctrl_za(self) )
+double ctrl_calc_sqr_vh(double zh, double za, double g);
+#define ctrl_calc_vh(zh,za,g) sqrt( ctrl_calc_sqr_vh( zh, za, g ) )
+#define ctrl_sqr_vh(self) ctrl_calc_sqr_vh( ctrl_zh(self), ctrl_za(self), ctrl_model(self)->gravity )
 #define ctrl_vh(self) sqrt( ctrl_sqr_vh( self ) )
 
 ctrl_t *ctrl_reset_default(ctrl_t *self, void *util);

@@ -133,11 +133,11 @@ TEST(test_ctrl_slip_calc_stiffness)
     { 0, 0, 0, 0, 0 }
   };
   struct case_t *c;
-  double (*f)(double,double,double,double);
+  double (*f)(double,double,double,double,double);
 
   f = ctrl_slip_calc_stiffness;
   for( c=cases; c->m>0; c++ ){
-    ASSERT_NEAR( c->expected, f( c->m, c->zh, c->za, c->zb ), 1e-10 );
+    ASSERT_NEAR( c->expected, f( c->m, c->zh, c->za, c->zb, G ), 1e-10 );
   }
 }
 

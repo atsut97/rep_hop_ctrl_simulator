@@ -56,7 +56,7 @@ TEST(test_ctrl_regulator_calc_sqr_xi)
   };
   struct case_t *c;
   for( c=cases; c->zh>0; c++ ){
-    ASSERT_NEAR( c->expected, ctrl_regulator_calc_sqr_xi(c->zh), 1e-10 );
+    ASSERT_NEAR( c->expected, ctrl_regulator_calc_sqr_xi(c->zh, G), 1e-10 );
   }
 }
 
@@ -70,7 +70,7 @@ TEST(test_ctrl_regulator_calc_xi)
   };
   struct case_t *c;
   for( c=cases; c->zh>0; c++ ){
-    ASSERT_NEAR( c->expected, ctrl_regulator_calc_xi(c->zh), 1e-10 );
+    ASSERT_NEAR( c->expected, ctrl_regulator_calc_xi(c->zh, G), 1e-10 );
   }
 }
 

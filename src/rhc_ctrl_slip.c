@@ -50,7 +50,7 @@ void ctrl_slip_writer(FILE *fp, ctrl_t *self, void *util)
   fprintf( fp, ",%f\n", prp->k );
 }
 
-double ctrl_slip_calc_stiffness(double m, double zh, double za, double zb)
+double ctrl_slip_calc_stiffness(double m, double zh, double za, double zb, double g)
 {
-  return 2. * m * G * ( za - zb ) / sqr( zh - zb );
+  return 2. * m * g * ( za - zb ) / sqr( zh - zb );
 }

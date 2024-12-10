@@ -98,7 +98,7 @@ TEST(test_ctrl_arl_calc_sqr_R_des)
   double sqr_R_des;
 
   for( c=cases; c->m>0; c++ ){
-    sqr_R_des = ctrl_arl_calc_sqr_R_des( c->m, c->k, c->zh, c->za );
+    sqr_R_des = ctrl_arl_calc_sqr_R_des( c->m, c->k, c->zh, c->za, G );
     ASSERT_NEAR( c->expected_sqr_R_des, sqr_R_des, 1e-10 );
   }
 }
@@ -119,7 +119,7 @@ TEST(test_ctrl_arl_calc_sqr_R)
 
   for( c=cases; c->m>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
-    sqr_R = ctrl_arl_calc_sqr_R( p, c->m, c->k, c->zh );
+    sqr_R = ctrl_arl_calc_sqr_R( p, c->m, c->k, c->zh, G );
     ASSERT_NEAR( c->expected_sqr_R, sqr_R, 1e-10 );
   }
 }
@@ -140,7 +140,7 @@ TEST(test_ctrl_arl_calc_delta)
 
   for( c=cases; c->m>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
-    delta = ctrl_arl_calc_delta( p, c->m, c->k, c->beta, c->zh, c->za );
+    delta = ctrl_arl_calc_delta( p, c->m, c->k, c->beta, c->zh, c->za, G );
     ASSERT_NEAR( c->expected_delta, delta, 1e-10 );
   }
 }

@@ -1,5 +1,6 @@
 #include "rhc_ctrl_arl.h"
 #include "rhc_ctrl.h"
+#include "rhc_model.h"
 
 ctrl_t *ctrl_arl_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_arl_types type)
 {
@@ -58,19 +59,19 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util)
            prp->delta );
 }
 
-double ctrl_arl_calc_sqr_R_des(double m, double k, double zh, double za)
+double ctrl_arl_calc_sqr_R_des(double m, double k, double zh, double za, double g)
 {
   double vh, sqr_R_des;
   vec_t p;
 
-  vh = ctrl_calc_vh( zh, za );
+  vh = ctrl_calc_vh( zh, za, g );
   p = vec_create_list( 2, za, vh );
-  sqr_R_des = ctrl_arl_calc_sqr_R( p, m, k, zh );
+  sqr_R_des = ctrl_arl_calc_sqr_R( p, m, k, zh, g );
   vec_destroy( p );
   return sqr_R_des;
 }
 
-double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double zh)
+double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double zh, double g)
 {
   double l, v, c;
 
@@ -79,17 +80,17 @@ double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double zh)
   c = m / k;
   /* Note: definition of c is different from the paper. */
   /* Original definition is c = k / m. */
-  return ( l + c * G ) * ( l + c * G ) + c * v * v;
+  return ( l + c * g ) * ( l + c * g ) + c * v * v;
 }
 
-double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double zh, double za)
+double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double zh, double za, double g)
 {
   double l, v, sqr_R, sqr_R_des;
 
   l = vec_elem(p, 0) - zh;
   v = vec_elem(p, 1);
-  sqr_R = ctrl_arl_calc_sqr_R( p, m, k, zh );
-  sqr_R_des = ctrl_arl_calc_sqr_R_des( m, k, zh, za );
+  sqr_R = ctrl_arl_calc_sqr_R( p, m, k, zh, g );
+  sqr_R_des = ctrl_arl_calc_sqr_R_des( m, k, zh, za, g );
   return beta * l * v * ( sqr_R - sqr_R_des );
 }
 

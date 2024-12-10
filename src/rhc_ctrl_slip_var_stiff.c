@@ -50,26 +50,26 @@ void ctrl_slip_var_stiff_writer(FILE *fp, ctrl_t *self, void *util)
   fprintf( fp, ",%f\n", prp->k );
 }
 
-double ctrl_slip_var_stiff_calc_stiffness_decomp(vec_t p, double m, double zh, double za, double zb)
+double ctrl_slip_var_stiff_calc_stiffness_decomp(vec_t p, double m, double zh, double za, double zb, double g)
 {
-  double numer = 2. * G * ( za - vec_elem(p,0) ) - sqr( vec_elem(p,1) );
+  double numer = 2. * g * ( za - vec_elem(p,0) ) - sqr( vec_elem(p,1) );
   double denom = sqr( zh - vec_elem(p,0) );
   if( istiny( denom ) )
     return 0;
   return m * numer / denom;
 }
 
-double ctrl_slip_var_stiff_calc_stiffness_comp(vec_t p, double m, double zh, double za, double zb)
+double ctrl_slip_var_stiff_calc_stiffness_comp(vec_t p, double m, double zh, double za, double zb, double g)
 {
-  double numer = 2. * G * ( vec_elem(p,0) - zb ) + sqr( vec_elem(p,1) );
+  double numer = 2. * g * ( vec_elem(p,0) - zb ) + sqr( vec_elem(p,1) );
   double denom = ( 2.*zh - ( vec_elem(p,0) + zb ) ) * ( vec_elem(p,0) - zb );
   return m * numer / denom;
 }
 
-double ctrl_slip_var_stiff_calc_stiffness(vec_t p, double m, double zh, double za, double zb)
+double ctrl_slip_var_stiff_calc_stiffness(vec_t p, double m, double zh, double za, double zb, double g)
 {
   if( vec_elem(p,1) > -1e-10 )
-    return ctrl_slip_var_stiff_calc_stiffness_decomp( p, m, zh, za, zb );
+    return ctrl_slip_var_stiff_calc_stiffness_decomp( p, m, zh, za, zb, g );
   else
-    return ctrl_slip_var_stiff_calc_stiffness_comp( p, m, zh, za, zb );
+    return ctrl_slip_var_stiff_calc_stiffness_comp( p, m, zh, za, zb, g );
 }

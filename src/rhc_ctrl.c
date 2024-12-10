@@ -30,22 +30,22 @@ void ctrl_events_destroy(ctrl_events_t *self)
   ctrl_events_init( self );
 }
 
-complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, complex_t *c)
+complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, double g, complex_t *c)
 {
   double z, v, vh;
 
   z = vec_elem( p, 0 );
   v = vec_elem( p, 1 );
-  vh = ctrl_calc_vh( zh, za );
+  vh = ctrl_calc_vh( zh, za, g );
   complex_init( c, (z-zh)/(zh-zb), -v/vh );
   return c;
 }
 
-double ctrl_events_calc_phi(double zh, double za, double zb, vec_t p)
+double ctrl_events_calc_phi(double zh, double za, double zb, vec_t p, double g)
 {
   complex_t c;
 
-  ctrl_events_calc_phase_complex( zh, za, zb, p, &c );
+  ctrl_events_calc_phase_complex( zh, za, zb, p, g, &c );
   return complex_arg( &c );
 }
 
@@ -147,13 +147,13 @@ void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t p
   }
 }
 
-ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd)
+ctrl_events_t *ctrl_events_update(ctrl_events_t *self, double t, vec_t p, cmd_t *cmd, double g)
 {
   double phi;
   enum _ctrl_events_phases_t phase;
 
   if( ctrl_events_is_updated(self) ) return self;
-  phi = ctrl_events_calc_phi( cmd->zh, cmd->za, cmd->zb, p );
+  phi = ctrl_events_calc_phi( cmd->zh, cmd->za, cmd->zb, p, g );
   if( ctrl_events_phi( self ) < 0 && phi >= 0 ) ctrl_events_n(self)++;
   phase = _ctrl_events_determine_phase( phi );
   _ctrl_events_update_event( self, phase, t, p, cmd );
@@ -186,9 +186,9 @@ void ctrl_destroy_default(ctrl_t *self)
   ctrl_events_destroy( ctrl_events( self ) );
 }
 
-double ctrl_calc_sqr_vh(double zh, double za)
+double ctrl_calc_sqr_vh(double zh, double za, double g)
 {
-  return 2.0 * G * ( za - zh );
+  return 2.0 * g * ( za - zh );
 }
 
 ctrl_t *ctrl_reset_default(ctrl_t *self, void *util)
@@ -201,7 +201,7 @@ ctrl_t *ctrl_reset_default(ctrl_t *self, void *util)
 ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
 {
   ctrl_events_update_next( ctrl_events( self ) );
-  ctrl_events_update( ctrl_events( self ), t, p, ctrl_cmd( self ) );
+  ctrl_events_update( ctrl_events( self ), t, p, ctrl_cmd( self ), model_gravity( ctrl_model(self) ) );
   return self;
 }
 

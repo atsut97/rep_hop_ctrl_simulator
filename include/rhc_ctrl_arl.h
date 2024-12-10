@@ -32,15 +32,15 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util);
 
 ctrl_t *ctrl_arl_set_params(ctrl_t *self, double k, double beta);
 
-double ctrl_arl_calc_sqr_R_des(double m, double k, double zh, double za);
-double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double zh);
-double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double zh, double za);
+double ctrl_arl_calc_sqr_R_des(double m, double k, double zh, double za, double g);
+double ctrl_arl_calc_sqr_R(vec_t p, double m, double k, double zh, double g);
+double ctrl_arl_calc_delta(vec_t p, double m, double k, double beta, double zh, double za, double g);
 #define ctrl_arl_sqr_R_des(self) \
-  ( ctrl_arl_calc_sqr_R_des( ctrl_model(self)->m, ctrl_arl_k(self), ctrl_zh(self), ctrl_za(self) ) )
+  ( ctrl_arl_calc_sqr_R_des( ctrl_model(self)->m, ctrl_arl_k(self), ctrl_zh(self), ctrl_za(self), ctrl_model(self)->gravity ) )
 #define ctrl_arl_sqr_R(self,p) \
-  ( ctrl_arl_calc_sqr_R( p, ctrl_model(self)->m, ctrl_arl_k(self), ctrl_zh(self) ) )
+  ( ctrl_arl_calc_sqr_R( p, ctrl_model(self)->m, ctrl_arl_k(self), ctrl_zh(self), ctrl_model(self)->gravity ) )
 #define ctrl_arl_delta(self,p) \
-  ( ctrl_arl_calc_delta( p, ctrl_model(self)->m, ctrl_arl_k(self), ctrl_arl_beta(self), ctrl_zh(self), ctrl_za(self) ) )
+  ( ctrl_arl_calc_delta( p, ctrl_model(self)->m, ctrl_arl_k(self), ctrl_arl_beta(self), ctrl_zh(self), ctrl_za(self), ctrl_model(self)->gravity ) )
 
 double ctrl_arl_calc_fz(ctrl_t *self, double t, vec_t p);
 
