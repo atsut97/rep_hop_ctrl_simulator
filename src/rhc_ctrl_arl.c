@@ -36,6 +36,7 @@ ctrl_t *ctrl_arl_set_params(ctrl_t *self, double k, double beta)
 
 ctrl_t *ctrl_arl_update(ctrl_t *self, double t, vec_t p)
 {
+  ctrl_update_default( self, t, p );
   self->fz = ctrl_arl_calc_fz( self, t, p );
   return self;
 }
