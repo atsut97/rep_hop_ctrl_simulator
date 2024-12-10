@@ -62,11 +62,43 @@ TEST(test_ctrl_rep_hop_stand_destroy)
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
+TEST(test_ctrl_rep_hop_stand_set_rho)
+{
+  struct case_t {
+    double rho;
+  } cases[] = {
+    {1.0}, {0.5}, {0.0}, {-1.0}
+  };
+  struct case_t *c;
+
+  for( c=cases; c->rho>0; c++ ){
+    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_rho(&ctrl) );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_set_k)
+{
+  struct case_t {
+    double k;
+  } cases[] = {
+    {1.0}, {0.5}, {0.0}, {-1.0}
+  };
+  struct case_t *c;
+
+  for( c=cases; c->k>0; c++ ){
+    ctrl_rep_hop_stand_set_k( &ctrl, c->k );
+    ASSERT_EQ( c->k, ctrl_rep_hop_stand_k(&ctrl) );
+  }
+}
+
 TEST_SUITE(test_ctrl_rep_hop_stand)
 {
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_rep_hop_stand_create);
   RUN_TEST(test_ctrl_rep_hop_stand_destroy);
+  RUN_TEST(test_ctrl_rep_hop_stand_set_rho);
+  RUN_TEST(test_ctrl_rep_hop_stand_set_k);
 }
 
 int main(int argc, char *argv[])
