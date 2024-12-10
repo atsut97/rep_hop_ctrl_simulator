@@ -14,21 +14,20 @@ typedef struct{
   enum ctrl_rep_hop_stand_types type;
   cmd_t params;
   double q1, q2;
-  double vh, vm;
+  double vm;
   double r, sqr_gamma, f_gamma;
-  double phase;
+  double phi;
 } ctrl_rep_hop_stand_prp;
 
 #define ctrl_rep_hop_stand_get_prp(self)   ( (ctrl_rep_hop_stand_prp*)((self)->prp) )
 #define ctrl_rep_hop_stand_type(self)      ( ctrl_rep_hop_stand_get_prp(self)->type )
 #define ctrl_rep_hop_stand_q1(self)        ( ctrl_rep_hop_stand_get_prp(self)->q1 )
 #define ctrl_rep_hop_stand_q2(self)        ( ctrl_rep_hop_stand_get_prp(self)->q2 )
-#define ctrl_rep_hop_stand_vh(self)        ( ctrl_rep_hop_stand_get_prp(self)->vh )
 #define ctrl_rep_hop_stand_vm(self)        ( ctrl_rep_hop_stand_get_prp(self)->vm )
 #define ctrl_rep_hop_stand_r(self)         ( ctrl_rep_hop_stand_get_prp(self)->r )
 #define ctrl_rep_hop_stand_sqr_gamma(self) ( ctrl_rep_hop_stand_get_prp(self)->sqr_gamma )
 #define ctrl_rep_hop_stand_f_gamma(self)   ( ctrl_rep_hop_stand_get_prp(self)->f_gamma )
-#define ctrl_rep_hop_stand_phase(self)     ( ctrl_rep_hop_stand_get_prp(self)->phase )
+#define ctrl_rep_hop_stand_phi(self)       ( ctrl_rep_hop_stand_get_prp(self)->phi )
 
 #define ctrl_rep_hop_stand_rho(self)         ( ctrl_cmd(self)->rep_hop_stand.rho )
 #define ctrl_rep_hop_stand_k(self)           ( ctrl_cmd(self)->rep_hop_stand.k )

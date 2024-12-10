@@ -19,12 +19,11 @@ ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum
   cmd_copy( cmd, ctrl_rep_hop_stand_params(self) );
   prp->q1 = 0;
   prp->q2 = 0;
-  prp->vh = 0;
   prp->vm = 0;
   prp->r = 0;
   prp->sqr_gamma = 0;
   prp->f_gamma = 0;
-  prp->phase = 0;
+  prp->phi = 0;
   return self;
 }
 
@@ -33,6 +32,28 @@ void ctrl_rep_hop_stand_destroy(ctrl_t *self)
   sfree( self->prp );
   ctrl_destroy_default( self );
 }
+
+void ctrl_rep_hop_stand_header(FILE *fp, void *util)
+{
+  fprintf( fp, ",type,rho,k,q1,q2,vm,zm_phi,p_za,p_zh,p_zm,p_zb,p_rho\n" );
+}
+
+void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util)
+{
+  fprintf( fp, ",%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+           ctrl_rep_hop_stand_type(self),
+           ctrl_rep_hop_stand_rho(self),
+           ctrl_rep_hop_stand_k(self),
+           ctrl_rep_hop_stand_q1(self),
+           ctrl_rep_hop_stand_q2(self),
+           ctrl_rep_hop_stand_vm(self),
+           ctrl_rep_hop_stand_phi(self),
+           ctrl_rep_hop_stand_params_za(self),
+           ctrl_rep_hop_stand_params_zh(self),
+           ctrl_rep_hop_stand_params_zm(self),
+           ctrl_rep_hop_stand_params_zb(self),
+           ctrl_rep_hop_stand_params_rho(self) );
+ }
 
 double ctrl_rep_hop_stand_calc_q1(double zh, double zm, double g)
 {
@@ -94,11 +115,30 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
 }
 
 ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p){
+  ctrl_update_default( self, t, p );
+  if( ctrl_phase_in( self, flight ) ){
+    self->fz = 0;
+  } else{
+    self->fz = ctrl_rep_hop_stand_calc_fz( self, p );
+  }
   return self;
 }
-void ctrl_rep_hop_stand_header(FILE *fp, void *util){}
-void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util){}
+
 double ctrl_rep_hop_stand_calc_fz(ctrl_t *self, vec_t p)
 {
-  return 0;
+  double zh, zm, zb, rho, k;
+  double g, k1, q1, gamma, f_gamma, unit_fz;
+
+  zh = ctrl_rep_hop_stand_params_zh( self );
+  zm = ctrl_rep_hop_stand_params_zm( self );
+  zb = ctrl_rep_hop_stand_params_zb( self );
+  rho = ctrl_rep_hop_stand_params_rho( self );
+  k = ctrl_rep_hop_stand_k( self );
+  g = model_gravity( ctrl_model(self) );
+  k1 = g / ( zh - zm );
+  q1 = ctrl_rep_hop_stand_calc_q1( zh, zm, g );
+  gamma = ctrl_rep_hop_stand_calc_gamma( p, zh, zm, zb, g );
+  f_gamma = 1.0 - rho * exp( k * ( 1.0 - gamma ) );
+  unit_fz = -2.0 * q1 * f_gamma * vec_elem(p,1) - k1 * ( vec_elem(p,0) - zm ) + g;
+  return model_mass( ctrl_model( self ) ) * unit_fz;
 }
