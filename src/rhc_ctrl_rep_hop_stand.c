@@ -41,7 +41,7 @@ double ctrl_rep_hop_stand_calc_q1(double zh, double zm, double g)
 
 double ctrl_rep_hop_stand_calc_r(double zm, double zb)
 {
-  return 0;
+  return zm - zb;
 }
 
 double ctrl_rep_hop_stand_calc_sqr_gamma(vec_t p, double zh, double zm, double zb)
