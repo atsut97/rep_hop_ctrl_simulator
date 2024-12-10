@@ -52,9 +52,16 @@ double ctrl_rep_hop_stand_calc_sqr_vm(double zh, double zm, double zb, double g)
   return g * r * r / ( zh - zm );
 }
 
-double ctrl_rep_hop_stand_calc_sqr_gamma(vec_t p, double zh, double zm, double zb)
+double ctrl_rep_hop_stand_calc_sqr_gamma(vec_t p, double zh, double zm, double zb, double g)
 {
-  return 0;
+  double z, v, r, sqr_r, sqr_vm;
+
+  z = vec_elem( p, 0 );
+  v = vec_elem( p, 1 );
+  r = ctrl_rep_hop_stand_calc_r( zm, zb );
+  sqr_r = r * r;
+  sqr_vm = ctrl_rep_hop_stand_calc_sqr_vm( zh, zm, zb, g );
+  return ( z - zm ) * ( z - zm ) / sqr_r + v * v / sqr_vm;
 }
 
 double ctrl_rep_hop_stand_calc_za(double zh, double zm, double zb)

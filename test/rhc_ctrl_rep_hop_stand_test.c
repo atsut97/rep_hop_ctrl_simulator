@@ -154,6 +154,29 @@ TEST(test_ctrl_rep_hop_stand_calc_sqr_vm)
   }
 }
 
+TEST(test_ctrl_rep_hop_stand_calc_sqr_gamma)
+{
+  struct case_t {
+    double z, v, zh, zm, zb;
+    double expected;
+  } cases[] = {
+    { 1.0, 0.0, 1.5+G, 1.5, 0.5, 0.25, },
+    { 1.0, 0.5, 2.0, 1.0, 0.5, 1.0/G, },
+    { 1.0, -G, 3.0, 2.0, 1.0, 1.0 + G, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+  double sqr_gamma, gamma;
+
+  for( c=cases; c->expected>0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    sqr_gamma = ctrl_rep_hop_stand_calc_sqr_gamma( p, c->zh, c->zm, c->zb, G );
+    gamma = ctrl_rep_hop_stand_calc_gamma( p, c->zh, c->zm, c-> zb, G );
+    ASSERT_NEAR( c->expected, sqr_gamma, 1e-10 );
+    ASSERT_NEAR( sqrt( c->expected ), gamma, 1e-10 );
+  }
+}
+
 TEST_SUITE(test_ctrl_rep_hop_stand)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -164,6 +187,7 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   RUN_TEST(test_ctrl_rep_hop_stand_calc_q1);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_r);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_sqr_vm);
+  RUN_TEST(test_ctrl_rep_hop_stand_calc_sqr_gamma);
 }
 
 int main(int argc, char *argv[])
