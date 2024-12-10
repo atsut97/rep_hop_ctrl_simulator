@@ -132,6 +132,28 @@ TEST(test_ctrl_rep_hop_stand_calc_r)
   }
 }
 
+TEST(test_ctrl_rep_hop_stand_calc_sqr_vm)
+{
+  struct case_t {
+    double zh, zm, zb;
+    double expected;
+  } cases[] = {
+    { 3.0, 2.0, 1.0, G, },
+    { 2.0, 1.5, 0.5, 2.0*G, },
+    { 2.0, 1.0, 0.5, 0.25*G, },
+    { 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+  double sqr_vm, vm;
+
+  for( c=cases; c->expected>0; c++ ){
+    sqr_vm = ctrl_rep_hop_stand_calc_sqr_vm( c->zh, c->zm, c->zb, G );
+    vm = ctrl_rep_hop_stand_calc_vm( c->zh, c->zm, c->zb, G );
+    ASSERT_NEAR( c->expected, sqr_vm, 1e-10 );
+    ASSERT_NEAR( sqrt( c->expected ), vm, 1e-10 );
+  }
+}
+
 TEST_SUITE(test_ctrl_rep_hop_stand)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -141,6 +163,7 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   RUN_TEST(test_ctrl_rep_hop_stand_set_k);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_q1);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_r);
+  RUN_TEST(test_ctrl_rep_hop_stand_calc_sqr_vm);
 }
 
 int main(int argc, char *argv[])

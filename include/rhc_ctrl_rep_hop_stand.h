@@ -44,13 +44,14 @@ typedef struct{
 
 double ctrl_rep_hop_stand_calc_q1(double zh, double zm, double g);
 double ctrl_rep_hop_stand_calc_r(double zm, double zb);
+double ctrl_rep_hop_stand_calc_sqr_vm(double zh, double zm, double zb, double g);
+#define ctrl_rep_hop_stand_calc_vm(zh,zm,zb,g) sqrt( ctrl_rep_hop_stand_calc_sqr_vm( zh, zm, zb, g ) )
 double ctrl_rep_hop_stand_calc_sqr_gamma(vec_t p, double zh, double zm, double zb);
 #define ctrl_rep_hop_stand_calc_gamma(zh) sqrt( ctrl_rep_hop_stand_calc_sqr_gamma( zh ) )
 double ctrl_rep_hop_stand_calc_za(double zh, double zm, double zb);
 double ctrl_rep_hop_stand_calc_zh(double za, double zm, double zb);
 double ctrl_rep_hop_stand_calc_zm(double za, double zh, double zb);
 double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm);
-double ctrl_rep_hop_stand_calc_vm(double zh, double zm, double zb);
 
 ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type);
 void ctrl_rep_hop_stand_destroy(ctrl_t *self);
