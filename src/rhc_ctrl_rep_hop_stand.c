@@ -111,8 +111,14 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
   return zm - sqrt( ( zh - zm ) * ( 2.0 * za - zh - zm ) );
 }
 
+ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self){
+
+  return self;
+}
+
 ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p){
   ctrl_update_default( self, t, p );
+
   if( ctrl_phase_in( self, flight ) ){
     self->fz = 0;
   } else{

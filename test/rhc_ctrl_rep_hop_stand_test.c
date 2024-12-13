@@ -253,6 +253,126 @@ TEST(test_ctrl_rep_hop_stand_calc_zb)
   }
 }
 
+TEST(test_ctrl_rep_hop_stand_update_params_za)
+{
+  struct case_t {
+    double za, zh, zm, zb, zmin, zmax, rho;
+    double expected;
+  } cases[] = {
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->za>0.0; c++ ){
+    cmd_set_limits( &cmd, c->zmax, c->zmin );
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ctrl_rep_hop_stand_set_rho( &cmd, c->rho );
+    ctrl_rep_hop_stand_update_params( &ctrl );
+    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
+    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_update_params_zh)
+{
+  struct case_t {
+    double za, zh, zm, zb, zmin, zmax, rho;
+    double expected;
+  } cases[] = {
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->za>0.0; c++ ){
+    cmd_set_limits( &cmd, c->zmax, c->zmin );
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ctrl_rep_hop_stand_set_rho( &cmd, c->rho );
+    ctrl_rep_hop_stand_update_params( &ctrl );
+    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
+    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_update_params_zm)
+{
+  struct case_t {
+    double za, zh, zm, zb, zmin, zmax, rho;
+    double expected;
+  } cases[] = {
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->za>0.0; c++ ){
+    cmd_set_limits( &cmd, c->zmax, c->zmin );
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ctrl_rep_hop_stand_set_rho( &cmd, c->rho );
+    ctrl_rep_hop_stand_update_params( &ctrl );
+    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
+    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_update_params_zb)
+{
+  struct case_t {
+    double za, zh, zm, zb, zmin, zmax, rho;
+    double expected;
+  } cases[] = {
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->za>0.0; c++ ){
+    cmd_set_limits( &cmd, c->zmax, c->zmin );
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ctrl_rep_hop_stand_set_rho( &cmd, c->rho );
+    ctrl_rep_hop_stand_update_params( &ctrl );
+    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
+    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  }
+}
+
+TEST(test_ctrl_rep_hop_stand_update_params_rho)
+{
+  struct case_t {
+    double za, zh, zm, zb, zmin, zmax, rho;
+    double expected;
+  } cases[] = {
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->za>0.0; c++ ){
+    cmd_set_limits( &cmd, c->zmax, c->zmin );
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ctrl_rep_hop_stand_set_rho( &cmd, c->rho );
+    ctrl_rep_hop_stand_update_params( &ctrl );
+    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
+    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  }
+}
+
 TEST_SUITE(test_ctrl_rep_hop_stand)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -268,6 +388,11 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   RUN_TEST(test_ctrl_rep_hop_stand_calc_zh);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_zm);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_zb);
+  RUN_TEST(test_ctrl_rep_hop_stand_update_params_za);
+  RUN_TEST(test_ctrl_rep_hop_stand_update_params_zh);
+  RUN_TEST(test_ctrl_rep_hop_stand_update_params_zm);
+  RUN_TEST(test_ctrl_rep_hop_stand_update_params_zb);
+  RUN_TEST(test_ctrl_rep_hop_stand_update_params_rho);
 }
 
 int main(int argc, char *argv[])
