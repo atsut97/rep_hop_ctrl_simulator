@@ -188,7 +188,11 @@ void ctrl_destroy_default(ctrl_t *self)
 
 double ctrl_calc_sqr_vh(double zh, double za, double g)
 {
-  return 2.0 * g * ( za - zh );
+  double sqr_vh;
+
+  sqr_vh = 2.0 * g * ( za - zh );
+  if( sqr_vh < 0 ) sqr_vh = 0;
+  return sqr_vh;
 }
 
 ctrl_t *ctrl_reset_default(ctrl_t *self, void *util)
