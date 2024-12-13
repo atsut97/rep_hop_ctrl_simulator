@@ -29,6 +29,28 @@ void cmd_destroy(cmd_t *self)
   cmd_init( self );
 }
 
+cmd_t *cmd_set(cmd_t *self, double za, double zh, double zm, double zb)
+{
+  self->za = za;
+  self->zh = zh;
+  self->zm = zm;
+  self->zb = zb;
+  return self;
+}
+
+cmd_t *cmd_set_limits(cmd_t *self, double zmax, double zmin)
+{
+  char msg[BUFSIZ];
+
+  if( zmax < zmin ){
+    sprintf( msg, "zmax must be higher than zmin: zmax=%f, zmin=%f\n", zmax, zmin );
+    RUNTIME_ERR( msg );
+  }
+  self->zmax = zmax;
+  self->zmin = zmin;
+  return self;
+}
+
 cmd_t *cmd_copy(cmd_t *src, cmd_t *dst)
 {
   memcpy(dst, src, sizeof(cmd_t));

@@ -117,6 +117,49 @@ TEST(test_cmd_copy)
   ASSERT_EQ( cmd1.zmin, cmd2.zmin );
 }
 
+TEST(test_cmd_set)
+{
+  struct case_t{
+    double za, zh, zm, zb;
+  } cases[] = {
+    { 0.28, 0.26, 0.25, 0.24 },
+    { 1.0, 0.7, 0.5, 0.2 },
+    { 1.2, 0.9, 0.6, 0.3 },
+    { 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->za>0; c++ ){
+    SHAM( &cmd, cmd_t );
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ASSERT_EQ( c->za, cmd.za );
+    ASSERT_EQ( c->zh, cmd.zh );
+    ASSERT_EQ( c->zm, cmd.zm );
+    ASSERT_EQ( c->zb, cmd.zb );
+  }
+
+}
+
+TEST(test_cmd_set_limits)
+{
+  struct case_t{
+    double zmin, zmax;
+  } cases[] = {
+    { 0.1, 0.5, },
+    { 0.15, 1.2, },
+    { 0.2, 1.0, },
+    { 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zmin>0; c++ ){
+    SHAM( &cmd, cmd_t );
+    cmd_set_limits( &cmd, c->zmax, c->zmin );
+    ASSERT_EQ( c->zmin, cmd.zmin );
+    ASSERT_EQ( c->zmax, cmd.zmax );
+  }
+}
+
 TEST_SUITE(test_cmd)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -129,6 +172,8 @@ TEST_SUITE(test_cmd)
   RUN_TEST(test_cmd_default_init);
   RUN_TEST(test_cmd_destroy);
   RUN_TEST(test_cmd_copy);
+  RUN_TEST(test_cmd_set);
+  RUN_TEST(test_cmd_set_limits);
 }
 
 int main(int argc, char *argv[])
