@@ -15,7 +15,6 @@ typedef struct{
   cmd_t params;
   double q1, q2;
   double vm;
-  double r, sqr_gamma, f_gamma;
   double phi;
 } ctrl_rep_hop_stand_prp;
 

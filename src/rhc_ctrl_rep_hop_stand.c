@@ -20,9 +20,6 @@ ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum
   prp->q1 = 0;
   prp->q2 = 0;
   prp->vm = 0;
-  prp->r = 0;
-  prp->sqr_gamma = 0;
-  prp->f_gamma = 0;
   prp->phi = 0;
   return self;
 }
