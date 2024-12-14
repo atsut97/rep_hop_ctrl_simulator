@@ -111,7 +111,7 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
   return zm - sqrt( ( zh - zm ) * ( 2.0 * za - zh - zm ) );
 }
 
-ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self)
+ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p)
 {
   cmd_t *params;
   double zb, zm;

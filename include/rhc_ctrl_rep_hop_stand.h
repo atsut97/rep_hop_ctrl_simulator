@@ -50,7 +50,7 @@ double ctrl_rep_hop_stand_calc_za(double zh, double zm, double zb);
 double ctrl_rep_hop_stand_calc_zh(double za, double zm, double zb);
 double ctrl_rep_hop_stand_calc_zm(double za, double zh, double zb);
 double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm);
-ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self);
+ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p);
 
 ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type);
 void ctrl_rep_hop_stand_destroy(ctrl_t *self);

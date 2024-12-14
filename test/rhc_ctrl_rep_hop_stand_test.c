@@ -256,20 +256,21 @@ TEST(test_ctrl_rep_hop_stand_calc_zb)
 TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb)
 {
   struct case_t {
-    double za, zh, zm, zb, rho;
+    double z, v, za, zh, zm, zb, rho;
     double expected_zb;
   } cases[] = {
-    /* za,  zh,  zm,  zb, rho, expected_zb */
-    { 2.5, 2.0, 1.5, 0.5, 1.0, 1.5-0.5*sqrt(3), },
-    { 1.5, 1.0, 0.8, 0.2, 1.0, 0.8-0.2*sqrt(6), },
-    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+    /*  z,   v , za,  zh,  zm,  zb, rho, expected_zb */
+    { 0.0, 0.0, 2.5, 2.0, 1.5, 0.5, 1.0, 1.5-0.5*sqrt(3), },
+    { 0.0, 0.0, 1.5, 1.0, 0.8, 0.2, 1.0, 0.8-0.2*sqrt(6), },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
   };
   struct case_t *c;
 
   for( c=cases; c->zb>0.0; c++ ){
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
     ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
-    ctrl_rep_hop_stand_update_params( &ctrl );
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_rep_hop_stand_update_params( &ctrl, p );
     ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
     ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
     ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
@@ -281,20 +282,21 @@ TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb)
 TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm)
 {
   struct case_t {
-    double za, zh, zm, zb, rho;
+    double z, v, za, zh, zm, zb, rho;
     double expected_zm;
   } cases[] = {
-    /* za,  zh,  zm,  zb, rho, expected_zm */
-    { 2.5, 2.0, 1.5, 1.0, 1.0, 1.75-1.0/12.0, },
-    { 1.5, 1.0, 0.8, 0.5, 1.0, 0.875, },
-    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+    /*  z,   v,  za,  zh,  zm,  zb, rho, expected_zm */
+    { 0.0, 0.0, 2.5, 2.0, 1.5, 1.0, 1.0, 1.75-1.0/12.0, },
+    { 0.0, 0.0, 1.5, 1.0, 0.8, 0.5, 1.0, 0.875, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
   };
   struct case_t *c;
 
   for( c=cases; c->zb>0.0; c++ ){
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
     ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
-    ctrl_rep_hop_stand_update_params( &ctrl );
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_rep_hop_stand_update_params( &ctrl, p );
     ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
     ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
     ASSERT_NEAR( c->expected_zm, ctrl_rep_hop_stand_params_zm(&ctrl), 1e-10 );
