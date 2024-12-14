@@ -111,12 +111,27 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
   return zm - sqrt( ( zh - zm ) * ( 2.0 * za - zh - zm ) );
 }
 
-ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self){
+ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self)
+{
+  cmd_t *params;
+  double zb, zm;
 
+  params = ctrl_rep_hop_stand_params(self);
+  cmd_copy( ctrl_cmd(self), params );
+  if( ctrl_rep_hop_stand_rho(self) > 0 ){
+    zb = ctrl_rep_hop_stand_calc_zb( ctrl_za(self), ctrl_zh(self), ctrl_zm(self) );
+    if( ctrl_zb(self) < zb ){
+      params->zb = zb;
+    } else{
+      zm = ctrl_rep_hop_stand_calc_zm( ctrl_za(self), ctrl_zh(self), ctrl_zb(self) );
+      params->zm = zm;
+    }
+  }
   return self;
 }
 
-ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p){
+ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p)
+{
   ctrl_update_default( self, t, p );
 
   if( ctrl_phase_in( self, flight ) ){
