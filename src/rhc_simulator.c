@@ -141,7 +141,7 @@ void simulator_header_default(FILE *fp, simulator_t *s, void *util)
   /* simulator, states, model */
   fprintf( fp, "tag,t,z,vz,m,az,fe" );
   /* controller */
-  fprintf( fp, ",fz,za,zh,zm,zb,zmax,zmin,vh,n,phi" );
+  fprintf( fp, ",fz,za,zh,zm,zb,vh,n,phi" );
   /* phase */
   fprintf( fp, ",phase" );
   /* events */
@@ -164,10 +164,9 @@ void simulator_writer_default(FILE *fp, simulator_t *s, void *util)
            model_mass(model), model_acc(model),
            simulator_fe(s) );
   /* controller */
-  fprintf( fp, ",%f,%f,%f,%f,%f,%f,%f,%f,%d,%f",
+  fprintf( fp, ",%f,%f,%f,%f,%f,%f,%d,%f",
            ctrl_fz(ctrl),
            ctrl_za(ctrl), ctrl_zh(ctrl), ctrl_zm(ctrl), ctrl_zb(ctrl),
-           ctrl_zmax(ctrl), ctrl_zmin(ctrl),
            ctrl_vh(ctrl),
            ctrl_n(ctrl), ctrl_phi(ctrl));
   /* phase and events */

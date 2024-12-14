@@ -22,8 +22,6 @@ TEST(test_cmd_init)
   ASSERT_EQ( 0, cmd.zh );
   ASSERT_EQ( 0, cmd.zm );
   ASSERT_EQ( 0, cmd.zb );
-  ASSERT_EQ( 0, cmd.zmax );
-  ASSERT_EQ( 0, cmd.zmin );
 }
 
 TEST(test_cmd_init_regulator)
@@ -85,8 +83,6 @@ TEST(test_cmd_default_init)
   ASSERT_EQ( 0.26, cmd.zh );
   ASSERT_EQ( 0.25, cmd.zm );
   ASSERT_EQ( 0.24, cmd.zb );
-  ASSERT_EQ( 0.26, cmd.zmax );
-  ASSERT_EQ( 0.24, cmd.zmin );
 }
 
 
@@ -98,8 +94,6 @@ TEST(test_cmd_destroy)
   ASSERT_EQ( 0, cmd.zh );
   ASSERT_EQ( 0, cmd.zm );
   ASSERT_EQ( 0, cmd.zb );
-  ASSERT_EQ( 0, cmd.zmax );
-  ASSERT_EQ( 0, cmd.zmin );
 }
 
 TEST(test_cmd_copy)
@@ -113,8 +107,6 @@ TEST(test_cmd_copy)
   ASSERT_EQ( cmd1.zh, cmd2.zh );
   ASSERT_EQ( cmd1.zm, cmd2.zm );
   ASSERT_EQ( cmd1.zb, cmd2.zb );
-  ASSERT_EQ( cmd1.zmax, cmd2.zmax );
-  ASSERT_EQ( cmd1.zmin, cmd2.zmin );
 }
 
 TEST(test_cmd_set)
@@ -137,27 +129,6 @@ TEST(test_cmd_set)
     ASSERT_EQ( c->zm, cmd.zm );
     ASSERT_EQ( c->zb, cmd.zb );
   }
-
-}
-
-TEST(test_cmd_set_limits)
-{
-  struct case_t{
-    double zmin, zmax;
-  } cases[] = {
-    { 0.1, 0.5, },
-    { 0.15, 1.2, },
-    { 0.2, 1.0, },
-    { 0.0, 0.0, },
-  };
-  struct case_t *c;
-
-  for( c=cases; c->zmin>0; c++ ){
-    SHAM( &cmd, cmd_t );
-    cmd_set_limits( &cmd, c->zmax, c->zmin );
-    ASSERT_EQ( c->zmin, cmd.zmin );
-    ASSERT_EQ( c->zmax, cmd.zmax );
-  }
 }
 
 TEST_SUITE(test_cmd)
@@ -173,7 +144,6 @@ TEST_SUITE(test_cmd)
   RUN_TEST(test_cmd_destroy);
   RUN_TEST(test_cmd_copy);
   RUN_TEST(test_cmd_set);
-  RUN_TEST(test_cmd_set_limits);
 }
 
 int main(int argc, char *argv[])

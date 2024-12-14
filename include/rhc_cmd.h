@@ -8,8 +8,6 @@ typedef struct{
   double zh;       /* lift-off height */
   double zm;       /* standing height */
   double zb;       /* crouching height */
-  double zmax;     /* kinematic upper limit */
-  double zmin;     /* kinematic lower limit */
   union {
     struct _regulator {
       double q1, q2;
@@ -34,7 +32,6 @@ cmd_t *cmd_default_init(cmd_t *self);
 void cmd_destroy(cmd_t *self);
 
 cmd_t *cmd_set(cmd_t *self, double za, double zh, double zm, double zb);
-cmd_t *cmd_set_limits(cmd_t *self, double zmax, double zmin);
 
 cmd_t *cmd_copy(cmd_t *src, cmd_t *dst);
 

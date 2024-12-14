@@ -1266,28 +1266,6 @@ TEST(test_ctrl_zb)
   }
 }
 
-TEST(test_ctrl_zmax)
-{
-  double cases[] = { 0.26, 0.28, 0.3, 0.0 };
-  double *c;
-
-  for( c=cases; *c>0; c++ ){
-    cmd.zmax = *c;
-    ASSERT_EQ( *c, ctrl_zmax( &ctrl ) );
-  }
-}
-
-TEST(test_ctrl_zmin)
-{
-  double cases[] = { 0.26, 0.28, 0.3, 0.0 };
-  double *c;
-
-  for( c=cases; *c>0; c++ ){
-    cmd.zmin = *c;
-    ASSERT_EQ( *c, ctrl_zmin( &ctrl ) );
-  }
-}
-
 TEST(test_ctrl_vh)
 {
   struct case_t {
@@ -1532,8 +1510,6 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_zh);
   RUN_TEST(test_ctrl_zm);
   RUN_TEST(test_ctrl_zb);
-  RUN_TEST(test_ctrl_zmax);
-  RUN_TEST(test_ctrl_zmin);
   RUN_TEST(test_ctrl_vh);
   RUN_TEST(test_ctrl_reset_default);
   RUN_TEST(test_ctrl_update_default);
