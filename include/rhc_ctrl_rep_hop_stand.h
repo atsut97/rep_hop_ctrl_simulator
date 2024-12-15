@@ -30,8 +30,11 @@ typedef struct{
 
 #define ctrl_rep_hop_stand_rho(self)         ( ctrl_cmd(self)->rep_hop_stand.rho )
 #define ctrl_rep_hop_stand_k(self)           ( ctrl_cmd(self)->rep_hop_stand.k )
+#define ctrl_rep_hop_stand_soft_landing(self) ( ctrl_cmd(self)->rep_hop_stand.soft_landing )
 #define ctrl_rep_hop_stand_set_rho(self,val) ( ctrl_rep_hop_stand_rho(self) = (val) )
 #define ctrl_rep_hop_stand_set_k(self,val)   ( ctrl_rep_hop_stand_k(self) = (val) )
+#define ctrl_rep_hop_stand_enable_soft_landing(self) ( ctrl_rep_hop_stand_soft_landing(self) = true )
+#define ctrl_rep_hop_stand_disable_soft_landing(self) ( ctrl_rep_hop_stand_soft_landing(self) = false )
 
 #define ctrl_rep_hop_stand_params(self)     ( &(ctrl_rep_hop_stand_get_prp(self)->params) )
 #define ctrl_rep_hop_stand_params_za(self)  ( ctrl_rep_hop_stand_params(self)->za )

@@ -14,6 +14,7 @@ typedef struct{
     } regulator;
     struct _rep_hop_stand {
       double rho, k;
+      bool soft_landing;
     } rep_hop_stand;
     struct _raibert {
       double delta, tau, gamma, yeta1, zr, mu;

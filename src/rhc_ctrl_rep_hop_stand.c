@@ -37,10 +37,11 @@ void ctrl_rep_hop_stand_header(FILE *fp, void *util)
 
 void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util)
 {
-  fprintf( fp, ",%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+  fprintf( fp, ",%d,%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
            ctrl_rep_hop_stand_type(self),
            ctrl_rep_hop_stand_rho(self),
            ctrl_rep_hop_stand_k(self),
+           ctrl_rep_hop_stand_soft_landing(self),
            ctrl_rep_hop_stand_q1(self),
            ctrl_rep_hop_stand_q2(self),
            ctrl_rep_hop_stand_vm(self),
