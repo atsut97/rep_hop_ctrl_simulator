@@ -93,10 +93,6 @@ double ctrl_rep_hop_stand_calc_za(double zh, double zm, double zb)
 
 double ctrl_rep_hop_stand_calc_zh(double za, double zm, double zb)
 {
-  if( ( za + zb - 2.0 * zm ) < 0.0 ) {
-    RUNTIME_ERR( "rhc_ctrl_rep_hop_stand: za > 2*zm - zb must be satisfied\n" );
-    exit( 1 );
-  }
   return za - sqrt( ( za - zb ) * ( za + zb - 2.0 * zm ) );
 }
 
