@@ -148,7 +148,9 @@ double ctrl_rep_hop_stand_calc_fz(ctrl_t *self, vec_t p)
 {
   double zh, zm, zb, rho, k;
   double g, k1, q1, gamma, f_gamma, unit_fz;
+  ctrl_rep_hop_stand_prp *prp;
 
+  prp = ctrl_rep_hop_stand_get_prp(self);
   zh = ctrl_rep_hop_stand_params_zh( self );
   zm = ctrl_rep_hop_stand_params_zm( self );
   zb = ctrl_rep_hop_stand_params_zb( self );
@@ -157,6 +159,8 @@ double ctrl_rep_hop_stand_calc_fz(ctrl_t *self, vec_t p)
   g = model_gravity( ctrl_model(self) );
   k1 = g / ( zh - zm );
   q1 = ctrl_rep_hop_stand_calc_q1( zh, zm, g );
+  prp->q1 = prp->q2 = q1;
+  prp->vm = ctrl_rep_hop_stand_calc_vm( zh, zm, zb, g );
   gamma = ctrl_rep_hop_stand_calc_gamma( p, zh, zm, zb, g );
   f_gamma = 1.0 - rho * exp( k * ( 1.0 - gamma ) );
   unit_fz = -2.0 * q1 * f_gamma * vec_elem(p,1) - k1 * ( vec_elem(p,0) - zm ) + g;
