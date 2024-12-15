@@ -20,7 +20,6 @@ ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum
   prp->q1 = 0;
   prp->q2 = 0;
   prp->vm = 0;
-  prp->phi = 0;
   return self;
 }
 
@@ -37,7 +36,7 @@ void ctrl_rep_hop_stand_header(FILE *fp, void *util)
 
 void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util)
 {
-  fprintf( fp, ",%d,%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+  fprintf( fp, ",%d,%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%f\n",
            ctrl_rep_hop_stand_type(self),
            ctrl_rep_hop_stand_rho(self),
            ctrl_rep_hop_stand_k(self),
@@ -45,7 +44,6 @@ void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util)
            ctrl_rep_hop_stand_q1(self),
            ctrl_rep_hop_stand_q2(self),
            ctrl_rep_hop_stand_vm(self),
-           ctrl_rep_hop_stand_phi(self),
            ctrl_rep_hop_stand_params_za(self),
            ctrl_rep_hop_stand_params_zh(self),
            ctrl_rep_hop_stand_params_zm(self),
@@ -137,7 +135,7 @@ ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p)
 ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p)
 {
   ctrl_update_default( self, t, p );
-
+  ctrl_rep_hop_stand_update_params( self, p );
   if( ctrl_phase_in( self, flight ) ){
     self->fz = 0;
   } else{

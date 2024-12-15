@@ -36,7 +36,6 @@ TEST(test_ctrl_rep_hop_stand_create)
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q1(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q2(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_phi(&ctrl) );
 
   ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_k(&ctrl) );
