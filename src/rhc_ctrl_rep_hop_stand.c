@@ -119,7 +119,7 @@ ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p)
 
   params = ctrl_rep_hop_stand_params(self);
   cmd_copy( ctrl_cmd(self), params );
-  if( ctrl_rep_hop_stand_rho(self) > 0 ){
+  if( ctrl_rep_hop_stand_rho(self) > 0 && ctrl_za(self) > ctrl_zh(self) ){
     zb = ctrl_rep_hop_stand_calc_zb( ctrl_za(self), ctrl_zh(self), ctrl_zm(self) );
     if( ctrl_zb(self) < zb ){
       params->zb = zb;
@@ -127,6 +127,9 @@ ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p)
       zm = ctrl_rep_hop_stand_calc_zm( ctrl_za(self), ctrl_zh(self), ctrl_zb(self) );
       params->zm = zm;
     }
+  } else if( ctrl_rep_hop_stand_rho(self) > 0 && ctrl_za(self) <= ctrl_zh(self) ){
+    zm = 0.5 * ( ctrl_za(self) + ctrl_zb(self) );
+    params->zm = zm;
   }
   return self;
 }
