@@ -197,8 +197,6 @@ N_TAGS_SHOW_LEGEND = 7
 
 def main() -> None:
     """Run main function."""
-    import sys
-
     args = parse()
     start_logging(sys.argv, None, __name__, args.verbose)
     evlog().info("Log filename: %s", get_event_logger_filename())
