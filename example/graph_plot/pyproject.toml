@@ -1,0 +1,141 @@
+[project]
+name = "graph-plot"
+version = "0.1.0"
+description = "Graph plotter for example programs"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pyplotutil",
+]
+
+[tool.uv.sources]
+pyplotutil = { git = "https://github.com/hrshtst/pyplotutil.git", branch = "develop-ver1" }
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+# Same as Black.
+line-length = 120
+indent-width = 4
+
+# Assume Python 3.10
+target-version = "py310"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+# select = ["E4", "E7", "E9", "F"]
+select = ["ALL"]
+ignore = [
+  "D1",
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = [
+  "SIM105",                     # Avoid inadvertently fixing try-except-pass clause
+  "T201",                       # Avoid inadvertently removing `print` statements
+]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.pydocstyle]
+# Use Numpy-style docstrings.
+convention = "numpy"
+
+[tool.ruff.lint.pylint]
+# Maximum number of arguments allowed for a function or method
+# definition (see PLR0913).
+max-args = 15                   # Default: 5
+
+[tool.ruff.lint.isort]
+# Always add import annotations
+required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = true
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.pyright]
+include = []
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+]
+venvPath = "."
+venv = ".venv"
+
+[tool.mypy]
+files = []
+python_executable = ".venv/bin/python"
+check_untyped_defs = true       # Type-checks the interior of functions without type annotations.
+
+[[tool.mypy.overrides]]
+module = [
+  "numpy.*",
+  "scipy.*",
+  "matplotlib.*",
+  "scienceplots.*",
+]
+ignore_missing_imports = true
+
+# Local Variables:
+# jinx-local-words: "McCabe Numpy Pyflakes addopts args bzr defs direnv doctests hg ini ipynb isort matplotlib md mypy nox numpy pycache pycodestyle pydocstyle pyenv pylint pypackages pyplotutil pyright pytest pytype ra reStructuredText rgx scienceplots scipy svn testpaths tox untyped uv venv venvPath vscode zA"
+# End:

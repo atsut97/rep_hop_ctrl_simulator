@@ -5,6 +5,7 @@
 # Test data
 /example/*.csv
 /example/*.txt
+/example/graph_plot/*.dat
 
 ### CMake ###
 compile_commands.json
