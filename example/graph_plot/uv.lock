@@ -428,8 +428,8 @@ wheels = [
 
 [[package]]
 name = "pyplotutil"
-version = "0.9.1.dev7+ga62c2bb"
-source = { git = "https://github.com/hrshtst/pyplotutil.git?branch=develop-ver1#a62c2bb329f41c7f439dd3bc232c700105b2a65e" }
+version = "0.9.2.dev1+gf62d2ec"
+source = { git = "https://github.com/hrshtst/pyplotutil.git?branch=develop-ver1#f62d2ec1d14b6a00d23191acf6ff9a551b78133a" }
 dependencies = [
     { name = "matplotlib" },
     { name = "numpy" },
