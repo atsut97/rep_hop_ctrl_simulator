@@ -19,8 +19,6 @@ enum mode_list {
 };
 enum mode_list mode_id = NONE;
 
-
-
 void usage(int argc, const char *argv[])
 {
   fprintf( stderr, "Usage:\n" );
@@ -69,19 +67,53 @@ void make_edge_points(ppp_t *ppp)
 {
   ppp_set_lim_xy( &plotter, 0.23, 0.29, -0.8, 0.8 );
   ppp_set_n_sc_xy( ppp, 10, 10 );
-  ppp_generate_edge_points( ppp );
 }
 
 void set_params_stand()
 {
+  ctrl_rep_hop_stand_set_rho( &ctrl, 0.0 );
+  ppp_generate_edge_points( &plotter );
 }
 
 void set_params_hop()
 {
+  double zh;
+  vec_t p0;
+
+  p0 = vec_create( 2 );
+  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
+  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
+  ppp_generate_edge_points( &plotter );
+  for( zh = cmd.zh - 0.005; zh < cmd.za + 0.1; zh += 0.005 ) {
+    vec_set_elem_list( p0, zh, 0.0 );
+    ppp_push_p0( &plotter, p0 );
+  }
+  vec_set_elem_list( p0, cmd.zm - 1.0e-6, 0.0 );
+  ppp_push_p0( &plotter, p0 );
+
+  vec_destroy( p0 );
 }
 
 void set_params_squat()
 {
+  vec_t p0;
+
+  p0 = vec_create( 2 );
+  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
+  ctrl_rep_hop_stand_set_k( &ctrl, 1.0 );
+  cmd.za = 0.255;
+  ppp_generate_edge_points( &plotter );
+
+  vec_set_elem_list( p0, cmd.za, 0.0 );
+  ppp_push_p0( &plotter, p0 );
+
+  vec_set_elem_list( p0, 0.5*(cmd.za + cmd.zb) - 1.0e-6, 0.0 );
+  ppp_push_p0( &plotter, p0 );
+
+  vec_set_elem_list( p0, cmd.zb, 0.0 );
+  ppp_push_p0( &plotter, p0 );
+
+  vec_destroy( p0 );
 }
 
 void setup_ctrl()
@@ -102,11 +134,14 @@ void setup_ctrl()
     exit( 1 );
     break;
   }
+  cmd_f_write_rep_hop_stand( stderr, &cmd );
 }
 
 void run()
 {
   ppp_run( &plotter, T, DT );
+  fprintf( stderr, "--\n");
+  cmd_f_write_rep_hop_stand( stderr, ctrl_rep_hop_stand_params(&ctrl) );
 }
 
 void destroy()
