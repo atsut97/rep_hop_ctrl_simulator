@@ -214,8 +214,7 @@ double ctrl_calc_sqr_vh(double zh, double za, double g)
   double sqr_vh;
 
   sqr_vh = 2.0 * g * ( za - zh );
-  if( sqr_vh < 0 ) sqr_vh = 0;
-  return sqr_vh;
+  return fabs(sqr_vh);
 }
 
 ctrl_t *ctrl_reset_default(ctrl_t *self, void *util)
