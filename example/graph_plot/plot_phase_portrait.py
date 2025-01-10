@@ -4,14 +4,14 @@
 Examples
 --------
 Create a phase portrait:
-$ (cd .. && make regulator_test)
-$ ../regulator_test >regulator.dat
-$ uv run python plot_phase_portrait.py regulator.dat --xlim --ylim
+$ (cd .. && make ppp_test)
+$ ../ppp_test regulator >regulator.csv
+$ uv run python plot_phase_portrait.py regulator.csv --xlim --ylim
 
 Plot specific tags on the phase space:
 $ (cd .. && make raibert_test)
-$ ../raibert_test 1 >raibert.1.dat
-$ uv run python plot_phase_portrait.py raibert.1.dat --tags 0 1
+$ ../raibert_test 1 >raibert.1.csv
+$ uv run python plot_phase_portrait.py raibert.1.csv --tags 0 1
 
 """
 
@@ -219,5 +219,5 @@ if __name__ == "__main__":
     main()
 
 # Local Variables:
-# jinx-local-words: "cd csv dat env py raibert usr uv vv xlim ylim za zb zh"
+# jinx-local-words: "cd csv dat env ppp py raibert usr uv vv xlim ylim za zb zh"
 # End:

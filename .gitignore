@@ -6,6 +6,7 @@
 /example/*.csv
 /example/*.txt
 /example/graph_plot/*.dat
+/example/graph_plot/*.csv
 
 ### CMake ###
 compile_commands.json
