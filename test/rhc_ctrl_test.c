@@ -143,6 +143,28 @@ TEST(test_ctrl_events_set_liftoff)
   }
 }
 
+TEST(test_ctrl_events_get_phase_string)
+{
+  struct case_t {
+    enum _ctrl_events_phases_t phase;
+    const char *expected;
+  } cases[] = {
+    { invalid, "invalid" },
+    { falling, "falling" },
+    { compression, "compression" },
+    { extension, "extension" },
+    { rising, "rising" },
+    { invalid, NULL },
+  };
+  struct case_t *c;
+  char buf[BUFSIZ];
+
+  for( c=cases; c->expected; c++ ){
+    ctrl_events_get_phase_string( c->phase, buf );
+    ASSERT_STREQ( c->expected, buf );
+  }
+}
+
 TEST(test_ctrl_events_calc_phase_complex)
 {
   struct case_t {
@@ -440,6 +462,48 @@ TEST(test_ctrl_events_update_phase)
     vec_set_elem_list( p, c->z, c->v );
     ctrl_events_update( &events, 0, p, &cmd, G );
     ASSERT_EQ( c->expected, ctrl_events_phase(&events) );
+    ctrl_events_update_next( &events );
+  }
+}
+
+TEST(test_ctrl_events_update_get_phase_string)
+{
+  struct case_t {
+    double za, zh, zb;
+    double z, v;
+    char *expected;
+  } cases[] = {
+    /* za ,  zh ,  zb ,    z ,     v , expected */
+    { 0.28, 0.26, 0.24, 0.280,  0.000, "falling"     },  /* initial */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, "falling"     },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, "compression" },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, "compression" },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, "extension"   },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, "extension"   },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, "rising"      },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, "rising"      },  /* rising */
+    { 0.28, 0.26, 0.24, 0.280,  0.000, "falling"     },  /* apex */
+    { 0.28, 0.26, 0.24, 0.270, -0.010, "falling"     },  /* falling */
+    { 0.28, 0.26, 0.24, 0.260, -0.030, "compression" },  /* touchdown */
+    { 0.28, 0.26, 0.24, 0.250, -0.020, "compression" },  /* compression */
+    { 0.28, 0.26, 0.24, 0.240,  0.000, "extension"   },  /* bottom */
+    { 0.28, 0.26, 0.24, 0.250,  0.020, "extension"   },  /* extension */
+    { 0.28, 0.26, 0.24, 0.260,  0.030, "rising"      },  /* lift-off */
+    { 0.28, 0.26, 0.24, 0.270,  0.020, "rising"      },  /* rising */
+    { 0.28, 0.26, 0.24, 0.280,  0.000, "falling"     },  /* apex */
+    {    0,    0,    0,     0,      0, "invalid"     },  /* terminator */
+  };
+  struct case_t *c;
+  char buf[BUFSIZ];
+
+  for( c=cases; c->za>0; c++ ){
+    cmd.za = c->za;
+    cmd.zh = c->zh;
+    cmd.zb = c->zb;
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_events_update( &events, 0, p, &cmd, G );
+    ctrl_events_get_phase_string( ctrl_events_phase(&events), buf );
+    ASSERT_STREQ( c->expected, buf );
     ctrl_events_update_next( &events );
   }
 }
@@ -1153,6 +1217,7 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_set_touchdown);
   RUN_TEST(test_ctrl_events_set_bottom);
   RUN_TEST(test_ctrl_events_set_liftoff);
+  RUN_TEST(test_ctrl_events_get_phase_string);
   RUN_TEST(test_ctrl_events_calc_phase_complex);
   RUN_TEST(test_ctrl_events_calc_phi);
   RUN_TEST(test_ctrl_events_is_in_rising);
@@ -1161,6 +1226,7 @@ TEST_SUITE(test_ctrl_events)
   RUN_TEST(test_ctrl_events_is_in_compression);
   RUN_TEST(test_ctrl_events_is_in_extension);
   RUN_TEST(test_ctrl_events_update_phase);
+  RUN_TEST(test_ctrl_events_update_get_phase_string);
   RUN_TEST(test_ctrl_events_update_n);
   RUN_TEST(test_ctrl_events_update_apex_1);
   RUN_TEST(test_ctrl_events_update_apex_2);
@@ -1369,6 +1435,38 @@ TEST(test_ctrl_phase)
   }
 }
 
+TEST(test_ctrl_phase_string)
+{
+  double vh = sqrt( 0.04 * G );
+  struct case_t{
+    /* parameters */
+    double za, zh, zb;
+    /* states */
+    double t, z, v;
+    /* expectations */
+    char *expected;
+  } cases[] = {
+    { 0.28, 0.26, 0.24, 0.00, 0.28,  0.00, "falling" }, /* apex */
+    { 0.28, 0.26, 0.24, 0.06, 0.27, -0.30, "falling" }, /* falling */
+    { 0.28, 0.26, 0.24, 0.12, 0.26, -vh,   "compression" }, /* touchdown */
+    { 0.28, 0.26, 0.24, 0.18, 0.25, -0.30, "compression" }, /* compression */
+    { 0.28, 0.26, 0.24, 0.24, 0.24,  0.00, "extension" }, /* bottom */
+    { 0.28, 0.26, 0.24, 0.30, 0.25,  0.30, "extension" }, /* extension */
+    { 0.28, 0.26, 0.24, 0.36, 0.26,  vh,   "rising" }, /* lift-off */
+    { 0.28, 0.26, 0.24, 0.42, 0.27,  0.30, "rising" }, /* rising */
+    { 0.28, 0.26, 0.24, 0.48, 0.28,  0.00, "falling" }, /* apex */
+    { 0, 0, 0, 0, 0, 0, "invalid" },
+  };
+  struct case_t *c;
+  char buf[BUFSIZ];
+
+  for( c=cases; c->za != 0; c++ ){
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_update( &ctrl, c->t, p );
+    ctrl_phase_string( &ctrl, buf );
+  }
+}
+
 TEST(test_ctrl_events_at_apex)
 {
   double vh = sqrt( 0.04 * G );
@@ -1514,6 +1612,7 @@ TEST_SUITE(test_ctrl)
   RUN_TEST(test_ctrl_reset_default);
   RUN_TEST(test_ctrl_update_default);
   RUN_TEST(test_ctrl_phase);
+  RUN_TEST(test_ctrl_phase_string);
   RUN_TEST(test_ctrl_events_at_apex);
   RUN_TEST(test_ctrl_events_at_touchdown);
   RUN_TEST(test_ctrl_events_at_bottom);

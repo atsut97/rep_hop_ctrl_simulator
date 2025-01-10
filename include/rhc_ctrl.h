@@ -63,6 +63,7 @@ bool ctrl_events_is_in_flight(ctrl_events_t *self);
 #define ctrl_events_phase(self) ( (self)->phase )
 #define ctrl_events_phi(self)   ( (self)->phi )
 #define ctrl_events_n(self)     ( (self)->n )
+char *ctrl_events_get_phase_string(enum _ctrl_events_phases_t phase, char *s);
 complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, double g, complex_t *c);
 double ctrl_events_calc_phi(double zh, double za, double zb, vec_t p, double g);
 
@@ -94,6 +95,7 @@ typedef struct _ctrl_t{
 
 #define ctrl_phase(self)            ctrl_events_phase( ctrl_events(self) )
 #define ctrl_phase_in(self, phase)  ctrl_events_is_in_##phase( ctrl_events(self) )
+#define ctrl_phase_string(self, s)  ctrl_events_get_phase_string( ctrl_events_phase( ctrl_events(self) ), s )
 #define ctrl_events(self)           ( &((ctrl_t*)self)->events )
 #define ctrl_events_at(self, event) ctrl_events_event( ctrl_events(self), event )
 

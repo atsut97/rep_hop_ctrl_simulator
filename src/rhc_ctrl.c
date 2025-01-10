@@ -1,5 +1,6 @@
 #include "rhc_ctrl.h"
 #include "rhc_misc.h"
+#include "rhc_string.h"
 
 static enum _ctrl_events_phases_t _ctrl_events_determine_phase(double phi);
 static void _ctrl_events_update_event(ctrl_events_t *self, enum _ctrl_events_phases_t phase, double t, vec_t p, cmd_t *cmd);
@@ -28,6 +29,28 @@ ctrl_events_t *ctrl_events_init(ctrl_events_t *self)
 void ctrl_events_destroy(ctrl_events_t *self)
 {
   ctrl_events_init( self );
+}
+
+char *ctrl_events_get_phase_string(enum _ctrl_events_phases_t phase, char *s)
+{
+  switch( phase ){
+  case falling:
+    string_copy( "falling", s );
+    break;
+  case compression:
+    string_copy( "compression", s );
+    break;
+  case extension:
+    string_copy( "extension", s );
+    break;
+  case rising:
+    string_copy( "rising", s );
+    break;
+  default:
+    string_copy( "invalid", s );
+    break;
+  }
+  return s;
 }
 
 complex_t *ctrl_events_calc_phase_complex(double zh, double za, double zb, vec_t p, double g, complex_t *c)
