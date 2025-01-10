@@ -125,7 +125,7 @@ def plot(
     title = None
     if dataset.is_loaded_from_file():
         title = dataset.datapath.stem
-    xlim, ylim = get_limits(xlim, ylim, fallback_xlim=(zb - 0.01, za + 0.01), fallback_ylim=(-0.8, 0.8))
+    xlim, ylim = get_limits(xlim, ylim, fallback_xlim=(0.22, 0.3), fallback_ylim=(-1.0, 1.0))
     set_misc(ax, "position [m]", "velocity [m/s]", title, xlim, ylim, grid=grid)
 
     if show_legend:

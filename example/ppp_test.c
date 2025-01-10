@@ -106,7 +106,7 @@ void init_regulator()
 
 void setup_ctrl()
 {
-  ppp_set_lim_xy( &plotter, 0.23, 0.29, -0.8, 0.8 );
+  ppp_set_lim_xy( &plotter, 0.22, 0.30, -1.0, 1.0 );
   switch( ctrl_id ){
     case SLIP:
       init_slip();
