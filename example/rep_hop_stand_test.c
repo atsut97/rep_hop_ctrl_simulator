@@ -100,14 +100,14 @@ void set_params_squat()
 
   p0 = vec_create( 2 );
   ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
-  ctrl_rep_hop_stand_set_k( &ctrl, 1.0 );
+  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
   cmd.za = 0.255;
   ppp_generate_edge_points( &plotter );
 
   vec_set_elem_list( p0, cmd.za, 0.0 );
   ppp_push_p0( &plotter, p0 );
 
-  vec_set_elem_list( p0, 0.5*(cmd.za + cmd.zb) - 1.0e-6, 0.0 );
+  vec_set_elem_list( p0, 0.5*(cmd.za + cmd.zb) - 1.0e-4, 0.0 );
   ppp_push_p0( &plotter, p0 );
 
   vec_set_elem_list( p0, cmd.zb, 0.0 );
