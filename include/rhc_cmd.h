@@ -36,4 +36,17 @@ cmd_t *cmd_set(cmd_t *self, double za, double zh, double zm, double zb);
 
 cmd_t *cmd_copy(cmd_t *src, cmd_t *dst);
 
+void cmd_f_write(FILE *fp, cmd_t *self);
+void cmd_f_write_regulator(FILE *fp, cmd_t *self);
+void cmd_f_write_rep_hop_stand(FILE *fp, cmd_t *self);
+void cmd_f_write_raibert(FILE *fp, cmd_t *self);
+void cmd_f_write_arl(FILE *fp, cmd_t *self);
+void cmd_f_write_mtoka(FILE *fp, cmd_t *self);
+#define cmd_write(self)               cmd_f_write( stdout, self )
+#define cmd_write_regulator(self)     cmd_f_write_regulator( stdout, self )
+#define cmd_write_rep_hop_stand(self) cmd_f_write_rep_hop_stand( stdout, self )
+#define cmd_write_raibert(self)       cmd_f_write_raibert( stdout, self )
+#define cmd_write_arl(self)           cmd_f_write_arl( stdout, self )
+#define cmd_write_mtoka(self)         cmd_f_write_mtoka( stdout, self )
+
 #endif /* __RHC_CMD_H__ */

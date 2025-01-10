@@ -41,3 +41,58 @@ cmd_t *cmd_copy(cmd_t *src, cmd_t *dst)
   memcpy(dst, src, sizeof(cmd_t));
   return dst;
 }
+
+void cmd_f_write(FILE* fp, cmd_t *self)
+{
+  fprintf( fp, "za = %f\n", self->za );
+  fprintf( fp, "zh = %f\n", self->zh );
+  fprintf( fp, "zm = %f\n", self->zm );
+  fprintf( fp, "zb = %f\n", self->zb );
+}
+
+void cmd_f_write_regulator(FILE* fp, cmd_t *self)
+{
+  cmd_f_write( fp, self );
+  fprintf( fp, "q1 = %f\n", self->regulator.q1 );
+  fprintf( fp, "q2 = %f\n", self->regulator.q2 );
+}
+
+void cmd_f_write_rep_hop_stand(FILE* fp, cmd_t *self)
+{
+  cmd_f_write( fp, self );
+  fprintf( fp, "rho = %f\n", self->rep_hop_stand.rho );
+  fprintf( fp, "k = %f\n", self->rep_hop_stand.k );
+  fprintf( fp, "soft_landing = %s\n", self->rep_hop_stand.soft_landing ? "true" : "false" );
+}
+
+void cmd_f_write_raibert(FILE* fp, cmd_t *self)
+{
+  cmd_f_write( fp, self );
+  fprintf( fp, "delta = %f\n", self->raibert.delta );
+  fprintf( fp, "tau = %f\n", self->raibert.tau );
+  fprintf( fp, "gamma = %f\n", self->raibert.gamma );
+  fprintf( fp, "yeta1 = %f\n", self->raibert.yeta1 );
+  fprintf( fp, "zr = %f\n", self->raibert.zr );
+  fprintf( fp, "mu = %f\n", self->raibert.mu );
+}
+
+void cmd_f_write_arl(FILE* fp, cmd_t *self)
+{
+  cmd_f_write( fp, self );
+  fprintf( fp, "k = %f\n", self->arl.k );
+  fprintf( fp, "beta = %f\n", self->arl.beta );
+}
+
+void cmd_f_write_mtoka(FILE* fp, cmd_t *self)
+{
+  cmd_f_write( fp, self );
+  fprintf( fp, "tau = %f\n", self->mtoka.tau );
+  fprintf( fp, "T = %f\n", self->mtoka.T );
+  fprintf( fp, "a = %f\n", self->mtoka.a );
+  fprintf( fp, "b = %f\n", self->mtoka.b );
+  fprintf( fp, "c = %f\n", self->mtoka.c );
+  fprintf( fp, "th = %f\n", self->mtoka.th );
+  fprintf( fp, "mu = %f\n", self->mtoka.mu );
+  fprintf( fp, "rho = %f\n", self->mtoka.rho );
+  fprintf( fp, "lam = %f\n", self->mtoka.lam );
+}
