@@ -22,6 +22,14 @@ void teardown()
   cmd_destroy( &cmd );
 }
 
+TEST(test_ctrl_rep_hop_stand_cmd_init)
+{
+  ctrl_rep_hop_stand_cmd_init( &ctrl, &cmd );
+  ASSERT_EQ( 0.0, ctrl_rep_hop_stand_rho( &ctrl ) );
+  ASSERT_EQ( 2.0, ctrl_rep_hop_stand_k( &ctrl ) );
+  ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing( &ctrl ) );
+}
+
 TEST(test_ctrl_rep_hop_stand_create)
 {
   ASSERT_PTREQ( ctrl_cmd( &ctrl ), &cmd );
@@ -38,7 +46,7 @@ TEST(test_ctrl_rep_hop_stand_create)
   ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl) );
 
   ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_k(&ctrl) );
+  ASSERT_EQ( 2.0, ctrl_rep_hop_stand_k(&ctrl) );
   ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
 
   ASSERT_EQ( 0.28, ctrl_rep_hop_stand_params_za(&ctrl) );
@@ -347,6 +355,7 @@ TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm)
 TEST_SUITE(test_ctrl_rep_hop_stand)
 {
   CONFIGURE_SUITE( setup, teardown );
+  RUN_TEST(test_ctrl_rep_hop_stand_cmd_init);
   RUN_TEST(test_ctrl_rep_hop_stand_create);
   RUN_TEST(test_ctrl_rep_hop_stand_destroy);
   RUN_TEST(test_ctrl_rep_hop_stand_set_rho);

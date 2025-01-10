@@ -1,10 +1,20 @@
 #include "rhc_ctrl_rep_hop_stand.h"
 
+cmd_t *ctrl_rep_hop_stand_cmd_init(ctrl_t *self, cmd_t *cmd)
+{
+  cmd_default_init( cmd );
+  ctrl_rep_hop_stand_set_rho( self, 0.0 );
+  ctrl_rep_hop_stand_set_k( self, 2.0 );
+  ctrl_rep_hop_stand_disable_soft_landing( self );
+  return cmd;
+}
+
 ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type)
 {
   ctrl_rep_hop_stand_prp *prp;
 
   ctrl_init( self, cmd, model );
+  ctrl_rep_hop_stand_cmd_init( self, cmd );
   self->_update = ctrl_rep_hop_stand_update;
   self->_destroy = ctrl_rep_hop_stand_destroy;
   self->_header = ctrl_rep_hop_stand_header;
