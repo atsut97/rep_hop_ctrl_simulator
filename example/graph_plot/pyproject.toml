@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-pyplotutil = { git = "https://github.com/hrshtst/pyplotutil.git", branch = "develop-ver1" }
+pyplotutil = { git = "https://github.com/hrshtst/pyplotutil.git", branch = "develop" }
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
