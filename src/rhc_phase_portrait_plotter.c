@@ -189,18 +189,20 @@ void ppp_generate_edge_points(ppp_t *self)
   }
 }
 
-bool ppp_simulator_is_converged(ppp_t *self, vec_t p, double tol)
+bool ppp_simulator_is_converged(ppp_t *self, vec_t p, int num, double tol)
 {
-  if( vec_ring_empty( ppp_point_buf(self) ) )
-    return false;
-  return vec_near( p, vec_ring_head( ppp_point_buf(self) ), tol );
-}
+  register int i;
+  int size;
 
-double __internally_divisional_proportion(ppp_t *self, vec_t p, vec_t v1, vec_t v2)
-{
-  vec_sub( p, v1, self->_a );
-  vec_sub( v2, v1, self->_b );
-  return vec_dot( self->_a, self->_b ) / vec_sqr_norm( self->_b );
+  if( vec_ring_size( ppp_point_buf(self) ) <= num )
+    return false;
+
+  size = vec_ring_size( ppp_point_buf(self) );
+  for( i=0; i<num; i++ ){
+    if( !vec_near( p, vec_ring_item( ppp_point_buf(self), size-i-1 ), tol ) )
+      return false;
+  }
+  return true;
 }
 
 bool ppp_simulator_is_on_limit_cycle(ppp_t *self, vec_t p, double tol)
@@ -212,22 +214,28 @@ bool ppp_simulator_is_on_limit_cycle(ppp_t *self, vec_t p, double tol)
   for( i=vec_ring_size( ppp_point_buf(self) )-1; i>0; i-- ){
     v1 = vec_ring_item( ppp_point_buf(self), i );
     v2 = vec_ring_item( ppp_point_buf(self), i-1 );
-    k = __internally_divisional_proportion( self, p, v1, v2 );
-    if( k < 0.0 || k > 1.0 ) continue;
-    vec_cat( v1, k, self->_b, self->_a );
-    vec_sub( p, self->_a, self->_b );
-    if( istol( vec_norm( self->_b ), tol ) )
+    vec_sub( p, v1, self->_a );
+    vec_sub( v2, v1, self->_b );
+    k = vec_cos_sim( self->_a, self->_b );
+    if( istol(1.0-k, tol) && vec_near( self->_a, self->_b, tol ) )
       return true;
   }
   return false;
 }
 
-#define PHASE_PORTRAIT_PLOTTER_STABLE_TOL ( 1.0e-4 )
+#define PHASE_PORTRAIT_PLOTTER_STABLE_CONVERGENCE_TOL ( 1.0e-8 )
+#define PHASE_PORTRAIT_PLOTTER_STABLE_CONVERGENCE_CHECK_NUM 5
+#define PHASE_PORTRAIT_PLOTTER_STABLE_LIMIT_CYCLE_TOL ( 1.0e-3 )
 bool ppp_simulator_is_stable(ppp_t *self, vec_t p)
 {
-  if( ppp_check_convergence(self) && ppp_simulator_is_converged( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
+  if( ppp_check_convergence(self) &&
+      ppp_simulator_is_converged( self, p,
+                                  PHASE_PORTRAIT_PLOTTER_STABLE_CONVERGENCE_CHECK_NUM,
+                                  PHASE_PORTRAIT_PLOTTER_STABLE_CONVERGENCE_TOL ) )
     return true;
-  if( ppp_check_limit_cycle(self) && ppp_simulator_is_on_limit_cycle( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
+
+  if( ppp_check_limit_cycle(self) &&
+      ppp_simulator_is_on_limit_cycle( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_LIMIT_CYCLE_TOL ) )
     return true;
   return false;
 }
