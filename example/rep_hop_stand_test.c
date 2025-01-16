@@ -77,7 +77,7 @@ void set_params_stand()
 
 void set_params_hop()
 {
-  double zh;
+  double zh, zm;
   vec_t p0;
 
   p0 = vec_create( 2 );
@@ -90,7 +90,16 @@ void set_params_hop()
   }
   vec_set_elem_list( p0, cmd.zm - 1.0e-6, 0.0 );
   ppp_push_p0( &plotter, p0 );
+  vec_set_elem_list( p0, cmd.zm + 1.0e-6, 0.0 );
+  ppp_push_p0( &plotter, p0 );
 
+  zm = ctrl_rep_hop_stand_calc_zm( cmd.za, cmd.zh, cmd.zb );
+  if( !istiny( zm - cmd.zm ) ){
+    vec_set_elem_list( p0, zm-1e-6, 0.0 );
+    ppp_push_p0( &plotter, p0 );
+    vec_set_elem_list( p0, zm+1e-6, 0.0 );
+    ppp_push_p0( &plotter, p0 );
+  }
   vec_destroy( p0 );
 }
 
