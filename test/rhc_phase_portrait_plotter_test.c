@@ -39,6 +39,9 @@ TEST(test_phase_portrait_plotter_init)
   ASSERT_EQ( 10, ppp_n_sc( &ppp, 0 ) );
   ASSERT_EQ( 10, ppp_n_sc( &ppp, 1 ) );
   ASSERT_EQ( 0, vec_list_num( ppp_p0_list( &ppp ) ) );
+  ASSERT_TRUE( ppp_check_convergence( &ppp ) );
+  ASSERT_TRUE( ppp_check_limit_cycle( &ppp ) );
+  ASSERT_TRUE( ppp_check_out_of_region( &ppp ) );
 }
 
 TEST(test_phase_portrait_plotter_destroy)
@@ -133,6 +136,33 @@ TEST(test_phase_portrait_plotter_push_p0)
   vec_destroy( p0 );
 }
 
+TEST(test_phase_portrait_plotter_check_convergence)
+{
+  ASSERT_TRUE( ppp_check_convergence( &ppp ) );
+  ppp_disable_check_convergence( &ppp );
+  ASSERT_FALSE( ppp_check_convergence( &ppp ) );
+  ppp_enable_check_convergence( &ppp );
+  ASSERT_TRUE( ppp_check_convergence( &ppp ) );
+}
+
+TEST(test_phase_portrait_plotter_check_limit_cycle)
+{
+  ASSERT_TRUE( ppp_check_limit_cycle( &ppp ) );
+  ppp_disable_check_limit_cycle( &ppp );
+  ASSERT_FALSE( ppp_check_limit_cycle( &ppp ) );
+  ppp_enable_check_limit_cycle( &ppp );
+  ASSERT_TRUE( ppp_check_limit_cycle( &ppp ) );
+}
+
+TEST(test_phase_portrait_plotter_check_out_of_region)
+{
+  ASSERT_TRUE( ppp_check_out_of_region( &ppp ) );
+  ppp_disable_check_out_of_region( &ppp );
+  ASSERT_FALSE( ppp_check_out_of_region( &ppp ) );
+  ppp_enable_check_out_of_region( &ppp );
+  ASSERT_TRUE( ppp_check_out_of_region( &ppp ) );
+}
+
 TEST(test_phase_portrait_plotter_generate_edge_points)
 {
   vec_t min = vec_create_list( 2, -4.0, -4.0 );
@@ -213,6 +243,9 @@ TEST_SUITE(test_phase_portrait_plotter)
   RUN_TEST(test_phase_portrait_plotter_set_n_sc);
   RUN_TEST(test_phase_portrait_plotter_set_n_sc_xy);
   RUN_TEST(test_phase_portrait_plotter_push_p0);
+  RUN_TEST(test_phase_portrait_plotter_check_convergence);
+  RUN_TEST(test_phase_portrait_plotter_check_limit_cycle);
+  RUN_TEST(test_phase_portrait_plotter_check_out_of_region);
   RUN_TEST(test_phase_portrait_plotter_generate_edge_points);
   RUN_TEST(test_phase_portrait_plotter_simulator_update);
   RUN_TEST(test_phase_portrait_plotter_simulator_update_reset_point_buffer);

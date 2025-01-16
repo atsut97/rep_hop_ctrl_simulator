@@ -19,6 +19,11 @@ typedef struct {
   logger_t *logger;
   simulator_t simulator;
 
+  /* configuration */
+  bool check_convergence;
+  bool check_limit_cycle;
+  bool check_out_of_region;
+
   vec_t _a, _b;  /* workspace */
 } ppp_t;
 
@@ -36,6 +41,16 @@ typedef struct {
 
 #define ppp_p0_list_head(self) vec_list_head( ppp_p0_list(self) )
 #define ppp_p0_list_tail(self) vec_list_tail( ppp_p0_list(self) )
+
+#define ppp_check_convergence(self)           (self)->check_convergence
+#define ppp_enable_check_convergence(self)    ( ppp_check_convergence(self) = true )
+#define ppp_disable_check_convergence(self)   ( ppp_check_convergence(self) = false )
+#define ppp_check_limit_cycle(self)           (self)->check_limit_cycle
+#define ppp_enable_check_limit_cycle(self)    ( ppp_check_limit_cycle(self) = true )
+#define ppp_disable_check_limit_cycle(self)   ( ppp_check_limit_cycle(self) = false )
+#define ppp_check_out_of_region(self)         (self)->check_out_of_region
+#define ppp_enable_check_out_of_region(self)  ( ppp_check_out_of_region(self) = true )
+#define ppp_disable_check_out_of_region(self) ( ppp_check_out_of_region(self) = false )
 
 ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t *logger);
 void ppp_destroy(ppp_t *self);

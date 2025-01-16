@@ -34,6 +34,10 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t 
   vec_ring_init( ppp_point_buf(self), ppp_dim(self),
                  PHASE_PORTRAIT_PLOTTER_BUFFER_SIZE );
 
+  ppp_enable_check_convergence(self);
+  ppp_enable_check_limit_cycle(self);
+  ppp_enable_check_out_of_region(self);
+
   self->_a = vec_create( ppp_dim(self) );
   self->_b = vec_create( ppp_dim(self) );
   return self;
@@ -221,9 +225,9 @@ bool ppp_simulator_is_on_limit_cycle(ppp_t *self, vec_t p, double tol)
 #define PHASE_PORTRAIT_PLOTTER_STABLE_TOL ( 1.0e-4 )
 bool ppp_simulator_is_stable(ppp_t *self, vec_t p)
 {
-  if( ppp_simulator_is_converged( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
+  if( ppp_check_convergence(self) && ppp_simulator_is_converged( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
     return true;
-  if( ppp_simulator_is_on_limit_cycle( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
+  if( ppp_check_limit_cycle(self) && ppp_simulator_is_on_limit_cycle( self, p, PHASE_PORTRAIT_PLOTTER_STABLE_TOL ) )
     return true;
   return false;
 }
@@ -248,7 +252,8 @@ bool __is_greater_any(vec_t v1, vec_t v2)
 
 bool ppp_simulator_is_out_of_region(ppp_t *self, vec_t p)
 {
-  return ( __is_lower_any( p, self->pmin ) ||
+  return ppp_check_out_of_region(self) &&
+         ( __is_lower_any( p, self->pmin ) ||
            __is_greater_any( p, self->pmax ) );
 }
 
@@ -265,9 +270,9 @@ bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util)
   ppp_t *ppp = util;
 
   if( ppp_simulator_is_stable( ppp, simulator_state(self) ) )
-    return false;
+    return true;
   if( ppp_simulator_is_out_of_region( ppp, simulator_state(self) ) )
-    return false;
+    return true;
   vec_ring_push( ppp_point_buf(ppp), simulator_state(self) );
   ode_update( &self->ode, simulator_time(self), simulator_state(self), dt, self );
   return true;
