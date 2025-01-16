@@ -37,7 +37,7 @@ vec_t vec_copy(vec_t src, vec_t dst);
 /* clone */
 vec_t vec_clone(vec_t src);
 
-/* arithmatic operations */
+/* arithmetic operations */
 vec_t vec_add(vec_t v1, vec_t v2, vec_t v);
 vec_t vec_sub(vec_t v1, vec_t v2, vec_t v);
 vec_t vec_mul(vec_t v1, double k, vec_t v);
@@ -59,6 +59,9 @@ double vec_sqr_norm(vec_t v);
 /* distance calculation */
 double vec_sqr_dist(vec_t v1, vec_t v2);
 #define vec_dist(v1, v2) sqrt( vec_sqr_dist( v1, v2 ) )
+
+/* cosine similarity */
+double vec_cos_sim(vec_t v1, vec_t v2);
 
 /* output */
 void vec_f_write(FILE *fp, vec_t v);

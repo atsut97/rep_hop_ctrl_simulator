@@ -920,6 +920,36 @@ TEST(test_vec_dist)
     check_vec_dist( c->n, c->val1, c->val2, c->expected );
 }
 
+TEST(test_vec_cos_sim)
+{
+  struct case_t{
+    size_t n;
+    double val1[10];
+    double val2[10];
+    double expected;
+  } cases[] = {
+    { 2, { 0, 0 }, { 1, 1 }, 0 },
+    { 2, { 1, 1 }, { 1, 1 }, 1 },
+    { 2, { 1, 1 }, { 2, 2 }, 1 },
+    { 2, { 1, 0 }, { 0, 1 }, 0 },
+    { 2, { 1, 0 }, { -1, 0 }, -1 },
+    { 3, { 1, 2, 1 }, { 2, 1, 2 }, sqrt(6)/3 },
+    { 3, { -1, 1, 2 }, { 2, 1, -1 }, -0.5},
+    { 3, { -1, 1, 2 }, { 2, -1, -1 }, -5.0/6},
+    { 0, {}, {}, 0 },
+  };
+  struct case_t *c;
+  vec_t v1, v2;
+
+  for( c=cases; c->n>0; c++ ){
+    v1 = vec_create_array( c->n, c->val1 );
+    v2 = vec_create_array( c->n, c->val2 );
+    ASSERT_DOUBLE_EQ( c->expected, vec_cos_sim( v1, v2 ) );
+    vec_destroy( v1 );
+    vec_destroy( v2 );
+  }
+}
+
 void check_vec_f_write(size_t n, double *val)
 {
   vec_t v;
@@ -1009,6 +1039,7 @@ TEST_SUITE(test_vec)
   RUN_TEST(test_vec_sqr_dist);
   RUN_TEST(test_vec_sqr_dist_size_mismatch);
   RUN_TEST(test_vec_dist);
+  RUN_TEST(test_vec_cos_sim);
   RUN_TEST(test_vec_f_write);
   RUN_TEST(test_vec_f_write_given_null);
 }

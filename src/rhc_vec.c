@@ -249,6 +249,11 @@ double vec_sqr_dist(vec_t v1, vec_t v2)
   return d;
 }
 
+double vec_cos_sim(vec_t v1, vec_t v2)
+{
+  return vec_dot( v1, v2 ) / ( vec_norm(v1) * vec_norm(v2) );
+}
+
 void vec_f_write(FILE *fp, vec_t v)
 {
   register size_t i;
