@@ -270,9 +270,9 @@ bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util)
   ppp_t *ppp = util;
 
   if( ppp_simulator_is_stable( ppp, simulator_state(self) ) )
-    return true;
+    return false;
   if( ppp_simulator_is_out_of_region( ppp, simulator_state(self) ) )
-    return true;
+    return false;
   vec_ring_push( ppp_point_buf(ppp), simulator_state(self) );
   ode_update( &self->ode, simulator_time(self), simulator_state(self), dt, self );
   return true;
