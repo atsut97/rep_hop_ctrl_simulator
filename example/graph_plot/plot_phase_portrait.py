@@ -206,11 +206,11 @@ def main() -> None:
         list_tags(dataset)
         sys.exit()
 
-    show_legend = False
-    if args.show_legend is None and args.tags is not None and len(args.tags) <= N_TAGS_SHOW_LEGEND:
+    show_legend: bool | None = args.show_legend
+    if show_legend is None and args.tags is not None and len(args.tags) <= N_TAGS_SHOW_LEGEND:
         show_legend = True
 
-    plot(dataset, args.tags, xlim=args.xlim, ylim=args.ylim, grid=args.grid, show_legend=show_legend)
+    plot(dataset, args.tags, xlim=args.xlim, ylim=args.ylim, grid=args.grid, show_legend=bool(show_legend))
     if args.show_plot:
         plt.show()
 
