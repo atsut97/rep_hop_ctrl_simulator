@@ -16,6 +16,9 @@ enum mode_list {
   STAND = 0,
   HOP,
   SQUAT,
+  STAND_SOFT_LAND,
+  HOP_SOFT_LAND,
+  SQUAT_SOFT_LAND,
 };
 enum mode_list mode_id = NONE;
 
@@ -28,6 +31,9 @@ void usage(int argc, const char *argv[])
   fprintf( stderr, "    stand\n" );
   fprintf( stderr, "    hop\n" );
   fprintf( stderr, "    squat\n" );
+  fprintf( stderr, "    stand_soft_land\n" );
+  fprintf( stderr, "    hop_soft_land\n" );
+  fprintf( stderr, "    squat_soft_land\n" );
 }
 
 void parse(int argc, const char *argv[])
@@ -46,6 +52,12 @@ void parse(int argc, const char *argv[])
     mode_id = HOP;
   else if( strcmp( argv[1], "squat" ) == 0)
     mode_id = SQUAT;
+  else if( strcmp( argv[1], "stand_soft_land" ) == 0 )
+    mode_id = STAND_SOFT_LAND;
+  else if( strcmp( argv[1], "hop_soft_land" ) == 0 )
+    mode_id = HOP_SOFT_LAND;
+  else if( strcmp( argv[1], "squat_soft_land" ) == 0)
+    mode_id = SQUAT_SOFT_LAND;
   else {
     fprintf( stderr, "unrecognized mode name: %s\n", argv[1] );
     mode_id = NONE;
@@ -73,6 +85,28 @@ void set_params_stand()
 {
   ctrl_rep_hop_stand_set_rho( &ctrl, 0.0 );
   ppp_generate_edge_points( &plotter );
+}
+
+void set_params_stand_soft_land()
+{
+  vec_t p0;
+
+  p0 = vec_create( 2 );
+  ctrl_rep_hop_stand_set_rho( &ctrl, 0.0 );
+  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
+  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+  ppp_generate_edge_points( &plotter );
+
+  vec_list_node_t *node, *next;
+  vec_set_elem_list( p0, cmd.zh, -1.5 );
+  vec_list_for_each( ppp_p0_list(&plotter), node ){
+    next = node->next;
+    if( vec_list_root(ppp_p0_list(&plotter)) != next && vec_near( next->v, p0, 1.0e-6 ) ){
+      vec_list_delete_next( ppp_p0_list(&plotter), node );
+      vec_list_node_destroy(next);
+    }
+  }
+  vec_destroy( p0 );
 }
 
 void set_params_hop()
@@ -104,6 +138,29 @@ void set_params_hop()
   vec_destroy( p0 );
 }
 
+void set_params_hop_soft_land()
+{
+  vec_t p0;
+
+  p0 = vec_create( 2 );
+  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
+  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
+  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+  cmd.za = 0.3;
+  ppp_generate_edge_points( &plotter );
+
+  vec_list_node_t *node, *next;
+  vec_set_elem_list( p0, cmd.zh, -1.5 );
+  vec_list_for_each( ppp_p0_list(&plotter), node ){
+    next = node->next;
+    if( vec_list_root(ppp_p0_list(&plotter)) != next && vec_near( next->v, p0, 1.0e-6 ) ){
+      vec_list_delete_next( ppp_p0_list(&plotter), node );
+      vec_list_node_destroy(next);
+    }
+  }
+  vec_destroy( p0 );
+}
+
 void set_params_squat()
 {
   vec_t p0;
@@ -128,6 +185,29 @@ void set_params_squat()
   vec_destroy( p0 );
 }
 
+void set_params_squat_soft_land()
+{
+  vec_t p0;
+
+  p0 = vec_create( 2 );
+  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
+  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
+  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+  cmd.za = 0.255;
+  ppp_generate_edge_points( &plotter );
+
+  vec_list_node_t *node, *next;
+  vec_set_elem_list( p0, cmd.zh, -1.5 );
+  vec_list_for_each( ppp_p0_list(&plotter), node ){
+    next = node->next;
+    if( vec_list_root(ppp_p0_list(&plotter)) != next && vec_near( next->v, p0, 1.0e-6 ) ){
+      vec_list_delete_next( ppp_p0_list(&plotter), node );
+      vec_list_node_destroy(next);
+    }
+  }
+  vec_destroy( p0 );
+}
+
 void setup_ctrl()
 {
   make_edge_points( &plotter );
@@ -140,6 +220,15 @@ void setup_ctrl()
     break;
   case SQUAT:
     set_params_squat();
+    break;
+  case STAND_SOFT_LAND:
+    set_params_stand_soft_land();
+    break;
+  case HOP_SOFT_LAND:
+    set_params_hop_soft_land();
+    break;
+  case SQUAT_SOFT_LAND:
+    set_params_squat_soft_land();
     break;
   case NONE:
   default:

@@ -125,20 +125,83 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
   return zm - sqrt( ( zh - zm ) * ( 2.0 * za - zh - zm ) );
 }
 
+double _ctrl_rep_hop_stand_calc_phi_ratio_linear(double phi)
+{
+  double s;
+  s = (2.0 * phi) / PI - 1.0;
+  if( s < 0.0 ) s = 0.0;
+  else if( s > 1.0 ) s = 1.0;
+  return s;
+}
+
+double _ctrl_rep_hop_stand_calc_phi_ratio_piecewise(double phi)
+{
+  double s;
+  if( phi < 0 ) s = 1.0;
+  else s = 0.0;
+  return s;
+}
+
+double ctrl_rep_hop_stand_calc_phi_based_param(double phi, double v1, double v2)
+{
+  double s, v;
+  s = _ctrl_rep_hop_stand_calc_phi_ratio_piecewise( phi );
+  /* fprintf(stderr, "s: %f\n", s); */
+  v = v1 * ( 1.0 - s ) + v2 * s;
+  return v;
+}
+
 ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p)
 {
   cmd_t *params;
-  double zb, zm;
+  double za, zb, zm;
+  double z_apex;
+  char phase[BUFSIZ];
 
   params = ctrl_rep_hop_stand_params(self);
   cmd_copy( ctrl_cmd(self), params );
-  if( ctrl_rep_hop_stand_rho(self) > 0 ){
-    zb = ctrl_rep_hop_stand_calc_zb( ctrl_za(self), ctrl_zh(self), ctrl_zm(self) );
-    if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
-      params->zb = zb;
+  if( ctrl_rep_hop_stand_soft_landing(self) ){
+    if( istiny( ctrl_apex_z(self) ) ) z_apex= ctrl_za(self);
+    else z_apex = ctrl_apex_z(self);
+    za = ctrl_rep_hop_stand_calc_phi_based_param( ctrl_phi(self), z_apex, ctrl_za(self) );
+    params->za = za;
+    ctrl_phase_string(self, phase);
+    /* fprintf( stderr, "phase: %s, ctrl_phi: %f, ctrl_apex_z: %f, ctrl_za: %f, params_za: %f, za: %f\n", */
+    /*         phase, */
+    /*         ctrl_phi(self), ctrl_apex_z(self), ctrl_za(self), params->za, za ); */
+    if( ctrl_rep_hop_stand_rho(self) > 0 ){
+      zb = ctrl_rep_hop_stand_calc_zb( za, ctrl_zh(self), ctrl_zm(self) );
+      if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
+        params->zb = zb;
+      } else{
+        zm = ctrl_rep_hop_stand_calc_zm( za, ctrl_zh(self), ctrl_zb(self) );
+        params->zm = zm;
+      }
     } else{
-      zm = ctrl_rep_hop_stand_calc_zm( ctrl_za(self), ctrl_zh(self), ctrl_zb(self) );
-      params->zm = zm;
+      double rho = ctrl_rep_hop_stand_calc_phi_based_param( ctrl_phi(self), 1.0, 0.0 );
+      /* fprintf( stderr, "phase: %s, ctrl_phi: %f, ctrl_apex_z: %f, ctrl_za: %f, params_za: %f, za: %f, rho: %f\n", */
+      /*         phase, */
+      /*         ctrl_phi(self), ctrl_apex_z(self), ctrl_za(self), params->za, za, rho ); */
+      params->rep_hop_stand.rho = rho;
+      if( rho > 0.0 ){
+        zb = ctrl_rep_hop_stand_calc_zb( za, ctrl_zh(self), ctrl_zm(self) );
+        if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
+          params->zb = zb;
+        } else{
+          zm = ctrl_rep_hop_stand_calc_zm( za, ctrl_zh(self), ctrl_zb(self) );
+          params->zm = zm;
+        }
+      }
+    }
+  } else{
+    if( ctrl_rep_hop_stand_rho(self) > 0 ){
+      zb = ctrl_rep_hop_stand_calc_zb( ctrl_za(self), ctrl_zh(self), ctrl_zm(self) );
+      if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
+        params->zb = zb;
+      } else{
+        zm = ctrl_rep_hop_stand_calc_zm( ctrl_za(self), ctrl_zh(self), ctrl_zb(self) );
+        params->zm = zm;
+      }
     }
   }
   return self;
