@@ -81,8 +81,8 @@ TEST(test_cmd_default_init)
   cmd_default_init( &cmd );
   ASSERT_EQ( 0.28, cmd.za );
   ASSERT_EQ( 0.26, cmd.zh );
-  ASSERT_EQ( 0.25, cmd.zm );
-  ASSERT_EQ( 0.24, cmd.zb );
+  ASSERT_EQ( 0.255, cmd.zm );
+  ASSERT_EQ( 0.23, cmd.zb );
 }
 
 

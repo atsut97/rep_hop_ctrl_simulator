@@ -59,7 +59,7 @@ def plot_params(ax: Axes, dataset: TaggedData, tags: list[str] | None) -> tuple[
 def plot_all(ax: Axes, dataset: TaggedData) -> Axes:
     # Plot solution curves.
     for tag, data in dataset:
-        ax.plot(data.z, data.vz, ls="-", lw=1, c="k", label=tag)
+        ax.plot(data.z, data.vz, ls="-", lw=0.5, c="k", label=tag)
     return ax
 
 
@@ -67,7 +67,7 @@ def plot_tags(ax: Axes, dataset: TaggedData, tags: list[str]) -> Axes:
     # Plot solution curves of specified tags.
     for tag in tags:
         data = dataset.get(tag)
-        ax.plot(data.z, data.vz, ls="-", lw=1, label=tag)
+        ax.plot(data.z, data.vz, ls="-", lw=0.5, label=tag)
     return ax
 
 
@@ -110,7 +110,7 @@ def plot(
         all_tags = sorted(dataset.tags())
         tags = [all_tags[int(tag)] if tag.isdigit() else tag for tag in tags]
     # Prepare figure.
-    _, ax = plt.subplots()
+    _, ax = plt.subplots(figsize=(12, 9))
 
     # Plot constant parameters.
     zh, za, zb = plot_params(ax, dataset, tags)
@@ -125,7 +125,7 @@ def plot(
     title = None
     if dataset.is_loaded_from_file():
         title = dataset.datapath.stem
-    xlim, ylim = get_limits(xlim, ylim, fallback_xlim=(0.22, 0.3), fallback_ylim=(-1.0, 1.0))
+    xlim, ylim = get_limits(xlim, ylim, fallback_xlim=(0.16, 0.36), fallback_ylim=(-1.5, 1.5))
     set_misc(ax, "position [m]", "velocity [m/s]", title, xlim, ylim, grid=grid)
 
     if show_legend:

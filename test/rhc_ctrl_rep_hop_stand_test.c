@@ -26,7 +26,7 @@ TEST(test_ctrl_rep_hop_stand_cmd_init)
 {
   ctrl_rep_hop_stand_cmd_init( &ctrl, &cmd );
   ASSERT_EQ( 0.0, ctrl_rep_hop_stand_rho( &ctrl ) );
-  ASSERT_EQ( 2.0, ctrl_rep_hop_stand_k( &ctrl ) );
+  ASSERT_EQ( 4.0, ctrl_rep_hop_stand_k( &ctrl ) );
   ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing( &ctrl ) );
 }
 
@@ -47,13 +47,13 @@ TEST(test_ctrl_rep_hop_stand_create)
   ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl) );
 
   ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl) );
-  ASSERT_EQ( 2.0, ctrl_rep_hop_stand_k(&ctrl) );
+  ASSERT_EQ( 4.0, ctrl_rep_hop_stand_k(&ctrl) );
   ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
 
   ASSERT_EQ( 0.28, ctrl_rep_hop_stand_params_za(&ctrl) );
   ASSERT_EQ( 0.26, ctrl_rep_hop_stand_params_zh(&ctrl) );
-  ASSERT_EQ( 0.25, ctrl_rep_hop_stand_params_zm(&ctrl) );
-  ASSERT_EQ( 0.24, ctrl_rep_hop_stand_params_zb(&ctrl) );
+  ASSERT_EQ( 0.255, ctrl_rep_hop_stand_params_zm(&ctrl) );
+  ASSERT_EQ( 0.23, ctrl_rep_hop_stand_params_zb(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_params_rho(&ctrl) );
 }
 
@@ -77,13 +77,13 @@ TEST(test_ctrl_rep_hop_stand_create_no_update)
   ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl_no_update) );
 
   ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl_no_update) );
-  ASSERT_EQ( 2.0, ctrl_rep_hop_stand_k(&ctrl_no_update) );
+  ASSERT_EQ( 4.0, ctrl_rep_hop_stand_k(&ctrl_no_update) );
   ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing(&ctrl_no_update) );
 
   ASSERT_EQ( 0.28, ctrl_rep_hop_stand_params_za(&ctrl_no_update) );
   ASSERT_EQ( 0.26, ctrl_rep_hop_stand_params_zh(&ctrl_no_update) );
-  ASSERT_EQ( 0.25, ctrl_rep_hop_stand_params_zm(&ctrl_no_update) );
-  ASSERT_EQ( 0.24, ctrl_rep_hop_stand_params_zb(&ctrl_no_update) );
+  ASSERT_EQ( 0.255, ctrl_rep_hop_stand_params_zm(&ctrl_no_update) );
+  ASSERT_EQ( 0.23, ctrl_rep_hop_stand_params_zb(&ctrl_no_update) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_params_rho(&ctrl_no_update) );
 
   ctrl_destroy( &ctrl_no_update );

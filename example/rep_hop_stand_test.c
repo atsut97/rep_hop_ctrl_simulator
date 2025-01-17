@@ -65,7 +65,7 @@ void init()
 
 void make_edge_points(ppp_t *ppp)
 {
-  ppp_set_lim_xy( &plotter, 0.22, 0.3, -1.0, 1.0 );
+  ppp_set_lim_xy( &plotter, 0.16, 0.36, -1.5, 1.5 );
   ppp_set_n_sc_xy( ppp, 10, 10 );
 }
 
