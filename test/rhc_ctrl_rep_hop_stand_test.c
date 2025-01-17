@@ -40,7 +40,7 @@ TEST(test_ctrl_rep_hop_stand_create)
   ASSERT_PTREQ( ctrl_rep_hop_stand_writer, ctrl._writer );
   ASSERT_PTRNE( NULL, ctrl.prp );
 
-  ASSERT_EQ( none, ctrl_rep_hop_stand_type(&ctrl) );
+  ASSERT_EQ( rep_hop_stand_default, ctrl_rep_hop_stand_type(&ctrl) );
   ASSERT_PTREQ( ctrl_rep_hop_stand_update_params_default, ctrl_rep_hop_stand_get_prp(&ctrl)->_update_params );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q1(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q2(&ctrl) );
