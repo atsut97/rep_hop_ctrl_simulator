@@ -60,7 +60,7 @@ void init()
   model_init( &model, 10 );
   logger_init( &logger );
   ppp_init( &plotter, &cmd, &ctrl, &model, &logger );
-  ctrl_rep_hop_stand_create( &ctrl, &cmd, &model, no_soft_landing);
+  ctrl_rep_hop_stand_create( &ctrl, &cmd, &model );
 }
 
 void make_edge_points(ppp_t *ppp)

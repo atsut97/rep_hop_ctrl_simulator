@@ -9,7 +9,7 @@ cmd_t *ctrl_rep_hop_stand_cmd_init(ctrl_t *self, cmd_t *cmd)
   return cmd;
 }
 
-ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type)
+ctrl_t *ctrl_rep_hop_stand_create_with_type(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type)
 {
   ctrl_rep_hop_stand_prp *prp;
 

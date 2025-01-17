@@ -11,7 +11,7 @@ void setup()
 {
   cmd_default_init( &cmd );
   model_init( &model, 10 );
-  ctrl_rep_hop_stand_create( &ctrl, &cmd, &model, none );
+  ctrl_rep_hop_stand_create( &ctrl, &cmd, &model );
   p = vec_create( 2 );
 }
 

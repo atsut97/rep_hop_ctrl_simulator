@@ -4,8 +4,8 @@
 #include "rhc_ctrl.h"
 
 enum ctrl_rep_hop_stand_types{
-  none = -1,
-  no_soft_landing = 0,
+  none = 0,
+  no_param_update,
   soft_landing_discont_rho,
   soft_landing_cont_rho,
 };
@@ -55,7 +55,8 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm);
 ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p);
 
 cmd_t *ctrl_rep_hop_stand_cmd_init(ctrl_t *self, cmd_t *cmd);
-ctrl_t *ctrl_rep_hop_stand_create(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type);
+ctrl_t *ctrl_rep_hop_stand_create_with_type(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type);
+#define ctrl_rep_hop_stand_create(self, cmd, model) ctrl_rep_hop_stand_create_with_type( self, cmd, model, none )
 void ctrl_rep_hop_stand_destroy(ctrl_t *self);
 ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p);
 void ctrl_rep_hop_stand_header(FILE *fp, void *util);
