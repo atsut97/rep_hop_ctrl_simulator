@@ -41,6 +41,7 @@ TEST(test_ctrl_rep_hop_stand_create)
   ASSERT_PTRNE( NULL, ctrl.prp );
 
   ASSERT_EQ( none, ctrl_rep_hop_stand_type(&ctrl) );
+  ASSERT_PTREQ( ctrl_rep_hop_stand_update_params_default, ctrl_rep_hop_stand_get_prp(&ctrl)->_update_params );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q1(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q2(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl) );
@@ -54,6 +55,38 @@ TEST(test_ctrl_rep_hop_stand_create)
   ASSERT_EQ( 0.25, ctrl_rep_hop_stand_params_zm(&ctrl) );
   ASSERT_EQ( 0.24, ctrl_rep_hop_stand_params_zb(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_params_rho(&ctrl) );
+}
+
+TEST(test_ctrl_rep_hop_stand_create_no_update)
+{
+  ctrl_t ctrl_no_update;
+  ctrl_rep_hop_stand_create_with_type( &ctrl_no_update, &cmd, &model, no_update_params );
+
+  ASSERT_PTREQ( ctrl_cmd( &ctrl_no_update ), &cmd );
+  ASSERT_PTREQ( ctrl_model( &ctrl_no_update ), &model );
+  ASSERT_PTREQ( ctrl_rep_hop_stand_update, ctrl._update );
+  ASSERT_PTREQ( ctrl_rep_hop_stand_destroy, ctrl._destroy );
+  ASSERT_PTREQ( ctrl_rep_hop_stand_header, ctrl._header );
+  ASSERT_PTREQ( ctrl_rep_hop_stand_writer, ctrl._writer );
+  ASSERT_PTRNE( NULL, ctrl.prp );
+
+  ASSERT_EQ( no_update_params, ctrl_rep_hop_stand_type(&ctrl_no_update) );
+  ASSERT_PTREQ( ctrl_rep_hop_stand_update_params_no_update, ctrl_rep_hop_stand_get_prp(&ctrl_no_update)->_update_params );
+  ASSERT_EQ( 0, ctrl_rep_hop_stand_q1(&ctrl_no_update) );
+  ASSERT_EQ( 0, ctrl_rep_hop_stand_q2(&ctrl_no_update) );
+  ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl_no_update) );
+
+  ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl_no_update) );
+  ASSERT_EQ( 2.0, ctrl_rep_hop_stand_k(&ctrl_no_update) );
+  ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing(&ctrl_no_update) );
+
+  ASSERT_EQ( 0.28, ctrl_rep_hop_stand_params_za(&ctrl_no_update) );
+  ASSERT_EQ( 0.26, ctrl_rep_hop_stand_params_zh(&ctrl_no_update) );
+  ASSERT_EQ( 0.25, ctrl_rep_hop_stand_params_zm(&ctrl_no_update) );
+  ASSERT_EQ( 0.24, ctrl_rep_hop_stand_params_zb(&ctrl_no_update) );
+  ASSERT_EQ( 0, ctrl_rep_hop_stand_params_rho(&ctrl_no_update) );
+
+  ctrl_destroy( &ctrl_no_update );
 }
 
 TEST(test_ctrl_rep_hop_stand_destroy)
@@ -311,7 +344,7 @@ TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb)
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
     ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
     vec_set_elem_list( p, c->z, c->v );
-    ctrl_rep_hop_stand_update_params( &ctrl, p );
+    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
     ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
     ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
     ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
@@ -337,7 +370,7 @@ TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm)
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
     ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
     vec_set_elem_list( p, c->z, c->v );
-    ctrl_rep_hop_stand_update_params( &ctrl, p );
+    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
     ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
     ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
     ASSERT_NEAR( c->expected_zm, ctrl_rep_hop_stand_params_zm(&ctrl), 1e-10 );
@@ -363,7 +396,7 @@ TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm)
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
     ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
     vec_set_elem_list( p, c->z, c->v );
-    ctrl_rep_hop_stand_update_params( &ctrl, p );
+    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
     ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
     ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
     ASSERT_NEAR( c->expected_zm, ctrl_rep_hop_stand_params_zm(&ctrl), 1e-10 );
@@ -377,6 +410,7 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_ctrl_rep_hop_stand_cmd_init);
   RUN_TEST(test_ctrl_rep_hop_stand_create);
+  RUN_TEST(test_ctrl_rep_hop_stand_create_no_update);
   RUN_TEST(test_ctrl_rep_hop_stand_destroy);
   RUN_TEST(test_ctrl_rep_hop_stand_set_rho);
   RUN_TEST(test_ctrl_rep_hop_stand_set_k);

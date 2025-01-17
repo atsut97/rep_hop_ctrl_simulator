@@ -5,13 +5,14 @@
 
 enum ctrl_rep_hop_stand_types{
   none = 0,
-  no_param_update,
+  no_update_params,
   soft_landing_discont_rho,
   soft_landing_cont_rho,
 };
 
 typedef struct{
   enum ctrl_rep_hop_stand_types type;
+  ctrl_t* (*_update_params)(ctrl_t *, vec_t);
   cmd_t params;
   double q1, q2;
   double vm;
@@ -52,7 +53,8 @@ double ctrl_rep_hop_stand_calc_za(double zh, double zm, double zb);
 double ctrl_rep_hop_stand_calc_zh(double za, double zm, double zb);
 double ctrl_rep_hop_stand_calc_zm(double za, double zh, double zb);
 double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm);
-ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p);
+ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p);
+ctrl_t *ctrl_rep_hop_stand_update_params_no_update(ctrl_t *self, vec_t p);
 
 cmd_t *ctrl_rep_hop_stand_cmd_init(ctrl_t *self, cmd_t *cmd);
 ctrl_t *ctrl_rep_hop_stand_create_with_type(ctrl_t *self, cmd_t *cmd, model_t *model, enum ctrl_rep_hop_stand_types type);

@@ -26,6 +26,11 @@ ctrl_t *ctrl_rep_hop_stand_create_with_type(ctrl_t *self, cmd_t *cmd, model_t *m
   }
   prp = self->prp;
   prp->type = type;
+
+  if( prp->type == no_update_params )
+    prp->_update_params = ctrl_rep_hop_stand_update_params_no_update;
+  else
+    prp->_update_params = ctrl_rep_hop_stand_update_params_default;
   cmd_copy( cmd, ctrl_rep_hop_stand_params(self) );
   prp->q1 = 0;
   prp->q2 = 0;
@@ -120,7 +125,7 @@ double ctrl_rep_hop_stand_calc_zb(double za, double zh, double zm)
   return zm - sqrt( ( zh - zm ) * ( 2.0 * za - zh - zm ) );
 }
 
-ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p)
+ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p)
 {
   cmd_t *params;
   double zb, zm;
@@ -139,10 +144,15 @@ ctrl_t *ctrl_rep_hop_stand_update_params(ctrl_t *self, vec_t p)
   return self;
 }
 
+ctrl_t *ctrl_rep_hop_stand_update_params_no_update(ctrl_t *self, vec_t p)
+{
+  return self;
+}
+
 ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p)
 {
   ctrl_update_default( self, t, p );
-  ctrl_rep_hop_stand_update_params( self, p );
+  ctrl_rep_hop_stand_get_prp(self)->_update_params( self, p );
   if( ctrl_phase_in( self, flight ) ){
     self->fz = 0;
   } else{
