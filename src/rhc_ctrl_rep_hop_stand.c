@@ -146,6 +146,13 @@ ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p)
 
 ctrl_t *ctrl_rep_hop_stand_update_params_no_update(ctrl_t *self, vec_t p)
 {
+  cmd_t *params;
+  double zm;
+
+  params = ctrl_rep_hop_stand_params(self);
+  cmd_copy( ctrl_cmd(self), params );
+  zm = ctrl_rep_hop_stand_calc_zm( ctrl_za(self), ctrl_zh(self), ctrl_zb(self) );
+  params->zm = zm;
   return self;
 }
 

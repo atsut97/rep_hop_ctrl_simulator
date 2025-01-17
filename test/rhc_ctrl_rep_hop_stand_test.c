@@ -405,6 +405,32 @@ TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm)
   }
 }
 
+TEST(test_ctrl_rep_hop_stand_update_params_no_update)
+{
+  struct case_t {
+    double z, v, za, zh, zm, zb, rho;
+    double expected_zm;
+  } cases[] = {
+    /*  z,   v,  za,  zh,  zm,  zb, rho, expected_zm */
+    { 0.0, 0.0, 2.5, 2.0, 1.5, 1.0, 1.0, 1.75-1.0/12.0, },
+    { 0.0, 0.0, 1.5, 1.0, 0.8, 0.5, 1.0, 0.875, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zb>0.0; c++ ){
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
+    vec_set_elem_list( p, c->z, c->v );
+    ctrl_rep_hop_stand_update_params_no_update( &ctrl, p );
+    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
+    ASSERT_NEAR( c->expected_zm, ctrl_rep_hop_stand_params_zm(&ctrl), 1e-10 );
+    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  }
+}
+
 TEST_SUITE(test_ctrl_rep_hop_stand)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -427,6 +453,7 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb);
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm);
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm);
+  RUN_TEST(test_ctrl_rep_hop_stand_update_params_no_update);
 }
 
 int main(int argc, char *argv[])
