@@ -221,15 +221,6 @@ ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p)
       params->zm = zm;
     }
   }
-
-  /* char phase[BUFSIZ]; */
-  /* ctrl_phase_string(self, phase); */
-  /* fprintf( stderr, "phase: %s, phi: %f, za': %f, zm': %f, zb': %f, rho': %f, za: %f, zm: %f, zb: %f, rho: %f, n: %s\n", */
-  /*          phase, ctrl_phi(self), */
-  /*          ctrl_za(self), ctrl_zm(self), ctrl_zb(self), ctrl_rep_hop_stand_rho(self), */
-  /*          params->za, params->zm, params->zb, params->rep_hop_stand.rho, */
-  /*          ctrl_rep_hop_stand_cushioning(self) ? "true" : "false" */
-  /*         ); */
   return self;
 }
 
