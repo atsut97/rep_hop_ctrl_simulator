@@ -148,6 +148,13 @@ void setup_ctrl()
   }
 }
 
+void print_cmd()
+{
+  cmd_f_write_rep_hop_stand( stderr, &cmd );
+  fprintf( stderr, "--\n" );
+  cmd_f_write_rep_hop_stand( stderr, ctrl_rep_hop_stand_params(&ctrl) );
+}
+
 void run()
 {
   ppp_run( &plotter, T, DT );
