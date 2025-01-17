@@ -8,7 +8,7 @@ cmd_t *ctrl_rep_hop_stand_cmd_init(ctrl_t *self, cmd_t *cmd)
   cmd_default_init( cmd );
   ctrl_rep_hop_stand_set_rho( self, 0.0 );
   ctrl_rep_hop_stand_set_k( self, 4.0 );
-  ctrl_rep_hop_stand_disable_soft_landing( self );
+  ctrl_rep_hop_stand_enable_soft_landing( self );
   return cmd;
 }
 

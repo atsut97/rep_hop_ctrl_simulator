@@ -84,6 +84,7 @@ void make_edge_points(ppp_t *ppp)
 void set_params_stand()
 {
   ctrl_rep_hop_stand_set_rho( &ctrl, 0.0 );
+  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
   ppp_generate_edge_points( &plotter );
 }
 
@@ -117,6 +118,7 @@ void set_params_hop()
   p0 = vec_create( 2 );
   ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
   ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
+  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
   ppp_generate_edge_points( &plotter );
 
   zm = ctrl_rep_hop_stand_calc_zm( cmd.za, cmd.zh, cmd.zb );
@@ -178,6 +180,7 @@ void set_params_squat()
   p0 = vec_create( 2 );
   ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
   ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
+  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
   cmd.za = 0.255;
   ppp_generate_edge_points( &plotter );
 
