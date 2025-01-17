@@ -41,7 +41,7 @@ void ctrl_rep_hop_stand_destroy(ctrl_t *self)
 
 void ctrl_rep_hop_stand_header(FILE *fp, void *util)
 {
-  fprintf( fp, ",type,rho,k,q1,q2,vm,zm_phi,p_za,p_zh,p_zm,p_zb,p_rho\n" );
+  fprintf( fp, ",type,rho,k,soft_landing,q1,q2,vm,p_za,p_zh,p_zm,p_zb,p_rho\n" );
 }
 
 void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util)
