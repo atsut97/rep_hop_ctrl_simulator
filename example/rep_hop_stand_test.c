@@ -5,6 +5,26 @@
 #define DT 0.001
 #define T  10
 
+/*
+  Usage:
+    Running a specific mode:
+      $ cd example
+      $ make rep_hop_stand_test
+      $ mode=stand; ./rep_hop_stand_test $mode >graph_plot/$mode.csv
+      $ cd graph_plot
+      $ uv run python plot_phase_portrait.py $mode.csv --xlim --ylim
+
+    Run all modes:
+      $ cd example/graph_plot
+      $ modes=(stand stand_soft_land hop hop_soft_land squat squat_soft_land);
+      $ (cd .. && make rep_hop_stand_test) && \
+        for mode in "${modes[@]}"; do \
+          echo "Running '${mode}'...";
+          ../rep_hop_stand_test $mode >$mode.csv && \
+          uv run python plot_phase_portrait.py $mode.csv --xlim --ylim || break; \
+        done
+ */
+
 cmd_t cmd;
 model_t model;
 ctrl_t ctrl;
