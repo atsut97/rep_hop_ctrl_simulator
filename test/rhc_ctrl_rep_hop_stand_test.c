@@ -254,6 +254,26 @@ TEST(test_ctrl_rep_hop_stand_calc_zm)
   }
 }
 
+TEST(test_ctrl_rep_hop_stand_calc_zm_when_za_lower_than_zh)
+{
+  struct case_t {
+    double za, zh, zb;
+    double expected;
+  } cases[] = {
+    { 1.4, 1.5, 1.0, 1.2, },
+    { 1.5, 2.0, 1.0, 1.25, },
+    { 1.5, 2.0, 0.5, 1.0, },
+    { 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+  double zm;
+
+  for( c=cases; c->expected>0; c++ ){
+    zm = ctrl_rep_hop_stand_calc_zm( c->za, c->zh, c->zb );
+    ASSERT_NEAR( c->expected, zm, 1e-10 );
+  }
+}
+
 TEST(test_ctrl_rep_hop_stand_calc_zb)
 {
   struct case_t {
@@ -368,6 +388,7 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   RUN_TEST(test_ctrl_rep_hop_stand_calc_za);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_zh);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_zm);
+  RUN_TEST(test_ctrl_rep_hop_stand_calc_zm_when_za_lower_than_zh);
   RUN_TEST(test_ctrl_rep_hop_stand_calc_zb);
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb);
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm);
