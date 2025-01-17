@@ -18,6 +18,7 @@ ctrl_t *ctrl_rep_hop_stand_create_with_type(ctrl_t *self, cmd_t *cmd, model_t *m
 
   ctrl_init( self, cmd, model );
   ctrl_rep_hop_stand_cmd_init( self, cmd );
+  self->_reset = ctrl_rep_hop_stand_reset;
   self->_update = ctrl_rep_hop_stand_update;
   self->_destroy = ctrl_rep_hop_stand_destroy;
   self->_header = ctrl_rep_hop_stand_header;
@@ -45,6 +46,14 @@ ctrl_t *ctrl_rep_hop_stand_create_with_type(ctrl_t *self, cmd_t *cmd, model_t *m
   prp->q1 = 0;
   prp->q2 = 0;
   prp->vm = 0;
+  prp->cushioning = false;
+  return self;
+}
+
+ctrl_t *ctrl_rep_hop_stand_reset(ctrl_t *self, void *util)
+{
+  ctrl_reset_default( self, util );
+  ctrl_rep_hop_stand_cushioning(self) = false;
   return self;
 }
 
@@ -167,56 +176,60 @@ double ctrl_rep_hop_stand_calc_phi_based_param(ctrl_t *self, double phi, double 
 ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p)
 {
   cmd_t *params;
-  double za, zb, zm;
+  double za, zb, zm, rho;
   double z_apex;
-  char phase[BUFSIZ];
 
   params = ctrl_rep_hop_stand_params(self);
   cmd_copy( ctrl_cmd(self), params );
+
+  if( ctrl_phase_in( self, flight ) ){
+    /* Once the robot goes into flight, cushioning is enabled */
+    ctrl_rep_hop_stand_cushioning(self) = true;
+  } else if( ctrl_phase_in( self, extension ) ){
+    /* Once the robot extends its body, cushioning is no more needed */
+    ctrl_rep_hop_stand_cushioning(self) = false;
+  }
+
+  /* When soft landing is enabled, fix desired apex and rho if needed */
   if( ctrl_rep_hop_stand_soft_landing(self) ){
-    if( istiny( ctrl_apex_z(self) ) ) z_apex= ctrl_za(self);
-    else z_apex = ctrl_apex_z(self);
+    if( istiny( ctrl_apex_z(self) ) || !ctrl_rep_hop_stand_cushioning(self) ){
+      /* Use desired apex height is used as the robot goes into flight yet */
+      z_apex = ctrl_za(self);
+    } else{
+      z_apex = ctrl_apex_z(self);
+    }
+    /* Fix the apex height to absorb the impact when touching down */
     za = ctrl_rep_hop_stand_calc_phi_based_param( self, ctrl_phi(self), z_apex, ctrl_za(self) );
     params->za = za;
-    ctrl_phase_string(self, phase);
-    /* fprintf( stderr, "phase: %s, ctrl_phi: %f, ctrl_apex_z: %f, ctrl_za: %f, params_za: %f, za: %f\n", */
-    /*         phase, */
-    /*         ctrl_phi(self), ctrl_apex_z(self), ctrl_za(self), params->za, za ); */
-    if( ctrl_rep_hop_stand_rho(self) > 0 ){
-      zb = ctrl_rep_hop_stand_calc_zb( za, ctrl_zh(self), ctrl_zm(self) );
-      if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
-        params->zb = zb;
-      } else{
-        zm = ctrl_rep_hop_stand_calc_zm( za, ctrl_zh(self), ctrl_zb(self) );
-        params->zm = zm;
-      }
-    } else{
-      double rho = ctrl_rep_hop_stand_calc_phi_based_param( self, ctrl_phi(self), 1.0, 0.0 );
-      /* fprintf( stderr, "phase: %s, ctrl_phi: %f, ctrl_apex_z: %f, ctrl_za: %f, params_za: %f, za: %f, rho: %f\n", */
-      /*         phase, */
-      /*         ctrl_phi(self), ctrl_apex_z(self), ctrl_za(self), params->za, za, rho ); */
+    if( istiny( ctrl_rep_hop_stand_rho(self) ) ){
+      /* Fix rho when the robot is in flight phase but it wants to stand */
+      rho = ctrl_rep_hop_stand_calc_phi_based_param( self, ctrl_phi(self), 1.0, ctrl_rep_hop_stand_rho(self) );
       params->rep_hop_stand.rho = rho;
-      if( rho > 0.0 ){
-        zb = ctrl_rep_hop_stand_calc_zb( za, ctrl_zh(self), ctrl_zm(self) );
-        if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
-          params->zb = zb;
-        } else{
-          zm = ctrl_rep_hop_stand_calc_zm( za, ctrl_zh(self), ctrl_zb(self) );
-          params->zm = zm;
-        }
-      }
-    }
-  } else{
-    if( ctrl_rep_hop_stand_rho(self) > 0 ){
-      zb = ctrl_rep_hop_stand_calc_zb( ctrl_za(self), ctrl_zh(self), ctrl_zm(self) );
-      if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
-        params->zb = zb;
-      } else{
-        zm = ctrl_rep_hop_stand_calc_zm( ctrl_za(self), ctrl_zh(self), ctrl_zb(self) );
-        params->zm = zm;
-      }
     }
   }
+
+  /* When hopping or squatting, the crouching height is fixed so that
+     it does not fall behind the kinematic lower limit */
+  if( params->rep_hop_stand.rho > 0 ){
+    zb = ctrl_rep_hop_stand_calc_zb( params->za, ctrl_zh(self), ctrl_zm(self) );
+    if( ctrl_zb(self) < zb && ctrl_za(self) > ctrl_zh(self) ){
+      /* The couching height will be over the kinematic limit */
+      params->zb = zb;
+    } else{
+      /* The couching height falls behind the kinematic limit or squatting */
+      zm = ctrl_rep_hop_stand_calc_zm( params->za, ctrl_zh(self), ctrl_zb(self) );
+      params->zm = zm;
+    }
+  }
+
+  /* char phase[BUFSIZ]; */
+  /* ctrl_phase_string(self, phase); */
+  /* fprintf( stderr, "phase: %s, phi: %f, za': %f, zm': %f, zb': %f, rho': %f, za: %f, zm: %f, zb: %f, rho: %f, n: %s\n", */
+  /*          phase, ctrl_phi(self), */
+  /*          ctrl_za(self), ctrl_zm(self), ctrl_zb(self), ctrl_rep_hop_stand_rho(self), */
+  /*          params->za, params->zm, params->zb, params->rep_hop_stand.rho, */
+  /*          ctrl_rep_hop_stand_cushioning(self) ? "true" : "false" */
+  /*         ); */
   return self;
 }
 

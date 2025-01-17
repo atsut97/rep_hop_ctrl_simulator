@@ -45,6 +45,7 @@ TEST(test_ctrl_rep_hop_stand_create)
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q1(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_q2(&ctrl) );
   ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl) );
+  ASSERT_FALSE( ctrl_rep_hop_stand_cushioning(&ctrl) );
 
   ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl) );
   ASSERT_EQ( 4.0, ctrl_rep_hop_stand_k(&ctrl) );
@@ -405,6 +406,42 @@ TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm)
   }
 }
 
+TEST(test_ctrl_rep_hop_stand_update_params_hop_soft_landing_fix_za)
+{
+  struct case_t {
+    double z, v, za, zh, zm, zb, rho, z_apex;
+    double expected_za;
+  } cases[] = {
+    /*   z,   v , za,  zh,  zm,  zb, rho, z_apex, expected_za */
+    { 1.5, -0.5, 2.5, 2.0, 1.55, 0.5, 1.0, 3.0, 3.0, },
+    { 0.8, -0.5, 1.5, 1.0, 0.8,  0.8-sqrt(5)/5, 1.0, 1.4, 1.4, },
+    { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, },
+  };
+  struct case_t *c;
+
+  for( c=cases; c->zb>0.0; c++ ){
+    cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
+    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
+    ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+
+    ctrl_events_init( ctrl_events( &ctrl ) );
+    vec_set_elem_list( p, c->z_apex, 0.0 ); /* apex */
+    ctrl_events_update( ctrl_events(&ctrl), 1.0, p, &cmd, G );
+    vec_set_elem_list( p, c->zh, -0.3 ); /* touchdown */
+    ctrl_events_update( ctrl_events(&ctrl), 1.0, p, &cmd, G );
+    vec_set_elem_list( p, c->z, c->v ); /* compression */
+
+    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
+    ASSERT_NEAR( c->expected_za, ctrl_rep_hop_stand_params_za(&ctrl), 1e-10 );
+    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
+    ASSERT_NEAR( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl), 1e-10 );
+    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  }
+}
+
+
+
 TEST(test_ctrl_rep_hop_stand_update_params_no_update)
 {
   struct case_t {
@@ -453,6 +490,7 @@ TEST_SUITE(test_ctrl_rep_hop_stand)
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb);
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm);
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm);
+  RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_soft_landing_fix_za);
   RUN_TEST(test_ctrl_rep_hop_stand_update_params_no_update);
 }
 
