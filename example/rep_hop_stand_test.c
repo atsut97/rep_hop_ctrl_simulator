@@ -118,15 +118,8 @@ void set_params_stand_soft_land()
   ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
   ppp_generate_edge_points( &plotter );
 
-  vec_list_node_t *node, *next;
   vec_set_elem_list( p0, cmd.zh, -1.5 );
-  vec_list_for_each( ppp_p0_list(&plotter), node ){
-    next = node->next;
-    if( vec_list_root(ppp_p0_list(&plotter)) != next && vec_near( next->v, p0, 1.0e-6 ) ){
-      vec_list_delete_next( ppp_p0_list(&plotter), node );
-      vec_list_node_destroy(next);
-    }
-  }
+  ppp_remove_p0( &plotter, p0, 1e-6 );
   vec_destroy( p0 );
 }
 
@@ -168,15 +161,8 @@ void set_params_hop_soft_land()
   cmd.za = 0.3;
   ppp_generate_edge_points( &plotter );
 
-  vec_list_node_t *node, *next;
   vec_set_elem_list( p0, cmd.zh, -1.5 );
-  vec_list_for_each( ppp_p0_list(&plotter), node ){
-    next = node->next;
-    if( vec_list_root(ppp_p0_list(&plotter)) != next && vec_near( next->v, p0, 1.0e-6 ) ){
-      vec_list_delete_next( ppp_p0_list(&plotter), node );
-      vec_list_node_destroy(next);
-    }
-  }
+  ppp_remove_p0( &plotter, p0, 1e-6 );
 
   zm = ctrl_rep_hop_stand_calc_zm( cmd.za, cmd.zh, cmd.zb );
   if( !istiny( zm - cmd.zm ) ){
@@ -229,15 +215,8 @@ void set_params_squat_soft_land()
   cmd.za = 0.255;
   ppp_generate_edge_points( &plotter );
 
-  vec_list_node_t *node, *next;
   vec_set_elem_list( p0, cmd.zh, -1.5 );
-  vec_list_for_each( ppp_p0_list(&plotter), node ){
-    next = node->next;
-    if( vec_list_root(ppp_p0_list(&plotter)) != next && vec_near( next->v, p0, 1.0e-6 ) ){
-      vec_list_delete_next( ppp_p0_list(&plotter), node );
-      vec_list_node_destroy(next);
-    }
-  }
+  ppp_remove_p0( &plotter, p0, 1e-6 );
   vec_destroy( p0 );
 }
 
