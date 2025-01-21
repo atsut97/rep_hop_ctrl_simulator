@@ -180,8 +180,10 @@ bool reset_test_failure(simulator_t *simulator, void *util)
 
 TEST(test_simulator_reset_ctrl_return_fail)
 {
+  ECHO_OFF();
   simulator_set_reset_fp( &sim, reset_test_failure );
   ASSERT_FALSE( simulator_reset( &sim, NULL ) );
+  ECHO_ON();
 }
 
 TEST(test_simulator_reset)
