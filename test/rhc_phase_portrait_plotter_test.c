@@ -136,6 +136,64 @@ TEST(test_phase_portrait_plotter_push_p0)
   vec_destroy( p0 );
 }
 
+TEST(test_phase_portrait_plotter_remove_p0_no_destroy)
+{
+  vec_t p0;
+  vec_list_node_t *node;
+
+  p0 = vec_create_list( 2, -3.0, 3.0 );
+  ppp_push_p0( &ppp, p0 );
+  node = ppp_remove_p0_no_destroy( &ppp, p0, 1e-6 );
+  ASSERT_EQ( -3.0, vec_elem( node->v, 0 ) );
+  ASSERT_EQ(  3.0, vec_elem( node->v, 1 ) );
+  ASSERT_PTRNE( p0, node->v );
+  vec_list_node_destroy( node );
+  sfree( node );
+  vec_destroy( p0 );
+}
+
+TEST(test_phase_portrait_plotter_remove_p0_no_destroy_not_found)
+{
+  vec_t p0, p1;
+  vec_list_node_t *node;
+
+  p0 = vec_create_list( 2, -3.0, 3.0 );
+  ppp_push_p0( &ppp, p0 );
+  p1 = vec_create_list( 2, -1.0, 1.0 );
+  node = ppp_remove_p0_no_destroy( &ppp, p1, 1e-6 );
+  ASSERT_PTREQ( NULL, node );
+  vec_destroy( p0 );
+  vec_destroy( p1 );
+}
+
+TEST(test_phase_portrait_plotter_remove_p0)
+{
+  vec_t p0;
+
+  p0 = vec_create_list( 2, -3.0, 3.0 );
+  ppp_push_p0( &ppp, p0 );
+  ASSERT_EQ( 1, vec_list_num( ppp_p0_list( &ppp ) ) );
+  ppp_remove_p0( &ppp, p0, 1e-6 );
+  ASSERT_EQ( 0, vec_list_num( ppp_p0_list( &ppp ) ) );
+  vec_destroy( p0 );
+}
+
+TEST(test_phase_portrait_plotter_remove_p0_not_found)
+{
+  vec_t p0, p1;
+
+  ECHO_OFF();
+  p0 = vec_create_list( 2, -3.0, 3.0 );
+  ppp_push_p0( &ppp, p0 );
+  ASSERT_EQ( 1, vec_list_num( ppp_p0_list( &ppp ) ) );
+  p1 = vec_create_list( 2, -1.0, 1.0 );
+  ppp_remove_p0( &ppp, p1, 1e-6 );
+  ASSERT_EQ( 1, vec_list_num( ppp_p0_list( &ppp ) ) );
+  vec_destroy( p0 );
+  vec_destroy( p1 );
+  ECHO_ON();
+}
+
 TEST(test_phase_portrait_plotter_check_convergence)
 {
   ASSERT_TRUE( ppp_check_convergence( &ppp ) );
@@ -243,6 +301,10 @@ TEST_SUITE(test_phase_portrait_plotter)
   RUN_TEST(test_phase_portrait_plotter_set_n_sc);
   RUN_TEST(test_phase_portrait_plotter_set_n_sc_xy);
   RUN_TEST(test_phase_portrait_plotter_push_p0);
+  RUN_TEST(test_phase_portrait_plotter_remove_p0_no_destroy);
+  RUN_TEST(test_phase_portrait_plotter_remove_p0_no_destroy_not_found);
+  RUN_TEST(test_phase_portrait_plotter_remove_p0);
+  RUN_TEST(test_phase_portrait_plotter_remove_p0_not_found);
   RUN_TEST(test_phase_portrait_plotter_check_convergence);
   RUN_TEST(test_phase_portrait_plotter_check_limit_cycle);
   RUN_TEST(test_phase_portrait_plotter_check_out_of_region);

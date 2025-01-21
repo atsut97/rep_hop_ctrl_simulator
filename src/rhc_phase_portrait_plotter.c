@@ -108,6 +108,34 @@ vec_t ppp_push_p0(ppp_t *self, vec_t p0)
   return p0;
 }
 
+vec_list_node_t *ppp_remove_p0_no_destroy(ppp_t *self, vec_t p0, double tol)
+{
+  vec_list_node_t *node;
+
+  vec_list_for_each( ppp_p0_list(self), node ){
+    if( vec_near( vec_list_node_data(node), p0, tol ) ){
+      vec_list_delete( ppp_p0_list(self), node );
+      return node;
+    }
+  }
+  return NULL;
+}
+
+void ppp_remove_p0(ppp_t *self, vec_t p0, double tol)
+{
+  vec_list_node_t *node;
+  char msg[BUFSIZ];
+
+  node = ppp_remove_p0_no_destroy( self, p0, tol );
+  if( node ){
+    vec_list_node_destroy( node );
+    sfree( node );
+  } else{
+    sprintf( msg, "p0 not found: (%g, %g) ", vec_elem(p0,0), vec_elem(p0,1) );
+    RUNTIME_WARN( msg );
+  }
+}
+
 void ppp_generate_edge_points_dec2bin(ppp_t *self, int dec, int bin[])
 {
   register int i;
