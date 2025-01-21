@@ -18,6 +18,7 @@ vec_list_node_t *vec_list_node_insert_prev(vec_list_node_t *self, vec_list_node_
 vec_list_node_t *vec_list_node_insert_next(vec_list_node_t *self, vec_list_node_t *new);
 vec_list_node_t *vec_list_node_delete_prev(vec_list_node_t *self);
 vec_list_node_t *vec_list_node_delete_next(vec_list_node_t *self);
+vec_list_node_t *vec_list_node_delete(vec_list_node_t *self);
 vec_t vec_list_node_set_data(vec_list_node_t *self, vec_t v);
 
 typedef struct _vec_list_t{
@@ -43,6 +44,7 @@ vec_list_node_t *vec_list_delete_prev(vec_list_t *self, vec_list_node_t *node);
 vec_list_node_t *vec_list_delete_next(vec_list_t *self, vec_list_node_t *node);
 #define vec_list_delete_head(self) vec_list_delete_prev( self, vec_list_root(self) )
 #define vec_list_delete_tail(self) vec_list_delete_next( self, vec_list_root(self) )
+vec_list_node_t *vec_list_delete(vec_list_t *self, vec_list_node_t *node);
 
 #define vec_list_push(self, v)    vec_list_insert_head( self, v )
 #define vec_list_pop(self)        vec_list_delete_head( self )
