@@ -38,10 +38,12 @@ TEST(test_logger_init)
 {
   logger_t l;
   logger_init( &l );
+  ASSERT_EQ( '\0', logger_filename( &l )[0] );
   ASSERT_PTREQ( NULL, l.fp );
   ASSERT_PTREQ( NULL, l.header );
   ASSERT_PTREQ( NULL, l.writer );
   ASSERT_FALSE( logger_is_header_written( &l ) );
+  ASSERT_STREQ( "\n", logger_eol( &l ) );
   logger_destroy( &l );
 }
 
@@ -51,6 +53,13 @@ TEST(test_logger_destroy)
   logger_init( &l );
   logger_destroy( &l );
   ASSERT_PTREQ( NULL, l.fp );
+}
+
+TEST(test_logger_set_eol)
+{
+  ASSERT_STREQ( "\n", logger_eol( &logger ) );
+  logger_set_eol( &logger, "\r\n" );
+  ASSERT_STREQ( "\r\n", logger_eol( &logger ) );
 }
 
 TEST(test_logger_open)
@@ -207,6 +216,7 @@ TEST_SUITE(test_logger)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST( test_logger_init );
   RUN_TEST( test_logger_destroy );
+  RUN_TEST(test_logger_set_eol);
   RUN_TEST( test_logger_open );
   RUN_TEST( test_logger_close );
   RUN_TEST( test_logger_register );

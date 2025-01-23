@@ -8,6 +8,7 @@ logger_t *logger_init(logger_t *self)
   self->header = NULL;
   self->writer = NULL;
   self->header_written_flag = false;
+  string_copy( "\n", self->eol );
   return self;
 }
 
@@ -27,6 +28,12 @@ logger_t *logger_create(const char *filename, logger_header_fp_t header, logger_
   logger_open( logger, filename );
   logger_register( logger, header, writer );
   return logger;
+}
+
+logger_t *logger_set_eol(logger_t *self, const char *eol)
+{
+  string_copy( eol, self->eol );
+  return self;
 }
 
 FILE* logger_open(logger_t *self, const char *filename)
