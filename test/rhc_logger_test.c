@@ -10,6 +10,8 @@ model_t model;
 ctrl_t ctrl;
 simulator_t simulator;
 
+char TEST_LOG_FILENAME[] = "/tmp/rhc_test.log";
+
 void setup()
 {
   logger_init( &logger );
@@ -53,8 +55,8 @@ TEST(test_logger_destroy)
 
 TEST(test_logger_open)
 {
-  logger_open( &logger, "/tmp/test.log" );
-  ASSERT_STREQ( "/tmp/test.log", logger_filename(&logger) );
+  logger_open( &logger, TEST_LOG_FILENAME );
+  ASSERT_STREQ( TEST_LOG_FILENAME, logger_filename(&logger) );
   ASSERT_PTRNE( NULL, logger.fp );
   ASSERT_PTREQ( NULL, logger.header );
   ASSERT_PTREQ( NULL, logger.writer );
@@ -64,7 +66,7 @@ TEST(test_logger_open)
 
 TEST(test_logger_close)
 {
-  logger_open( &logger, "/tmp/test.log" );
+  logger_open( &logger, TEST_LOG_FILENAME );
   logger_close( &logger );
   ASSERT_PTREQ( NULL, logger.fp );
 }
@@ -97,7 +99,7 @@ TEST(test_logger_delegate)
   FILE *tmp_fp;
   bool is_header_written = false;
 
-  logger_open( &src, "/tmp/test.log" );
+  logger_open( &src, TEST_LOG_FILENAME );
   tmp_fp = src.fp;
   logger_register( &src, header, output );
   is_header_written = logger_is_header_written( &src );
@@ -106,7 +108,7 @@ TEST(test_logger_delegate)
   ASSERT_PTREQ( NULL, src.fp );
   ASSERT_PTREQ( NULL, src.header );
   ASSERT_PTREQ( NULL, src.writer );
-  ASSERT_STREQ( "/tmp/test.log", logger_filename(&dst) );
+  ASSERT_STREQ( TEST_LOG_FILENAME, logger_filename(&dst) );
   ASSERT_PTREQ( tmp_fp, dst.fp );
   ASSERT_PTREQ( header, dst.header );
   ASSERT_PTREQ( output, dst.writer );
@@ -121,7 +123,7 @@ TEST(test_logger_delegate_2)
   FILE *tmp_fp;
   bool is_header_written = false;
 
-  logger_open( &src, "/tmp/test.log" );
+  logger_open( &src, TEST_LOG_FILENAME );
   tmp_fp = src.fp;
   logger_register( &src, header, output );
   ECHO_OFF();
@@ -133,7 +135,7 @@ TEST(test_logger_delegate_2)
   ASSERT_PTREQ( NULL, src.fp );
   ASSERT_PTREQ( NULL, src.header );
   ASSERT_PTREQ( NULL, src.writer );
-  ASSERT_STREQ( "/tmp/test.log", logger_filename(&dst) );
+  ASSERT_STREQ( TEST_LOG_FILENAME, logger_filename(&dst) );
   ASSERT_PTREQ( tmp_fp, dst.fp );
   ASSERT_PTREQ( header, dst.header );
   ASSERT_PTREQ( output, dst.writer );
@@ -144,7 +146,7 @@ TEST(test_logger_delegate_2)
 
 TEST(test_logger_write_header)
 {
-  logger_open( &logger, "/tmp/test.log" );
+  logger_open( &logger, TEST_LOG_FILENAME );
   logger_register( &logger, header, output );
   ASSERT_FALSE( logger_is_header_written(&logger) );
   logger_write_header( &logger, &simulator, NULL );
@@ -184,7 +186,7 @@ TEST(test_logger_write_not_regiseter_writer)
 TEST(test_logger_is_open)
 {
   ASSERT_FALSE( logger_is_open(&logger) );
-  logger_open( &logger, "/tmp/test.log" );
+  logger_open( &logger, TEST_LOG_FILENAME );
   ASSERT_TRUE( logger_is_open(&logger) );
   logger_close( &logger );
   ASSERT_FALSE( logger_is_open(&logger) );
@@ -192,8 +194,8 @@ TEST(test_logger_is_open)
 
 TEST(test_logger_create)
 {
-  logger_t *l = logger_create( "/tmp/test.log", header, output );
-  ASSERT_STREQ( "/tmp/test.log", logger_filename(l) );
+  logger_t *l = logger_create( TEST_LOG_FILENAME, header, output );
+  ASSERT_STREQ( TEST_LOG_FILENAME, logger_filename(l) );
   ASSERT_PTRNE( NULL, l->fp );
   ASSERT_PTREQ( output, l->writer );
   logger_destroy( l );
