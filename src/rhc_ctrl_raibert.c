@@ -46,12 +46,12 @@ ctrl_t *ctrl_raibert_update(ctrl_t *self, double t, vec_t p)
 
 void ctrl_raibert_header(FILE *fp, void *util)
 {
-  fprintf( fp, ",type,delta,tau,gamma,yeta1,zr,mu,in_th,et_t,et_z,et_v\n" );
+  fprintf( fp, ",type,delta,tau,gamma,yeta1,zr,mu,in_th,et_t,et_z,et_v" );
 }
 
 void ctrl_raibert_writer(FILE *fp, ctrl_t *self, void *util)
 {
-  fprintf( fp, ",%d,%f,%f,%f,%f,%f,%f,%d,%f,%f,%f\n",
+  fprintf( fp, ",%d,%f,%f,%f,%f,%f,%f,%d,%f,%f,%f",
            ctrl_raibert_type(self),
            ctrl_raibert_delta(self),
            ctrl_raibert_tau(self),

@@ -48,12 +48,12 @@ ctrl_t *ctrl_regulator_update(ctrl_t *self, double t, vec_t p)
 
 void ctrl_regulator_header(FILE *fp, void *util)
 {
-  fprintf( fp, ",q1,q2,xi\n" );
+  fprintf( fp, ",q1,q2,xi" );
 }
 
 void ctrl_regulator_writer(FILE *fp, ctrl_t *self, void *util)
 {
-  fprintf( fp, ",%f,%f,%f\n",
+  fprintf( fp, ",%f,%f,%f",
            ctrl_regulator_q1(self), ctrl_regulator_q2(self),
            ctrl_regulator_xi(self) );
 }

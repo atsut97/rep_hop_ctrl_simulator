@@ -232,11 +232,7 @@ ctrl_t *ctrl_update_default(ctrl_t *self, double t, vec_t p)
 }
 
 void ctrl_header_default(FILE *fp, void *util)
-{
-  fprintf( fp, "\n" );
-}
+{}
 
 void ctrl_writer_default(FILE *fp, ctrl_t *self, void *util)
-{
-  fprintf( fp, "\n" );
-}
+{}

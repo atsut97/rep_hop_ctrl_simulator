@@ -65,12 +65,12 @@ void ctrl_rep_hop_stand_destroy(ctrl_t *self)
 
 void ctrl_rep_hop_stand_header(FILE *fp, void *util)
 {
-  fprintf( fp, ",type,rho,k,soft_landing,q1,q2,vm,p_za,p_zh,p_zm,p_zb,p_rho\n" );
+  fprintf( fp, ",type,rho,k,soft_landing,q1,q2,vm,p_za,p_zh,p_zm,p_zb,p_rho" );
 }
 
 void ctrl_rep_hop_stand_writer(FILE *fp, ctrl_t *self, void *util)
 {
-  fprintf( fp, ",%d,%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%f\n",
+  fprintf( fp, ",%d,%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%f",
            ctrl_rep_hop_stand_type(self),
            ctrl_rep_hop_stand_rho(self),
            ctrl_rep_hop_stand_k(self),
@@ -96,7 +96,7 @@ double ctrl_rep_hop_stand_calc_r(double zm, double zb)
 
   r = zm - zb;
   if( istiny(r) )
-    RUNTIME_WARN( "rhc_ctrl_rep_hop_stand: zm and zb are too close!\n" );
+    RUNTIME_WARN( "rhc_ctrl_rep_hop_stand: zm and zb are too close!" );
   return r;
 }
 

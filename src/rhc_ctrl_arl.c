@@ -43,7 +43,7 @@ ctrl_t *ctrl_arl_update(ctrl_t *self, double t, vec_t p)
 
 void ctrl_arl_header(FILE *fp, void *util)
 {
-  fprintf( fp, ",type,k,beta,sqr_R_des,sqr_R,delta\n" );
+  fprintf( fp, ",type,k,beta,sqr_R_des,sqr_R,delta" );
 }
 
 void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util)
@@ -51,7 +51,7 @@ void ctrl_arl_writer(FILE *fp, ctrl_t *self, void *util)
   ctrl_arl_prp *prp;
 
   prp = self->prp;
-  fprintf( fp, ",%d,%f,%f,%f,%f,%f\n",
+  fprintf( fp, ",%d,%f,%f,%f,%f,%f",
            ctrl_arl_type(self),
            ctrl_arl_k(self),
            ctrl_arl_beta(self),

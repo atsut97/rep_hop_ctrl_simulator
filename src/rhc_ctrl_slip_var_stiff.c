@@ -39,7 +39,7 @@ ctrl_t *ctrl_slip_var_stiff_update(ctrl_t *self, double t, vec_t p)
 
 void ctrl_slip_var_stiff_header(FILE *fp, void *util)
 {
-  fprintf( fp, ",k\n" );
+  fprintf( fp, ",k" );
 }
 
 void ctrl_slip_var_stiff_writer(FILE *fp, ctrl_t *self, void *util)
@@ -47,7 +47,7 @@ void ctrl_slip_var_stiff_writer(FILE *fp, ctrl_t *self, void *util)
   ctrl_slip_var_stiff_prp *prp;
 
   prp = self->prp;
-  fprintf( fp, ",%f\n", prp->k );
+  fprintf( fp, ",%f", prp->k );
 }
 
 double ctrl_slip_var_stiff_calc_stiffness_decomp(vec_t p, double m, double zh, double za, double zb, double g)

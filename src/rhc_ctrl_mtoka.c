@@ -66,7 +66,6 @@ void ctrl_mtoka_header(FILE *fp, void *util)
   fprintf( fp, ",x1,y1,v1,c1,s1" );
   /* variables in neuron #2 */
   fprintf( fp, ",x2,y2,v2,c2,s2" );
-  fprintf( fp, "\n" );
 }
 
 void ctrl_mtoka_writer(FILE *fp, ctrl_t *self, void *util)
@@ -97,7 +96,6 @@ void ctrl_mtoka_writer(FILE *fp, ctrl_t *self, void *util)
            vec_elem( mtoka_osci_adapt_property(osci), 1 ),
            vec_elem( mtoka_osci_tonic_input(osci), 1 ),
            vec_elem( mtoka_osci_sensory_feedback(osci), 1 ) );
-  fprintf( fp, "\n" );
 }
 
 ctrl_t *ctrl_mtoka_set_params(ctrl_t *self, double tau, double T, double a, double b, double th, double mu, double rho, double lam)
