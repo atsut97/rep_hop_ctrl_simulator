@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
   model_init( &model, 10 );
   ctrl_slip_var_stiff_create( &ctrl, &cmd, &model );
   logger_init( &logger );
+  logger_open( &logger, NULL );
   simulator_init( &sim, &cmd, &ctrl, &model );
   simulator_set_default_logger( &sim, &logger );
   p0 = vec_create( 2 );

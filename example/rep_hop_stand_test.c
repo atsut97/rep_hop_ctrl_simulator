@@ -91,6 +91,7 @@ void init()
   cmd_default_init( &cmd );
   model_init( &model, 10 );
   logger_init( &logger );
+  logger_open( &logger, NULL );
   ppp_init( &plotter, &cmd, &ctrl, &model, &logger );
   ctrl_rep_hop_stand_create( &ctrl, &cmd, &model );
 }

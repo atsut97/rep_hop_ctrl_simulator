@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
   ctrl_arl_create( &ctrl, &cmd, &model, ahmadi2007 );
   ctrl_arl_set_params( &ctrl, 10000, 200000 );
   logger_init( &logger );
+  logger_open( &logger, NULL );
   simulator_init( &sim, &cmd, &ctrl, &model );
   simulator_set_default_logger( &sim, &logger );
   p0 = vec_create( 2 );

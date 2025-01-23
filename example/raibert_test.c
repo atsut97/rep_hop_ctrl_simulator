@@ -138,6 +138,7 @@ void init()
   cmd_init( &cmd );
   model_init( &model, 1 );
   logger_init( &logger );
+  logger_open( &logger, NULL );
   simulator_init( &sim, &cmd, &ctrl, &model );
   simulator_set_default_logger( &sim, &logger );
 }
