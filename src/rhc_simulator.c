@@ -127,6 +127,8 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
   if( simulator_has_default_tag( self ) ){
     simulator_update_default_tag( self );
   }
+  if( logger && !logger_is_open(logger) )
+    RUNTIME_WARN( "Logger is not opened" );
   while( simulator_time(self) < time ){
     self->dump_fp( self, logger, util );
     if( !self->update_fp( self, 0.0, dt, util ) )
