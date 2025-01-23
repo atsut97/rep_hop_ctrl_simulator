@@ -10,7 +10,46 @@ model_t model;
 ctrl_t ctrl;
 simulator_t simulator;
 
-char TEST_LOG_FILENAME[] = "/tmp/rhc_test.log";
+const char TEST_LOG_FILENAME[] = "/tmp/rhc_test.log";
+
+void assert_file(const char *filename, const char *expected_lines[], size_t n_lines)
+{
+  FILE *fp;
+
+  if( ( fp = fopen( filename, "r" ) ) == NULL){
+    FAIL( "Error opening file" );
+  }
+
+  char buffer[BUFSIZ]; // Buffer to hold each line from the file
+  size_t i = 0;
+
+  while( fgets( buffer, sizeof(buffer), fp ) ){
+    // Remove trailing newline character from the file line
+    size_t len = strlen( buffer );
+    if( len > 0 && buffer[len - 1] == '\n' ){
+      buffer[len - 1] = '\0';
+    }
+
+    // Check if we have more lines in the file than provided
+    if( i >= n_lines ){
+      fclose(fp);
+      FAIL( "Number of lines in the file is greater than expected" );
+    }
+
+    // Compare the file line with the corresponding provided line
+    if( strcmp(buffer, expected_lines[i] ) != 0 ){
+      char msg[BUFSIZ];
+      fclose(fp);
+      snprintf( msg, BUFSIZ,
+                "Line #%zu:\nExpected: %s\n But was: %s",
+                i, expected_lines[i], buffer );
+      FAIL( msg );
+    }
+    i++;
+  }
+
+  fclose(fp);
+}
 
 void setup()
 {
@@ -81,16 +120,16 @@ TEST(test_logger_close)
 }
 
 void header(FILE *fp, simulator_t *s, void *util) {
-  fprintf( fp, "t,x,y,z,fe,za,zh,zb,m,az\n");
+  fprintf( fp, "t,z,vz,fe,za,zh,zb,m,az\n");
 }
 
 void output(FILE *fp, simulator_t *s, void *util) {
   vec_t state = simulator_state(s);
   cmd_t *cmd = simulator_cmd(s);
   model_t *model = simulator_model(s);
-  fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+  fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
            simulator_time(s),
-           vec_elem(state,0), vec_elem(state,1), vec_elem(state,2),
+           vec_elem(state,0), vec_elem(state,1),
            simulator_fe(s), cmd->za, cmd->zh, cmd->zb,
            model_mass(model), model_acc(model) );
 }
@@ -153,45 +192,6 @@ TEST(test_logger_delegate_2)
   logger_close( &dst );
 }
 
-TEST(test_logger_write_header)
-{
-  logger_open( &logger, TEST_LOG_FILENAME );
-  logger_register( &logger, header, output );
-  ASSERT_FALSE( logger_is_header_written(&logger) );
-  logger_write_header( &logger, &simulator, NULL );
-  ASSERT_TRUE( logger_is_header_written(&logger) );
-  logger_write_header( &logger, &simulator, NULL );
-  ASSERT_TRUE( logger_is_header_written(&logger) );
-  logger_close( &logger );
-}
-
-TEST(test_logger_write)
-{
-  logger_register( &logger, header, output );
-  /* logger_write( &logger, 0.001, state, -0.1, &cmd, &model, NULL ); */
-  /* logger_write( &logger, 0.001, state, -0.1, &cmd, &model, NULL ); */
-}
-
-TEST(test_logger_write_data)
-{
-  logger_register( &logger, header, output );
-  /* logger_write_data( &logger, 0.001, state, -0.1, &cmd, &model, NULL ); */
-  /* logger_write_data( &logger, 0.001, state, -0.1, &cmd, &model, NULL ); */
-}
-
-TEST(test_logger_write_not_regiseter_header)
-{
-  logger_register( &logger, NULL, output );
-  /* logger_write_data( &logger, 0.0, state, 0.0, &cmd, &model, NULL); */
-}
-
-TEST(test_logger_write_not_regiseter_writer)
-{
-  ECHO_OFF();
-  logger_write_data( &logger, &simulator, NULL);
-  ECHO_ON();
-}
-
 TEST(test_logger_is_open)
 {
   ASSERT_FALSE( logger_is_open(&logger) );
@@ -211,6 +211,91 @@ TEST(test_logger_create)
   free( l );
 }
 
+simulator_t *set_simulator_data(simulator_t *simulator, double t, double z, double vz, double fe)
+{
+  vec_t v;
+
+  v = vec_create_list( 2, z, vz );
+  simulator_set_time( simulator, t );
+  simulator_set_state( simulator, v );
+  simulator_set_fe( simulator, fe );
+  vec_destroy( v );
+  return simulator;
+}
+
+TEST(test_logger_write_header)
+{
+  logger_open( &logger, TEST_LOG_FILENAME );
+  logger_register( &logger, header, output );
+  ASSERT_FALSE( logger_is_header_written(&logger) );
+  logger_write_header( &logger, &simulator, NULL );
+  ASSERT_TRUE( logger_is_header_written(&logger) );
+  logger_write_header( &logger, &simulator, NULL );
+  ASSERT_TRUE( logger_is_header_written(&logger) );
+  logger_close( &logger );
+}
+
+TEST(test_logger_write_data)
+{
+  const char *expected[] = {
+    "0.000000,0.100000,0.200000,0.000000,0.000000,0.000000,0.000000,1.000000,0.000000",
+    "0.001000,0.110000,0.220000,1.000000,0.000000,0.000000,0.000000,1.000000,0.000000",
+  };
+
+  logger_open( &logger, TEST_LOG_FILENAME );
+  logger_register( &logger, NULL, output );
+  set_simulator_data( &simulator, 0.000, 0.1, 0.2, 0.0 );
+  logger_write( &logger, &simulator, NULL );
+  set_simulator_data( &simulator, 0.001, 0.11, 0.22, 1.0 );
+  logger_write( &logger, &simulator, NULL );
+  logger_close( &logger );
+  assert_file( TEST_LOG_FILENAME, expected, 3 );
+}
+
+TEST(test_logger_write)
+{
+  const char *expected[] = {
+    "t,z,vz,fe,za,zh,zb,m,az",
+    "0.000000,0.100000,0.200000,0.000000,0.000000,0.000000,0.000000,1.000000,0.000000",
+    "0.003300,0.110000,0.220000,1.000000,0.000000,0.000000,0.000000,1.000000,0.000000",
+  };
+
+  logger_open( &logger, TEST_LOG_FILENAME );
+  logger_register( &logger, header, output );
+  set_simulator_data( &simulator, 0.000, 0.1, 0.2, 0.0 );
+  logger_write( &logger, &simulator, NULL );
+  set_simulator_data( &simulator, 0.0033, 0.11, 0.22, 1.0 );
+  logger_write( &logger, &simulator, NULL );
+  logger_close( &logger );
+  assert_file( TEST_LOG_FILENAME, expected, 3 );
+}
+
+TEST(test_logger_write_not_regiseter_header)
+{
+  const char *expected[] = {
+    "0.000000,0.100000,0.200000,0.000000,0.000000,0.000000,0.000000,1.000000,0.000000",
+    "0.002000,0.110000,0.220000,1.000000,0.000000,0.000000,0.000000,1.000000,0.000000",
+  };
+
+  logger_open( &logger, TEST_LOG_FILENAME );
+  logger_register( &logger, NULL, output );
+  set_simulator_data( &simulator, 0.000, 0.1, 0.2, 0.0 );
+  logger_write( &logger, &simulator, NULL );
+  set_simulator_data( &simulator, 0.002, 0.11, 0.22, 1.0 );
+  logger_write( &logger, &simulator, NULL );
+  logger_close( &logger );
+  assert_file( TEST_LOG_FILENAME, expected, 3 );
+}
+
+TEST(test_logger_write_not_regiseter_writer)
+{
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  logger_write_data( &logger, &simulator, NULL);
+  ASSERT_STREQ( "No logger output", __err_last_msg );
+  ECHO_ON();
+}
+
 TEST_SUITE(test_logger)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -222,13 +307,13 @@ TEST_SUITE(test_logger)
   RUN_TEST( test_logger_register );
   RUN_TEST( test_logger_delegate );
   RUN_TEST( test_logger_delegate_2 );
-  RUN_TEST( test_logger_write );
-  RUN_TEST( test_logger_write_header );
-  RUN_TEST( test_logger_write_data );
-  RUN_TEST( test_logger_write_not_regiseter_header );
-  RUN_TEST( test_logger_write_not_regiseter_writer );
   RUN_TEST( test_logger_is_open );
   RUN_TEST( test_logger_create );
+  RUN_TEST( test_logger_write_header );
+  RUN_TEST( test_logger_write_data );
+  RUN_TEST( test_logger_write );
+  RUN_TEST( test_logger_write_not_regiseter_header );
+  RUN_TEST( test_logger_write_not_regiseter_writer );
 }
 
 int main(int argc, char *argv[])
