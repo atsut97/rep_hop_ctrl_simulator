@@ -159,6 +159,7 @@ TEST(test_logger_delegate)
   bool is_header_written = false;
   char eol[3];
 
+  logger_init( &src );
   logger_open( &src, TEST_LOG_FILENAME );
   tmp_fp = src.fp;
   logger_register( &src, header, output );
@@ -187,6 +188,7 @@ TEST(test_logger_delegate_2)
   bool is_header_written = false;
   char eol[3];
 
+  logger_init( &src );
   logger_open( &src, TEST_LOG_FILENAME );
   tmp_fp = src.fp;
   logger_register( &src, header, output );
