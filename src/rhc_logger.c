@@ -70,6 +70,8 @@ void logger_delegate(logger_t *src, logger_t *dst)
   dst->fp = src->fp;
   dst->header = src->header;
   dst->writer = src->writer;
+  dst->header_written_flag = src->header_written_flag;
+  string_copy( logger_eol(src), logger_eol(dst) );
   logger_init( src );
 }
 

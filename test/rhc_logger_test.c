@@ -157,11 +157,13 @@ TEST(test_logger_delegate)
   logger_t src, dst;
   FILE *tmp_fp;
   bool is_header_written = false;
+  char eol[3];
 
   logger_open( &src, TEST_LOG_FILENAME );
   tmp_fp = src.fp;
   logger_register( &src, header, output );
   is_header_written = logger_is_header_written( &src );
+  string_copy( logger_eol(&src), eol );
   logger_delegate( &src, &dst );
   ASSERT_STREQ( "", logger_filename(&src) );
   ASSERT_PTREQ( NULL, src.fp );
@@ -171,7 +173,9 @@ TEST(test_logger_delegate)
   ASSERT_PTREQ( tmp_fp, dst.fp );
   ASSERT_PTREQ( header, dst.header );
   ASSERT_PTREQ( output, dst.writer );
+  ASSERT_STREQ( eol, logger_eol(&dst) );
   ASSERT_EQ( is_header_written, logger_is_header_written(&dst) );
+  ASSERT_FALSE( logger_is_header_written(&dst) );
   logger_close( &src );
   logger_close( &dst );
 }
@@ -181,14 +185,14 @@ TEST(test_logger_delegate_2)
   logger_t src, dst;
   FILE *tmp_fp;
   bool is_header_written = false;
+  char eol[3];
 
   logger_open( &src, TEST_LOG_FILENAME );
   tmp_fp = src.fp;
   logger_register( &src, header, output );
-  ECHO_OFF();
-  logger_write_data( &logger, &simulator, NULL );
-  ECHO_ON();
+  logger_write( &src, &simulator, NULL );
   is_header_written = logger_is_header_written( &src );
+  string_copy( logger_eol(&src), eol );
   logger_delegate( &src, &dst );
   ASSERT_STREQ( "", logger_filename(&src) );
   ASSERT_PTREQ( NULL, src.fp );
@@ -198,7 +202,9 @@ TEST(test_logger_delegate_2)
   ASSERT_PTREQ( tmp_fp, dst.fp );
   ASSERT_PTREQ( header, dst.header );
   ASSERT_PTREQ( output, dst.writer );
+  ASSERT_STREQ( eol, logger_eol(&dst) );
   ASSERT_EQ( is_header_written, logger_is_header_written(&dst) );
+  ASSERT_TRUE( logger_is_header_written(&dst) );
   logger_close( &src );
   logger_close( &dst );
 }
