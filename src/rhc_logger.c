@@ -1,3 +1,4 @@
+#include "rhc_misc.h"
 #include "rhc_logger.h"
 #include "rhc_string.h"
 
@@ -25,6 +26,7 @@ logger_t *logger_create(const char *filename, logger_header_fp_t header, logger_
     ALLOC_ERR();
     return NULL;
   }
+  logger_init( logger );
   logger_open( logger, filename );
   logger_register( logger, header, writer );
   return logger;
@@ -38,7 +40,7 @@ logger_t *logger_set_eol(logger_t *self, const char *eol)
 
 FILE* logger_open(logger_t *self, const char *filename)
 {
-  logger_init( self );
+  if( !filename ) return NULL;
   string_copy(filename, self->filename);
   self->fp = fopen(filename, "w");
   if(!self->fp) {
@@ -69,6 +71,17 @@ void logger_delegate(logger_t *src, logger_t *dst)
   dst->header = src->header;
   dst->writer = src->writer;
   logger_init( src );
+}
+
+logger_t *logger_reset(logger_t *self, const char *filename)
+{
+  logger_close( self );
+  if( filename )
+    logger_open( self, filename );
+  else
+    self->filename[0] = '\0';
+  self->header_written_flag = false;
+  return self;
 }
 
 void logger_write_header(logger_t *self, simulator_t *simulator, void *util)

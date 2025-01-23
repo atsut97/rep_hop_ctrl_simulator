@@ -112,6 +112,17 @@ TEST(test_logger_open)
   logger_close( &logger );
 }
 
+TEST(test_logger_open_null)
+{
+  logger_open( &logger, NULL );
+  ASSERT_STREQ( "", logger_filename(&logger) );
+  ASSERT_PTREQ( NULL, logger.fp );
+  ASSERT_PTREQ( NULL, logger.header );
+  ASSERT_PTREQ( NULL, logger.writer );
+  ASSERT_FALSE( logger_is_header_written( &logger ) );
+  logger_close( &logger );
+}
+
 TEST(test_logger_close)
 {
   logger_open( &logger, TEST_LOG_FILENAME );
@@ -206,9 +217,67 @@ TEST(test_logger_create)
   logger_t *l = logger_create( TEST_LOG_FILENAME, header, output );
   ASSERT_STREQ( TEST_LOG_FILENAME, logger_filename(l) );
   ASSERT_PTRNE( NULL, l->fp );
+  ASSERT_PTREQ( header, l->header );
   ASSERT_PTREQ( output, l->writer );
   logger_destroy( l );
   free( l );
+}
+
+TEST(test_logger_reset)
+{
+  logger_register( &logger, header, output );
+  logger.header_written_flag = true;
+  logger_reset( &logger, NULL );
+  ASSERT_FALSE( logger_is_header_written( &logger ) );
+  ASSERT_PTREQ( header, logger.header );
+  ASSERT_PTREQ( output, logger.writer );
+}
+
+TEST(test_logger_reset_with_filename)
+{
+  const char filename1[] = "/tmp/rhc_logger_filename1.log";
+  const char filename2[] = "/tmp/rhc_logger_filename2.log";
+
+  logger_t *new_logger = logger_create( filename1, header, output );
+  new_logger->header_written_flag = true;
+  ASSERT_STREQ( filename1, logger_filename( new_logger ) );
+  ASSERT_PTRNE( NULL, new_logger->fp );
+  ASSERT_PTREQ( header, new_logger->header );
+  ASSERT_PTREQ( output, new_logger->writer );
+  ASSERT_TRUE( logger_is_header_written( new_logger ) );
+
+  logger_reset( new_logger, filename2 );
+  ASSERT_STREQ( filename2, logger_filename( new_logger ) );
+  ASSERT_PTRNE( NULL, new_logger->fp );
+  ASSERT_PTREQ( header, new_logger->header );
+  ASSERT_PTREQ( output, new_logger->writer );
+  ASSERT_FALSE( logger_is_header_written( new_logger ) );
+
+  logger_destroy( new_logger );
+  free( new_logger );
+}
+
+TEST(test_logger_reset_with_no_filename)
+{
+  const char filename1[] = "/tmp/rhc_logger_filename1.log";
+
+  logger_t *new_logger = logger_create( filename1, header, output );
+  new_logger->header_written_flag = true;
+  ASSERT_STREQ( filename1, logger_filename( new_logger ) );
+  ASSERT_PTRNE( NULL, new_logger->fp );
+  ASSERT_PTREQ( header, new_logger->header );
+  ASSERT_PTREQ( output, new_logger->writer );
+  ASSERT_TRUE( logger_is_header_written( new_logger ) );
+
+  logger_reset( new_logger, NULL );
+  ASSERT_STREQ( "", logger_filename( new_logger ) );
+  ASSERT_PTREQ( NULL, new_logger->fp );
+  ASSERT_PTREQ( header, new_logger->header );
+  ASSERT_PTREQ( output, new_logger->writer );
+  ASSERT_FALSE( logger_is_header_written( new_logger ) );
+
+  logger_destroy( new_logger );
+  free( new_logger );
 }
 
 simulator_t *set_simulator_data(simulator_t *simulator, double t, double z, double vz, double fe)
@@ -301,14 +370,18 @@ TEST_SUITE(test_logger)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST( test_logger_init );
   RUN_TEST( test_logger_destroy );
-  RUN_TEST(test_logger_set_eol);
+  RUN_TEST( test_logger_set_eol );
   RUN_TEST( test_logger_open );
+  RUN_TEST( test_logger_open_null );
   RUN_TEST( test_logger_close );
   RUN_TEST( test_logger_register );
   RUN_TEST( test_logger_delegate );
   RUN_TEST( test_logger_delegate_2 );
   RUN_TEST( test_logger_is_open );
   RUN_TEST( test_logger_create );
+  RUN_TEST( test_logger_reset );
+  RUN_TEST( test_logger_reset_with_filename );
+  RUN_TEST( test_logger_reset_with_no_filename );
   RUN_TEST( test_logger_write_header );
   RUN_TEST( test_logger_write_data );
   RUN_TEST( test_logger_write );
