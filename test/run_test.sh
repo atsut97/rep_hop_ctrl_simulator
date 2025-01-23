@@ -144,8 +144,8 @@ run_test() {
   echo
   echo "Running $(basename "$1")..."
   if [ $((memcheck)) -ne 0 ] && ! command -v valgrind >/dev/null; then
-    echo >&2 "warning: memcheck is enabled, but valgrind is not available"
-    memcheck=0
+    echo >&2 "error: memcheck is enabled, but valgrind is not available"
+    exit 1
   fi
   if [ $((memcheck)) -ne 0 ]; then
     valgrind -q --leak-check=full --error-exitcode=1 "$1"
@@ -199,7 +199,8 @@ report_summary() {
   else
     printf "%s" "$red"
     printf -- "=%.0s" $(seq "$(tput cols)")
-    printf "\nSome failed!\n"
+    printf "\n"
+    printf "Test failed!\n"
     for i in "$@"; do
       printf "  * %s\n" "$i"
     done
