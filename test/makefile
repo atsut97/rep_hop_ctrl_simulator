@@ -10,12 +10,11 @@ MEMCHECK=n
 
 OBJS_SRC=$(wildcard $(SRCDIR)/*.c)
 TEST_SRC=$(wildcard *_test.c)
-ALL_SRC =$(OBJS_SRC) $(TEST_SRC)
 
 OBJS=$(OBJS_SRC:.c=.o)
-TARGET=$(basename $(TEST_SRC))
+TARGET=$(TEST_SRC:.c=)
 
-DEPS=$(patsubst %.c, %.d, $(ALL_SRC))
+DEPS=$(OBJS_SRC:.c=.d) $(TEST_SRC:.c=.d)
 
 .PHONY: all
 all: $(TARGET)
@@ -36,7 +35,7 @@ else
 	@./run_test.sh
 endif
 
-%_test: %_test.o $(OBJS)
+%_test: %_test.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LINK)
 
 %.o: %.c
