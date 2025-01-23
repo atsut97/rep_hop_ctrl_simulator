@@ -91,7 +91,6 @@ void logger_write_header(logger_t *self, simulator_t *simulator, void *util)
 {
   if( !self->fp ) return;
   if( !self->header ) return;
-
   self->header( self->fp, simulator, util );
   fprintf( self->fp, "%s", logger_eol(self) );
   self->header_written_flag = true;
@@ -99,15 +98,8 @@ void logger_write_header(logger_t *self, simulator_t *simulator, void *util)
 
 void logger_write_data(logger_t *self, simulator_t *simulator, void *util)
 {
-  if( !self->fp ){
-    RUNTIME_WARN( "Logger is not opened yet" );
-    return;
-  }
-  if( !self->writer ){
-    RUNTIME_WARN( "Data writer is not set yet" );
-    return;
-  }
-
+  if( !self->fp ) return;
+  if( !self->writer ) return;
   self->writer( self->fp, simulator, util );
   fprintf( self->fp, "%s", logger_eol(self) );
 }

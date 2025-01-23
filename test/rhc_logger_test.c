@@ -371,25 +371,6 @@ TEST(test_logger_write_not_regiseter_header)
   assert_file( TEST_LOG_FILENAME, expected, 3 );
 }
 
-TEST(test_logger_write_not_open_logger)
-{
-  RESET_ERR_MSG();
-  ECHO_OFF();
-  logger_write_data( &logger, &simulator, NULL);
-  ASSERT_STREQ( "Logger is not opened yet", __err_last_msg );
-  ECHO_ON();
-}
-
-TEST(test_logger_write_not_regiseter_writer)
-{
-  RESET_ERR_MSG();
-  ECHO_OFF();
-  logger_open( &logger, NULL );
-  logger_write_data( &logger, &simulator, NULL);
-  ASSERT_STREQ( "Data writer is not set yet", __err_last_msg );
-  ECHO_ON();
-}
-
 TEST_SUITE(test_logger)
 {
   CONFIGURE_SUITE( setup, teardown );
@@ -411,8 +392,6 @@ TEST_SUITE(test_logger)
   RUN_TEST( test_logger_write_data );
   RUN_TEST( test_logger_write );
   RUN_TEST( test_logger_write_not_regiseter_header );
-  RUN_TEST( test_logger_write_not_regiseter_writer );
-  RUN_TEST( test_logger_write_not_open_logger );
 }
 
 int main(int argc, char *argv[])
