@@ -125,7 +125,9 @@ def plot(
     title = None
     if dataset.is_loaded_from_file():
         title = dataset.datapath.stem
-    xlim, ylim = get_limits(xlim, ylim, fallback_xlim=(0.16, 0.36), fallback_ylim=(-1.5, 1.5))
+    default_xlim = (dataset.param("xmin"), dataset.param("xmax"))
+    default_ylim = (dataset.param("ymin"), dataset.param("ymax"))
+    xlim, ylim = get_limits(xlim, ylim, fallback_xlim=default_xlim, fallback_ylim=default_ylim)
     set_misc(ax, "position [m]", "velocity [m/s]", title, xlim, ylim, grid=grid)
 
     if show_legend:
@@ -219,5 +221,5 @@ if __name__ == "__main__":
     main()
 
 # Local Variables:
-# jinx-local-words: "cd csv dat env ppp py raibert usr uv vv xlim ylim za zb zh"
+# jinx-local-words: "cd csv dat env ppp py raibert usr uv vv xlim xmax xmin ylim ymax ymin za zb zh"
 # End:
