@@ -91,11 +91,10 @@ void logger_write_header(logger_t *self, simulator_t *simulator, void *util)
   if( !self->header )
     return;
 
-  if( logger_is_open(self) ){
-    self->header( self->fp, simulator, util );
-  } else {
-    self->header( stdout, simulator, util );
-  }
+  FILE *fp = self->fp;
+  if( !fp ) fp = stdout;
+  self->header( fp, simulator, util );
+  logger_write_eol( self );
   self->header_written_flag = true;
 }
 
@@ -105,11 +104,11 @@ void logger_write_data(logger_t *self, simulator_t *simulator, void *util)
     RUNTIME_WARN( "No logger output" );
     return;
   }
-  if( logger_is_open(self) ) {
-    self->writer( self->fp, simulator, util );
-  } else {
-    self->writer( stdout, simulator, util );
-  }
+
+  FILE *fp = self->fp;
+  if( !fp ) fp = stdout;
+  self->writer( fp, simulator, util );
+  logger_write_eol( self );
 }
 
 void logger_write(logger_t *self, simulator_t *simulator, void *util)

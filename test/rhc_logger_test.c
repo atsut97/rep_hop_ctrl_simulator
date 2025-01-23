@@ -131,14 +131,14 @@ TEST(test_logger_close)
 }
 
 void header(FILE *fp, simulator_t *s, void *util) {
-  fprintf( fp, "t,z,vz,fe,za,zh,zb,m,az\n");
+  fprintf( fp, "t,z,vz,fe,za,zh,zb,m,az");
 }
 
 void output(FILE *fp, simulator_t *s, void *util) {
   vec_t state = simulator_state(s);
   cmd_t *cmd = simulator_cmd(s);
   model_t *model = simulator_model(s);
-  fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+  fprintf( fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f",
            simulator_time(s),
            vec_elem(state,0), vec_elem(state,1),
            simulator_fe(s), cmd->za, cmd->zh, cmd->zb,
