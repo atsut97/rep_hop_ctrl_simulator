@@ -23,7 +23,7 @@ ppp_t *ppp_init(ppp_t *self, cmd_t *cmd, ctrl_t *ctrl, model_t *model, logger_t 
     self->n_sc[i] = PHASE_PORTRAIT_PLOTTER_DEFAULT_NUM_SC;
 
   simulator_init( ppp_simulator(self), ppp_cmd(self), ppp_ctrl(self), ppp_model(self ) );
-  simulator_set_default_logger( ppp_simulator(self), ppp_logger(self) );
+  ppp_setup_logger( self, logger );
   simulator_set_reset_fp( ppp_simulator(self), ppp_simulator_reset );
   simulator_set_update_fp( ppp_simulator(self), ppp_simulator_update );
 
@@ -291,6 +291,26 @@ bool ppp_simulator_is_out_of_region(ppp_t *self, vec_t p)
   return ppp_check_out_of_region(self) &&
          ( __is_lower_any( p, self->pmin ) ||
            __is_greater_any( p, self->pmax ) );
+}
+
+void ppp_write_header(FILE *fp, simulator_t *s, void *util)
+{
+  simulator_header_default( fp, s, util );
+  fprintf( fp, ",xmin,xmax,ymin,ymax" );
+}
+
+void ppp_write_data(FILE *fp, simulator_t *s, void *util)
+{
+  ppp_t *self = util;
+  simulator_writer_default( fp, s, util );
+  fprintf( fp, ",%f,%f,%f,%f",
+           vec_elem( ppp_min(self), 0 ), vec_elem( ppp_max(self), 0 ),
+           vec_elem( ppp_min(self), 1 ), vec_elem( ppp_max(self), 1 ) );
+}
+
+void ppp_setup_logger(ppp_t *self, logger_t *logger)
+{
+  logger_register( logger, ppp_write_header, ppp_write_data );
 }
 
 bool ppp_simulator_reset(simulator_t *self, void *util)

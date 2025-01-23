@@ -65,6 +65,9 @@ void ppp_remove_p0(ppp_t *self, vec_t p0, double tol);
 
 void ppp_generate_edge_points(ppp_t *self);
 
+void ppp_write_header(FILE *fp, simulator_t *s, void *util);
+void ppp_write_data(FILE *fp, simulator_t *s, void *util);
+void ppp_setup_logger(ppp_t *self, logger_t *logger);
 bool ppp_simulator_reset(simulator_t *self, void *util);
 bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util);
 void ppp_run(ppp_t *self, double max_time, double dt);
