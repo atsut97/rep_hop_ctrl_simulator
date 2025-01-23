@@ -40,19 +40,24 @@ logger_t *logger_set_eol(logger_t *self, const char *eol)
 
 FILE* logger_open(logger_t *self, const char *filename)
 {
-  if( !filename ) return NULL;
-  string_copy(filename, self->filename);
-  self->fp = fopen(filename, "w");
-  if(!self->fp) {
-    RUNTIME_ERR(filename);
-    return NULL;
+  if( filename ){
+    string_copy(filename, self->filename);
+    self->fp = fopen(filename, "w");
+    if( !self->fp ){
+      RUNTIME_ERR(filename);
+      return NULL;
+    }
+  } else{
+    self->filename[0] = '\0';
+    self->fp = stdout;
   }
+  self->header_written_flag = false;
   return self->fp;
 }
 
 void logger_close(logger_t *self)
 {
-  if( self->fp )
+  if( self->fp && self->fp != stdout )
     fclose( self->fp );
   self->fp = NULL;
 }
@@ -78,37 +83,33 @@ void logger_delegate(logger_t *src, logger_t *dst)
 logger_t *logger_reset(logger_t *self, const char *filename)
 {
   logger_close( self );
-  if( filename )
-    logger_open( self, filename );
-  else
-    self->filename[0] = '\0';
-  self->header_written_flag = false;
+  logger_open( self, filename );
   return self;
 }
 
 void logger_write_header(logger_t *self, simulator_t *simulator, void *util)
 {
-  if( !self->header )
-    return;
+  if( !self->fp ) return;
+  if( !self->header ) return;
 
-  FILE *fp = self->fp;
-  if( !fp ) fp = stdout;
-  self->header( fp, simulator, util );
-  logger_write_eol( self );
+  self->header( self->fp, simulator, util );
+  fprintf( self->fp, "%s", logger_eol(self) );
   self->header_written_flag = true;
 }
 
 void logger_write_data(logger_t *self, simulator_t *simulator, void *util)
 {
-  if( !self->writer ) {
-    RUNTIME_WARN( "No logger output" );
+  if( !self->fp ){
+    RUNTIME_WARN( "Logger is not opened yet" );
+    return;
+  }
+  if( !self->writer ){
+    RUNTIME_WARN( "Data writer is not set yet" );
     return;
   }
 
-  FILE *fp = self->fp;
-  if( !fp ) fp = stdout;
-  self->writer( fp, simulator, util );
-  logger_write_eol( self );
+  self->writer( self->fp, simulator, util );
+  fprintf( self->fp, "%s", logger_eol(self) );
 }
 
 void logger_write(logger_t *self, simulator_t *simulator, void *util)

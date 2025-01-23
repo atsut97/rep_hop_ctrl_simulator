@@ -36,7 +36,6 @@ void logger_register(logger_t *self, logger_header_fp_t header, logger_writer_fp
 void logger_delegate(logger_t *src, logger_t *dst);
 logger_t *logger_reset(logger_t *self, const char *filename);
 
-#define logger_write_eol(self) fprintf( self->fp, "%s", logger_eol(self) )
 void logger_write_header(logger_t *self, simulator_t *simulator, void *util);
 void logger_write_data(logger_t *self, simulator_t *simulator, void *util);
 void logger_write(logger_t *self, simulator_t *simulator, void *util);

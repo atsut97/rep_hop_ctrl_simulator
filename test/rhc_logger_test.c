@@ -106,6 +106,7 @@ TEST(test_logger_open)
   logger_open( &logger, TEST_LOG_FILENAME );
   ASSERT_STREQ( TEST_LOG_FILENAME, logger_filename(&logger) );
   ASSERT_PTRNE( NULL, logger.fp );
+  ASSERT_PTRNE( stdout, logger.fp );
   ASSERT_PTREQ( NULL, logger.header );
   ASSERT_PTREQ( NULL, logger.writer );
   ASSERT_FALSE( logger_is_header_written( &logger ) );
@@ -116,7 +117,7 @@ TEST(test_logger_open_null)
 {
   logger_open( &logger, NULL );
   ASSERT_STREQ( "", logger_filename(&logger) );
-  ASSERT_PTREQ( NULL, logger.fp );
+  ASSERT_PTREQ( stdout, logger.fp );
   ASSERT_PTREQ( NULL, logger.header );
   ASSERT_PTREQ( NULL, logger.writer );
   ASSERT_FALSE( logger_is_header_written( &logger ) );
@@ -225,6 +226,7 @@ TEST(test_logger_create)
   logger_t *l = logger_create( TEST_LOG_FILENAME, header, output );
   ASSERT_STREQ( TEST_LOG_FILENAME, logger_filename(l) );
   ASSERT_PTRNE( NULL, l->fp );
+  ASSERT_PTRNE( stdout, l->fp );
   ASSERT_PTREQ( header, l->header );
   ASSERT_PTREQ( output, l->writer );
   logger_destroy( l );
@@ -233,10 +235,12 @@ TEST(test_logger_create)
 
 TEST(test_logger_reset)
 {
+  logger_open( &logger, NULL );
   logger_register( &logger, header, output );
   logger.header_written_flag = true;
   logger_reset( &logger, NULL );
   ASSERT_FALSE( logger_is_header_written( &logger ) );
+  ASSERT_PTREQ( stdout, logger.fp );
   ASSERT_PTREQ( header, logger.header );
   ASSERT_PTREQ( output, logger.writer );
 }
@@ -250,6 +254,7 @@ TEST(test_logger_reset_with_filename)
   new_logger->header_written_flag = true;
   ASSERT_STREQ( filename1, logger_filename( new_logger ) );
   ASSERT_PTRNE( NULL, new_logger->fp );
+  ASSERT_PTRNE( stdout, new_logger->fp );
   ASSERT_PTREQ( header, new_logger->header );
   ASSERT_PTREQ( output, new_logger->writer );
   ASSERT_TRUE( logger_is_header_written( new_logger ) );
@@ -257,6 +262,7 @@ TEST(test_logger_reset_with_filename)
   logger_reset( new_logger, filename2 );
   ASSERT_STREQ( filename2, logger_filename( new_logger ) );
   ASSERT_PTRNE( NULL, new_logger->fp );
+  ASSERT_PTRNE( stdout, new_logger->fp );
   ASSERT_PTREQ( header, new_logger->header );
   ASSERT_PTREQ( output, new_logger->writer );
   ASSERT_FALSE( logger_is_header_written( new_logger ) );
@@ -273,13 +279,14 @@ TEST(test_logger_reset_with_no_filename)
   new_logger->header_written_flag = true;
   ASSERT_STREQ( filename1, logger_filename( new_logger ) );
   ASSERT_PTRNE( NULL, new_logger->fp );
+  ASSERT_PTRNE( stdout, new_logger->fp );
   ASSERT_PTREQ( header, new_logger->header );
   ASSERT_PTREQ( output, new_logger->writer );
   ASSERT_TRUE( logger_is_header_written( new_logger ) );
 
   logger_reset( new_logger, NULL );
   ASSERT_STREQ( "", logger_filename( new_logger ) );
-  ASSERT_PTREQ( NULL, new_logger->fp );
+  ASSERT_PTREQ( stdout, new_logger->fp );
   ASSERT_PTREQ( header, new_logger->header );
   ASSERT_PTREQ( output, new_logger->writer );
   ASSERT_FALSE( logger_is_header_written( new_logger ) );
@@ -364,12 +371,22 @@ TEST(test_logger_write_not_regiseter_header)
   assert_file( TEST_LOG_FILENAME, expected, 3 );
 }
 
-TEST(test_logger_write_not_regiseter_writer)
+TEST(test_logger_write_not_open_logger)
 {
   RESET_ERR_MSG();
   ECHO_OFF();
   logger_write_data( &logger, &simulator, NULL);
-  ASSERT_STREQ( "No logger output", __err_last_msg );
+  ASSERT_STREQ( "Logger is not opened yet", __err_last_msg );
+  ECHO_ON();
+}
+
+TEST(test_logger_write_not_regiseter_writer)
+{
+  RESET_ERR_MSG();
+  ECHO_OFF();
+  logger_open( &logger, NULL );
+  logger_write_data( &logger, &simulator, NULL);
+  ASSERT_STREQ( "Data writer is not set yet", __err_last_msg );
   ECHO_ON();
 }
 
@@ -395,6 +412,7 @@ TEST_SUITE(test_logger)
   RUN_TEST( test_logger_write );
   RUN_TEST( test_logger_write_not_regiseter_header );
   RUN_TEST( test_logger_write_not_regiseter_writer );
+  RUN_TEST( test_logger_write_not_open_logger );
 }
 
 int main(int argc, char *argv[])
