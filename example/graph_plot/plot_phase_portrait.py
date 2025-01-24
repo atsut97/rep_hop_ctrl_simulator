@@ -23,6 +23,7 @@ import warnings
 from typing import TYPE_CHECKING, Literal
 
 import matplotlib.pyplot as plt
+import polars as pl
 from pyplotutil.datautil import TaggedData
 from pyplotutil.loggingutil import evlog, get_event_logger_filename, start_logging
 from pyplotutil.plotutil import get_limits
@@ -125,8 +126,12 @@ def plot(
     title = None
     if dataset.is_loaded_from_file():
         title = dataset.datapath.stem
-    default_xlim = (dataset.param("xmin"), dataset.param("xmax"))
-    default_ylim = (dataset.param("ymin"), dataset.param("ymax"))
+    try:
+        default_xlim = (dataset.param("xmin"), dataset.param("xmax"))
+        default_ylim = (dataset.param("ymin"), dataset.param("ymax"))
+    except pl.ColumnNotFoundError:
+        default_xlim = None
+        default_ylim = None
     xlim, ylim = get_limits(xlim, ylim, fallback_xlim=default_xlim, fallback_ylim=default_ylim)
     set_misc(ax, "position [m]", "velocity [m/s]", title, xlim, ylim, grid=grid)
 
