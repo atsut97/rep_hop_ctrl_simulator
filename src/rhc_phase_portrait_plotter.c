@@ -321,7 +321,7 @@ bool ppp_simulator_reset(simulator_t *self, void *util)
   return simulator_reset_ctrl( self, util );
 }
 
-bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util)
+bool ppp_simulator_update(simulator_t *self, double dt, void *util)
 {
   ppp_t *ppp = util;
 

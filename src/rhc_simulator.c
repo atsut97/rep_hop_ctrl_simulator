@@ -40,7 +40,7 @@ void simulator_set_reset_fp(simulator_t *self, bool (*reset_fp)(simulator_t*, vo
   self->reset_fp = reset_fp;
 }
 
-void simulator_set_update_fp(simulator_t *self, bool (*update_fp)(simulator_t*, double, double, void*))
+void simulator_set_update_fp(simulator_t *self, bool (*update_fp)(simulator_t*, double, void*))
 {
   self->update_fp = update_fp;
 }
@@ -81,7 +81,7 @@ vec_t simulator_dp(double t, vec_t x, void *util, vec_t v)
   simulator_t *sim = util;
 
   ctrl_update( sim->ctrl, t, x );
-  model_update( sim->model, ctrl_fz(sim->ctrl), 0 );
+  model_update( sim->model, ctrl_fz(sim->ctrl), simulator_fe(sim) );
   vec_set_elem( v, 0, vec_elem(x,1) );
   vec_set_elem( v, 1, model_acc( sim->model ) );
   return v;
@@ -108,7 +108,7 @@ bool simulator_reset(simulator_t *self, void *util)
   return true;
 }
 
-bool simulator_update(simulator_t *self, double fe, double dt, void *util)
+bool simulator_update(simulator_t *self, double dt, void *util)
 {
   ode_update( &self->ode, simulator_time(self), simulator_state(self), dt, self );
   return true;
@@ -131,7 +131,7 @@ void simulator_run(simulator_t *self, vec_t p0, double time, double dt, logger_t
     RUNTIME_WARN( "Logger is not opened" );
   while( simulator_time(self) < time ){
     self->dump_fp( self, logger, util );
-    if( !self->update_fp( self, 0.0, dt, util ) )
+    if( !self->update_fp( self, dt, util ) )
       break;
     simulator_update_time( self, dt );
   }

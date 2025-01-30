@@ -261,12 +261,12 @@ TEST(test_phase_portrait_plotter_simulator_update)
   ASSERT_EQ( 0, vec_ring_size( ppp_point_buf(&ppp) ) );
   ASSERT_GE( vec_ring_capacity( ppp_point_buf(&ppp) ), 10 );
 
-  ret = ppp_simulator_update( ppp_simulator(&ppp), 0, 0.001, &ppp );
+  ret = ppp_simulator_update( ppp_simulator(&ppp), 0.001, &ppp );
   ASSERT_TRUE( ret );
   ASSERT_EQ( 1, vec_ring_size( ppp_point_buf(&ppp) ) );
   ASSERT_TRUE( vec_match( vec_ring_head( ppp_point_buf(&ppp) ), p0 ) );
 
-  ret = ppp_simulator_update( ppp_simulator(&ppp), 0, 0.001, &ppp );
+  ret = ppp_simulator_update( ppp_simulator(&ppp), 0.001, &ppp );
   ASSERT_TRUE( ret );
   ASSERT_EQ( 2, vec_ring_size( ppp_point_buf(&ppp) ) );
   ASSERT_FALSE( vec_match( vec_ring_head( ppp_point_buf(&ppp) ), p0 ) );

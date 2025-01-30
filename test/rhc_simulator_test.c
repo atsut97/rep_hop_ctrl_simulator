@@ -119,7 +119,7 @@ TEST(test_simulator_set_reset_fp)
   ASSERT_PTREQ( reset_test, sim.reset_fp );
 }
 
-bool update_test(simulator_t *simulator, double dt, double t, void *util)
+bool update_test(simulator_t *simulator, double dt, void *util)
 {
   return true;
 }

@@ -69,7 +69,7 @@ void ppp_write_header(FILE *fp, simulator_t *s, void *util);
 void ppp_write_data(FILE *fp, simulator_t *s, void *util);
 void ppp_setup_logger(ppp_t *self, logger_t *logger);
 bool ppp_simulator_reset(simulator_t *self, void *util);
-bool ppp_simulator_update(simulator_t *self, double fe, double dt, void *util);
+bool ppp_simulator_update(simulator_t *self, double dt, void *util);
 void ppp_run(ppp_t *self, double max_time, double dt);
 
 #endif /* __RHC_PHASE_PORTRAIT_PLOTTER_H__ */
