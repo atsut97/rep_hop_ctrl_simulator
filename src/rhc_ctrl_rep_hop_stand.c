@@ -173,6 +173,32 @@ double ctrl_rep_hop_stand_calc_phi_based_param(ctrl_t *self, double phi, double 
   return v;
 }
 
+void ctrl_rep_hop_stand_print_params(FILE *fp, ctrl_t *self, vec_t p, const char *sep)
+{
+  char s[BUFSIZ];
+
+  if( sep ){
+    fprintf( fp, "%s\n", sep );
+  }
+  ctrl_events_get_phase_string(ctrl_phase(self), s);
+  fprintf( fp, "phase: %s, phi: %f, z: %f, vz: %f\n", s, ctrl_phi(self), vec_elem(p,0), vec_elem(p,1) );
+  fprintf( fp, "  za: %f, zh: %f, zm: %f, zb: %f, rho: %f, k: %f, soft_landing: %s, cushioning: %s\n",
+           ctrl_za(self),
+           ctrl_zh(self),
+           ctrl_zm(self),
+           ctrl_zb(self),
+           ctrl_rep_hop_stand_rho(self),
+           ctrl_rep_hop_stand_k(self),
+           ctrl_rep_hop_stand_soft_landing(self) ? "true" : "false",
+           ctrl_rep_hop_stand_cushioning(self) ? "true" : "false" );
+  fprintf( fp, "  za: %f, zh: %f, zm: %f, zb: %f, rho: %f\n",
+           ctrl_rep_hop_stand_params_za(self),
+           ctrl_rep_hop_stand_params_zh(self),
+           ctrl_rep_hop_stand_params_zm(self),
+           ctrl_rep_hop_stand_params_zb(self),
+           ctrl_rep_hop_stand_params_rho(self) );
+}
+
 ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p)
 {
   cmd_t *params;
