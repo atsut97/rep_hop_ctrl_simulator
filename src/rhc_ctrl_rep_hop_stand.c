@@ -222,11 +222,11 @@ ctrl_t *ctrl_rep_hop_stand_update_params_default(ctrl_t *self, vec_t p)
       /* Use desired apex height is used as the robot goes into flight yet */
       z_apex = ctrl_za(self);
     } else{
-      z_apex = ctrl_apex_z(self);
+      z_apex = max(ctrl_apex_z(self), ctrl_za(self));
     }
     /* Fix the apex height to absorb the impact when touching down */
     za = ctrl_rep_hop_stand_calc_phi_based_param( self, ctrl_phi(self), z_apex, ctrl_za(self) );
-    params->za = za;
+    params->za = max(za, ctrl_za(self));
     if( istiny( ctrl_rep_hop_stand_rho(self) ) && ctrl_rep_hop_stand_cushioning(self) ){
       /* Fix rho when the robot is in flight phase but it wants to stand */
       rho = ctrl_rep_hop_stand_calc_phi_based_param( self, ctrl_phi(self), 1.0, ctrl_rep_hop_stand_rho(self) );
