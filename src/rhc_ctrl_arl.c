@@ -38,6 +38,7 @@ ctrl_t *ctrl_arl_update(ctrl_t *self, double t, vec_t p)
 {
   ctrl_update_default( self, t, p );
   self->fz = ctrl_arl_calc_fz( self, t, p );
+  if( self->fz < 0 ) self->fz = 0;
   return self;
 }
 

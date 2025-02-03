@@ -34,6 +34,7 @@ ctrl_t *ctrl_slip_update(ctrl_t *self, double t, vec_t p)
   prp->k = ctrl_slip_stiffness( self );
   self->fz = -prp->k * ( vec_elem(p,0) - ctrl_zh(self) );
   if( ctrl_phase_in( self, flight ) ) self->fz = 0;
+  if( self->fz < 0 ) self->fz = 0;
   return self;
 }
 

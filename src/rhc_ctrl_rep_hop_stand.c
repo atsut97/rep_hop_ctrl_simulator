@@ -245,6 +245,7 @@ ctrl_t *ctrl_rep_hop_stand_update(ctrl_t *self, double t, vec_t p)
   } else{
     self->fz = ctrl_rep_hop_stand_calc_fz( self, p );
   }
+  if( self->fz < 0 ) self->fz = 0;
   return self;
 }
 

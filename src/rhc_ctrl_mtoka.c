@@ -55,6 +55,7 @@ ctrl_t *ctrl_mtoka_update(ctrl_t *self, double t, vec_t p)
   ctrl_mtoka_set_sensory_feedback( self, s );
   self->fz = ctrl_mtoka_calc_fz( self, t, p );
   if( ctrl_phase_in( self, flight ) ) self->fz = 0;
+  if( self->fz < 0 ) self->fz = 0;
   return self;
 }
 

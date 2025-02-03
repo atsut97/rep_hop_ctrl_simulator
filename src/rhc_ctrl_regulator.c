@@ -43,6 +43,7 @@ ctrl_t *ctrl_regulator_update(ctrl_t *self, double t, vec_t p)
   prp->xi = ctrl_regulator_calc_xi( ctrl_zh(self), model_gravity( ctrl_model(self) ) );
   self->fz = ctrl_regulator_calc_fz( self, p );
   if( ctrl_phase_in( self, flight ) ) self->fz = 0;
+  if( self->fz < 0 ) self->fz = 0;
   return self;
 }
 
