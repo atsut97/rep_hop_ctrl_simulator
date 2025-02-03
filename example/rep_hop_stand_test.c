@@ -166,7 +166,7 @@ void set_params_hop_soft_land()
   ppp_remove_p0( &plotter, p0, 1e-6 );
 
   zm = ctrl_rep_hop_stand_calc_zm( cmd.za, cmd.zh, cmd.zb );
-  if( !istiny( zm - cmd.zm ) ){
+  if( istiny( zm - cmd.zm ) ){
     vec_set_elem_list( p0, zm-1e-6, 0.0 );
     ppp_push_p0( &plotter, p0 );
     vec_set_elem_list( p0, zm+1e-6, 0.0 );
