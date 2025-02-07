@@ -57,12 +57,12 @@ void cmd_f_write_regulator(FILE* fp, cmd_t *self)
   fprintf( fp, "q2 = %f\n", self->regulator.q2 );
 }
 
-void cmd_f_write_rep_hop_stand(FILE* fp, cmd_t *self)
+void cmd_f_write_dynmorph(FILE* fp, cmd_t *self)
 {
   cmd_f_write( fp, self );
-  fprintf( fp, "rho = %f\n", self->rep_hop_stand.rho );
-  fprintf( fp, "k = %f\n", self->rep_hop_stand.k );
-  fprintf( fp, "soft_landing = %s\n", self->rep_hop_stand.soft_landing ? "true" : "false" );
+  fprintf( fp, "rho = %f\n", self->dynmorph.rho );
+  fprintf( fp, "k = %f\n", self->dynmorph.k );
+  fprintf( fp, "soft_landing = %s\n", self->dynmorph.soft_landing ? "true" : "false" );
 }
 
 void cmd_f_write_raibert(FILE* fp, cmd_t *self)

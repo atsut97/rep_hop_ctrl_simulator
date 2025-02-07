@@ -1,5 +1,5 @@
 #include "rhc_ctrl.h"
-#include "rhc_ctrl_rep_hop_stand.h"
+#include "rhc_ctrl_dynmorph.h"
 #include "rhc_test.h"
 
 static cmd_t cmd;
@@ -11,7 +11,7 @@ void setup()
 {
   cmd_default_init( &cmd );
   model_init( &model, 10 );
-  ctrl_rep_hop_stand_create( &ctrl, &cmd, &model );
+  ctrl_dynmorph_create( &ctrl, &cmd, &model );
   p = vec_create( 2 );
 }
 
@@ -22,77 +22,77 @@ void teardown()
   cmd_destroy( &cmd );
 }
 
-TEST(test_ctrl_rep_hop_stand_cmd_init)
+TEST(test_ctrl_dynmorph_cmd_init)
 {
-  ctrl_rep_hop_stand_cmd_init( &ctrl, &cmd );
-  ASSERT_EQ( 0.0, ctrl_rep_hop_stand_rho( &ctrl ) );
-  ASSERT_EQ( 4.0, ctrl_rep_hop_stand_k( &ctrl ) );
-  ASSERT_TRUE( ctrl_rep_hop_stand_soft_landing( &ctrl ) );
+  ctrl_dynmorph_cmd_init( &ctrl, &cmd );
+  ASSERT_EQ( 0.0, ctrl_dynmorph_rho( &ctrl ) );
+  ASSERT_EQ( 4.0, ctrl_dynmorph_k( &ctrl ) );
+  ASSERT_TRUE( ctrl_dynmorph_soft_landing( &ctrl ) );
 }
 
-TEST(test_ctrl_rep_hop_stand_create)
+TEST(test_ctrl_dynmorph_create)
 {
   ASSERT_PTREQ( ctrl_cmd( &ctrl ), &cmd );
   ASSERT_PTREQ( ctrl_model( &ctrl ), &model );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_update, ctrl._update );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_destroy, ctrl._destroy );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_header, ctrl._header );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_writer, ctrl._writer );
+  ASSERT_PTREQ( ctrl_dynmorph_update, ctrl._update );
+  ASSERT_PTREQ( ctrl_dynmorph_destroy, ctrl._destroy );
+  ASSERT_PTREQ( ctrl_dynmorph_header, ctrl._header );
+  ASSERT_PTREQ( ctrl_dynmorph_writer, ctrl._writer );
   ASSERT_PTRNE( NULL, ctrl.prp );
 
-  ASSERT_EQ( rep_hop_stand_default, ctrl_rep_hop_stand_type(&ctrl) );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_update_params_default, ctrl_rep_hop_stand_get_prp(&ctrl)->_update_params );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_q1(&ctrl) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_q2(&ctrl) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl) );
-  ASSERT_FALSE( ctrl_rep_hop_stand_cushioning(&ctrl) );
+  ASSERT_EQ( dynmorph_default, ctrl_dynmorph_type(&ctrl) );
+  ASSERT_PTREQ( ctrl_dynmorph_update_params_default, ctrl_dynmorph_get_prp(&ctrl)->_update_params );
+  ASSERT_EQ( 0, ctrl_dynmorph_q1(&ctrl) );
+  ASSERT_EQ( 0, ctrl_dynmorph_q2(&ctrl) );
+  ASSERT_EQ( 0, ctrl_dynmorph_vm(&ctrl) );
+  ASSERT_FALSE( ctrl_dynmorph_cushioning(&ctrl) );
 
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl) );
-  ASSERT_EQ( 4.0, ctrl_rep_hop_stand_k(&ctrl) );
-  ASSERT_TRUE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
+  ASSERT_EQ( 0, ctrl_dynmorph_rho(&ctrl) );
+  ASSERT_EQ( 4.0, ctrl_dynmorph_k(&ctrl) );
+  ASSERT_TRUE( ctrl_dynmorph_soft_landing(&ctrl) );
 
-  ASSERT_EQ( 0.28, ctrl_rep_hop_stand_params_za(&ctrl) );
-  ASSERT_EQ( 0.26, ctrl_rep_hop_stand_params_zh(&ctrl) );
-  ASSERT_EQ( 0.255, ctrl_rep_hop_stand_params_zm(&ctrl) );
-  ASSERT_EQ( 0.23, ctrl_rep_hop_stand_params_zb(&ctrl) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_params_rho(&ctrl) );
+  ASSERT_EQ( 0.28, ctrl_dynmorph_params_za(&ctrl) );
+  ASSERT_EQ( 0.26, ctrl_dynmorph_params_zh(&ctrl) );
+  ASSERT_EQ( 0.255, ctrl_dynmorph_params_zm(&ctrl) );
+  ASSERT_EQ( 0.23, ctrl_dynmorph_params_zb(&ctrl) );
+  ASSERT_EQ( 0, ctrl_dynmorph_params_rho(&ctrl) );
 }
 
-TEST(test_ctrl_rep_hop_stand_create_no_update)
+TEST(test_ctrl_dynmorph_create_no_update)
 {
   ctrl_t ctrl_no_update;
-  ctrl_rep_hop_stand_create_with_type( &ctrl_no_update, &cmd, &model, no_update_params );
+  ctrl_dynmorph_create_with_type( &ctrl_no_update, &cmd, &model, no_update_params );
 
   ASSERT_PTREQ( ctrl_cmd( &ctrl_no_update ), &cmd );
   ASSERT_PTREQ( ctrl_model( &ctrl_no_update ), &model );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_update, ctrl._update );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_destroy, ctrl._destroy );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_header, ctrl._header );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_writer, ctrl._writer );
+  ASSERT_PTREQ( ctrl_dynmorph_update, ctrl._update );
+  ASSERT_PTREQ( ctrl_dynmorph_destroy, ctrl._destroy );
+  ASSERT_PTREQ( ctrl_dynmorph_header, ctrl._header );
+  ASSERT_PTREQ( ctrl_dynmorph_writer, ctrl._writer );
   ASSERT_PTRNE( NULL, ctrl.prp );
 
-  ASSERT_EQ( no_update_params, ctrl_rep_hop_stand_type(&ctrl_no_update) );
-  ASSERT_PTREQ( ctrl_rep_hop_stand_update_params_no_update, ctrl_rep_hop_stand_get_prp(&ctrl_no_update)->_update_params );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_q1(&ctrl_no_update) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_q2(&ctrl_no_update) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_vm(&ctrl_no_update) );
+  ASSERT_EQ( no_update_params, ctrl_dynmorph_type(&ctrl_no_update) );
+  ASSERT_PTREQ( ctrl_dynmorph_update_params_no_update, ctrl_dynmorph_get_prp(&ctrl_no_update)->_update_params );
+  ASSERT_EQ( 0, ctrl_dynmorph_q1(&ctrl_no_update) );
+  ASSERT_EQ( 0, ctrl_dynmorph_q2(&ctrl_no_update) );
+  ASSERT_EQ( 0, ctrl_dynmorph_vm(&ctrl_no_update) );
 
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_rho(&ctrl_no_update) );
-  ASSERT_EQ( 4.0, ctrl_rep_hop_stand_k(&ctrl_no_update) );
-  ASSERT_TRUE( ctrl_rep_hop_stand_soft_landing(&ctrl_no_update) );
+  ASSERT_EQ( 0, ctrl_dynmorph_rho(&ctrl_no_update) );
+  ASSERT_EQ( 4.0, ctrl_dynmorph_k(&ctrl_no_update) );
+  ASSERT_TRUE( ctrl_dynmorph_soft_landing(&ctrl_no_update) );
 
-  ASSERT_EQ( 0.28, ctrl_rep_hop_stand_params_za(&ctrl_no_update) );
-  ASSERT_EQ( 0.26, ctrl_rep_hop_stand_params_zh(&ctrl_no_update) );
-  ASSERT_EQ( 0.255, ctrl_rep_hop_stand_params_zm(&ctrl_no_update) );
-  ASSERT_EQ( 0.23, ctrl_rep_hop_stand_params_zb(&ctrl_no_update) );
-  ASSERT_EQ( 0, ctrl_rep_hop_stand_params_rho(&ctrl_no_update) );
+  ASSERT_EQ( 0.28, ctrl_dynmorph_params_za(&ctrl_no_update) );
+  ASSERT_EQ( 0.26, ctrl_dynmorph_params_zh(&ctrl_no_update) );
+  ASSERT_EQ( 0.255, ctrl_dynmorph_params_zm(&ctrl_no_update) );
+  ASSERT_EQ( 0.23, ctrl_dynmorph_params_zb(&ctrl_no_update) );
+  ASSERT_EQ( 0, ctrl_dynmorph_params_rho(&ctrl_no_update) );
 
   ctrl_destroy( &ctrl_no_update );
 }
 
-TEST(test_ctrl_rep_hop_stand_destroy)
+TEST(test_ctrl_dynmorph_destroy)
 {
-  ctrl_rep_hop_stand_destroy( &ctrl );
+  ctrl_dynmorph_destroy( &ctrl );
   ASSERT_PTREQ( NULL, ctrl_cmd( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl_model( &ctrl ) );
   ASSERT_PTREQ( NULL, ctrl.prp );
@@ -100,7 +100,7 @@ TEST(test_ctrl_rep_hop_stand_destroy)
   ASSERT_EQ( 0, ctrl_phi( &ctrl ) );
 }
 
-TEST(test_ctrl_rep_hop_stand_set_rho)
+TEST(test_ctrl_dynmorph_set_rho)
 {
   struct case_t {
     double rho;
@@ -110,12 +110,12 @@ TEST(test_ctrl_rep_hop_stand_set_rho)
   struct case_t *c;
 
   for( c=cases; c->rho>0; c++ ){
-    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
-    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_rho(&ctrl) );
+    ctrl_dynmorph_set_rho( &ctrl, c->rho );
+    ASSERT_EQ( c->rho, ctrl_dynmorph_rho(&ctrl) );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_set_k)
+TEST(test_ctrl_dynmorph_set_k)
 {
   struct case_t {
     double k;
@@ -125,28 +125,28 @@ TEST(test_ctrl_rep_hop_stand_set_k)
   struct case_t *c;
 
   for( c=cases; c->k>0; c++ ){
-    ctrl_rep_hop_stand_set_k( &ctrl, c->k );
-    ASSERT_EQ( c->k, ctrl_rep_hop_stand_k(&ctrl) );
+    ctrl_dynmorph_set_k( &ctrl, c->k );
+    ASSERT_EQ( c->k, ctrl_dynmorph_k(&ctrl) );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_set_soft_landing)
+TEST(test_ctrl_dynmorph_set_soft_landing)
 {
-  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
-  ASSERT_TRUE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
-  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
-  ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
-  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
-  ASSERT_TRUE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
-  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
-  ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
-  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
-  ASSERT_FALSE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
-  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
-  ASSERT_TRUE( ctrl_rep_hop_stand_soft_landing(&ctrl) );
+  ctrl_dynmorph_enable_soft_landing( &ctrl );
+  ASSERT_TRUE( ctrl_dynmorph_soft_landing(&ctrl) );
+  ctrl_dynmorph_disable_soft_landing( &ctrl );
+  ASSERT_FALSE( ctrl_dynmorph_soft_landing(&ctrl) );
+  ctrl_dynmorph_enable_soft_landing( &ctrl );
+  ASSERT_TRUE( ctrl_dynmorph_soft_landing(&ctrl) );
+  ctrl_dynmorph_disable_soft_landing( &ctrl );
+  ASSERT_FALSE( ctrl_dynmorph_soft_landing(&ctrl) );
+  ctrl_dynmorph_disable_soft_landing( &ctrl );
+  ASSERT_FALSE( ctrl_dynmorph_soft_landing(&ctrl) );
+  ctrl_dynmorph_enable_soft_landing( &ctrl );
+  ASSERT_TRUE( ctrl_dynmorph_soft_landing(&ctrl) );
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_q1)
+TEST(test_ctrl_dynmorph_calc_q1)
 {
   struct case_t {
     double zh, zm;
@@ -161,12 +161,12 @@ TEST(test_ctrl_rep_hop_stand_calc_q1)
   double q1;
 
   for( c=cases; c->expected>0.0; c++ ){
-    q1=ctrl_rep_hop_stand_calc_q1( c->zh, c->zm, G );
+    q1=ctrl_dynmorph_calc_q1( c->zh, c->zm, G );
     ASSERT_NEAR( c->expected, q1, 1e-10);
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_r)
+TEST(test_ctrl_dynmorph_calc_r)
 {
   struct case_t {
     double zm, zb;
@@ -181,12 +181,12 @@ TEST(test_ctrl_rep_hop_stand_calc_r)
   double r;
 
   for( c=cases; c->expected>0; c++ ){
-    r = ctrl_rep_hop_stand_calc_r( c->zm, c->zb );
+    r = ctrl_dynmorph_calc_r( c->zm, c->zb );
     ASSERT_NEAR( c->expected, r, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_sqr_vm)
+TEST(test_ctrl_dynmorph_calc_sqr_vm)
 {
   struct case_t {
     double zh, zm, zb;
@@ -201,14 +201,14 @@ TEST(test_ctrl_rep_hop_stand_calc_sqr_vm)
   double sqr_vm, vm;
 
   for( c=cases; c->expected>0; c++ ){
-    sqr_vm = ctrl_rep_hop_stand_calc_sqr_vm( c->zh, c->zm, c->zb, G );
-    vm = ctrl_rep_hop_stand_calc_vm( c->zh, c->zm, c->zb, G );
+    sqr_vm = ctrl_dynmorph_calc_sqr_vm( c->zh, c->zm, c->zb, G );
+    vm = ctrl_dynmorph_calc_vm( c->zh, c->zm, c->zb, G );
     ASSERT_NEAR( c->expected, sqr_vm, 1e-10 );
     ASSERT_NEAR( sqrt( c->expected ), vm, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_sqr_gamma)
+TEST(test_ctrl_dynmorph_calc_sqr_gamma)
 {
   struct case_t {
     double z, v, zh, zm, zb;
@@ -224,14 +224,14 @@ TEST(test_ctrl_rep_hop_stand_calc_sqr_gamma)
 
   for( c=cases; c->expected>0; c++ ){
     vec_set_elem_list( p, c->z, c->v );
-    sqr_gamma = ctrl_rep_hop_stand_calc_sqr_gamma( p, c->zh, c->zm, c->zb, G );
-    gamma = ctrl_rep_hop_stand_calc_gamma( p, c->zh, c->zm, c->zb, G );
+    sqr_gamma = ctrl_dynmorph_calc_sqr_gamma( p, c->zh, c->zm, c->zb, G );
+    gamma = ctrl_dynmorph_calc_gamma( p, c->zh, c->zm, c->zb, G );
     ASSERT_NEAR( c->expected, sqr_gamma, 1e-10 );
     ASSERT_NEAR( sqrt( c->expected ), gamma, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_za)
+TEST(test_ctrl_dynmorph_calc_za)
 {
   struct case_t {
     double zh, zm, zb;
@@ -246,12 +246,12 @@ TEST(test_ctrl_rep_hop_stand_calc_za)
   double za;
 
   for( c=cases; c->expected>0; c++ ){
-    za = ctrl_rep_hop_stand_calc_za( c->zh, c->zm, c->zb );
+    za = ctrl_dynmorph_calc_za( c->zh, c->zm, c->zb );
     ASSERT_NEAR( c->expected, za, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_zh)
+TEST(test_ctrl_dynmorph_calc_zh)
 {
   struct case_t {
     double za, zm, zb;
@@ -266,12 +266,12 @@ TEST(test_ctrl_rep_hop_stand_calc_zh)
   double zh;
 
   for( c=cases; c->expected>0; c++ ){
-    zh = ctrl_rep_hop_stand_calc_zh( c->za, c->zm, c->zb );
+    zh = ctrl_dynmorph_calc_zh( c->za, c->zm, c->zb );
     ASSERT_NEAR( c->expected, zh, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_zm)
+TEST(test_ctrl_dynmorph_calc_zm)
 {
   struct case_t {
     double za, zh, zb;
@@ -286,12 +286,12 @@ TEST(test_ctrl_rep_hop_stand_calc_zm)
   double zm;
 
   for( c=cases; c->expected>0; c++ ){
-    zm = ctrl_rep_hop_stand_calc_zm( c->za, c->zh, c->zb );
+    zm = ctrl_dynmorph_calc_zm( c->za, c->zh, c->zb );
     ASSERT_NEAR( c->expected, zm, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_zm_when_za_lower_than_zh)
+TEST(test_ctrl_dynmorph_calc_zm_when_za_lower_than_zh)
 {
   struct case_t {
     double za, zh, zb;
@@ -306,12 +306,12 @@ TEST(test_ctrl_rep_hop_stand_calc_zm_when_za_lower_than_zh)
   double zm;
 
   for( c=cases; c->expected>0; c++ ){
-    zm = ctrl_rep_hop_stand_calc_zm( c->za, c->zh, c->zb );
+    zm = ctrl_dynmorph_calc_zm( c->za, c->zh, c->zb );
     ASSERT_NEAR( c->expected, zm, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_calc_zb)
+TEST(test_ctrl_dynmorph_calc_zb)
 {
   struct case_t {
     double za, zh, zm;
@@ -326,12 +326,12 @@ TEST(test_ctrl_rep_hop_stand_calc_zb)
   double zb;
 
   for( c=cases; c->za>0.0; c++ ){
-    zb = ctrl_rep_hop_stand_calc_zb( c->za, c->zh, c->zm );
+    zb = ctrl_dynmorph_calc_zb( c->za, c->zh, c->zm );
     ASSERT_NEAR( c->expected, zb, 1e-10 );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb)
+TEST(test_ctrl_dynmorph_update_params_hop_fix_zb)
 {
   struct case_t {
     double z, v, za, zh, zm, zb, rho;
@@ -346,19 +346,19 @@ TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb)
 
   for( c=cases; c->zb>0.0; c++ ){
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
-    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
-    ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
+    ctrl_dynmorph_set_rho( &ctrl, c->rho );
+    ctrl_dynmorph_disable_soft_landing( &ctrl );
     vec_set_elem_list( p, c->z, c->v );
-    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
-    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
-    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
-    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
-    ASSERT_NEAR( c->expected_zb, ctrl_rep_hop_stand_params_zb(&ctrl), 1e-10 );
-    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+    ctrl_dynmorph_update_params_default( &ctrl, p );
+    ASSERT_EQ( c->za, ctrl_dynmorph_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_dynmorph_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_dynmorph_params_zm(&ctrl) );
+    ASSERT_NEAR( c->expected_zb, ctrl_dynmorph_params_zb(&ctrl), 1e-10 );
+    ASSERT_EQ( c->rho, ctrl_dynmorph_params_rho(&ctrl) );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm)
+TEST(test_ctrl_dynmorph_update_params_hop_fix_zm)
 {
   struct case_t {
     double z, v, za, zh, zm, zb, rho;
@@ -373,19 +373,19 @@ TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm)
 
   for( c=cases; c->zb>0.0; c++ ){
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
-    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
-    ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
+    ctrl_dynmorph_set_rho( &ctrl, c->rho );
+    ctrl_dynmorph_disable_soft_landing( &ctrl );
     vec_set_elem_list( p, c->z, c->v );
-    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
-    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
-    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
-    ASSERT_NEAR( c->expected_zm, ctrl_rep_hop_stand_params_zm(&ctrl), 1e-10 );
-    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
-    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+    ctrl_dynmorph_update_params_default( &ctrl, p );
+    ASSERT_EQ( c->za, ctrl_dynmorph_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_dynmorph_params_zh(&ctrl) );
+    ASSERT_NEAR( c->expected_zm, ctrl_dynmorph_params_zm(&ctrl), 1e-10 );
+    ASSERT_EQ( c->zb, ctrl_dynmorph_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_dynmorph_params_rho(&ctrl) );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm)
+TEST(test_ctrl_dynmorph_update_params_squat_fix_zm)
 {
   struct case_t {
     double z, v, za, zh, zm, zb, rho;
@@ -400,19 +400,19 @@ TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm)
 
   for( c=cases; c->zb>0.0; c++ ){
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
-    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
-    ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
+    ctrl_dynmorph_set_rho( &ctrl, c->rho );
+    ctrl_dynmorph_disable_soft_landing( &ctrl );
     vec_set_elem_list( p, c->z, c->v );
-    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
-    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
-    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
-    ASSERT_NEAR( c->expected_zm, ctrl_rep_hop_stand_params_zm(&ctrl), 1e-10 );
-    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
-    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+    ctrl_dynmorph_update_params_default( &ctrl, p );
+    ASSERT_EQ( c->za, ctrl_dynmorph_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_dynmorph_params_zh(&ctrl) );
+    ASSERT_NEAR( c->expected_zm, ctrl_dynmorph_params_zm(&ctrl), 1e-10 );
+    ASSERT_EQ( c->zb, ctrl_dynmorph_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_dynmorph_params_rho(&ctrl) );
   }
 }
 
-TEST(test_ctrl_rep_hop_stand_update_params_hop_soft_landing_fix_za)
+TEST(test_ctrl_dynmorph_update_params_hop_soft_landing_fix_za)
 {
   struct case_t {
     double z, v, za, zh, zm, zb, rho, z_apex;
@@ -427,8 +427,8 @@ TEST(test_ctrl_rep_hop_stand_update_params_hop_soft_landing_fix_za)
 
   for( c=cases; c->zb>0.0; c++ ){
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
-    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
-    ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+    ctrl_dynmorph_set_rho( &ctrl, c->rho );
+    ctrl_dynmorph_enable_soft_landing( &ctrl );
 
     ctrl_events_init( ctrl_events( &ctrl ) );
     vec_set_elem_list( p, c->z_apex, 0.0 ); /* apex */
@@ -437,18 +437,18 @@ TEST(test_ctrl_rep_hop_stand_update_params_hop_soft_landing_fix_za)
     ctrl_events_update( ctrl_events(&ctrl), 1.0, p, &cmd, G );
     vec_set_elem_list( p, c->z, c->v ); /* compression */
 
-    ctrl_rep_hop_stand_update_params_default( &ctrl, p );
-    ASSERT_NEAR( c->expected_za, ctrl_rep_hop_stand_params_za(&ctrl), 1e-10 );
-    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
-    ASSERT_EQ( c->zm, ctrl_rep_hop_stand_params_zm(&ctrl) );
-    ASSERT_NEAR( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl), 1e-10 );
-    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+    ctrl_dynmorph_update_params_default( &ctrl, p );
+    ASSERT_NEAR( c->expected_za, ctrl_dynmorph_params_za(&ctrl), 1e-10 );
+    ASSERT_EQ( c->zh, ctrl_dynmorph_params_zh(&ctrl) );
+    ASSERT_EQ( c->zm, ctrl_dynmorph_params_zm(&ctrl) );
+    ASSERT_NEAR( c->zb, ctrl_dynmorph_params_zb(&ctrl), 1e-10 );
+    ASSERT_EQ( c->rho, ctrl_dynmorph_params_rho(&ctrl) );
   }
 }
 
 
 
-TEST(test_ctrl_rep_hop_stand_update_params_no_update)
+TEST(test_ctrl_dynmorph_update_params_no_update)
 {
   struct case_t {
     double z, v, za, zh, zm, zb, rho;
@@ -463,46 +463,46 @@ TEST(test_ctrl_rep_hop_stand_update_params_no_update)
 
   for( c=cases; c->zb>0.0; c++ ){
     cmd_set( &cmd, c->za, c->zh, c->zm, c->zb );
-    ctrl_rep_hop_stand_set_rho( &ctrl, c->rho );
+    ctrl_dynmorph_set_rho( &ctrl, c->rho );
     vec_set_elem_list( p, c->z, c->v );
-    ctrl_rep_hop_stand_update_params_no_update( &ctrl, p );
-    ASSERT_EQ( c->za, ctrl_rep_hop_stand_params_za(&ctrl) );
-    ASSERT_EQ( c->zh, ctrl_rep_hop_stand_params_zh(&ctrl) );
-    ASSERT_NEAR( c->expected_zm, ctrl_rep_hop_stand_params_zm(&ctrl), 1e-10 );
-    ASSERT_EQ( c->zb, ctrl_rep_hop_stand_params_zb(&ctrl) );
-    ASSERT_EQ( c->rho, ctrl_rep_hop_stand_params_rho(&ctrl) );
+    ctrl_dynmorph_update_params_no_update( &ctrl, p );
+    ASSERT_EQ( c->za, ctrl_dynmorph_params_za(&ctrl) );
+    ASSERT_EQ( c->zh, ctrl_dynmorph_params_zh(&ctrl) );
+    ASSERT_NEAR( c->expected_zm, ctrl_dynmorph_params_zm(&ctrl), 1e-10 );
+    ASSERT_EQ( c->zb, ctrl_dynmorph_params_zb(&ctrl) );
+    ASSERT_EQ( c->rho, ctrl_dynmorph_params_rho(&ctrl) );
   }
 }
 
-TEST_SUITE(test_ctrl_rep_hop_stand)
+TEST_SUITE(test_ctrl_dynmorph)
 {
   CONFIGURE_SUITE( setup, teardown );
-  RUN_TEST(test_ctrl_rep_hop_stand_cmd_init);
-  RUN_TEST(test_ctrl_rep_hop_stand_create);
-  RUN_TEST(test_ctrl_rep_hop_stand_create_no_update);
-  RUN_TEST(test_ctrl_rep_hop_stand_destroy);
-  RUN_TEST(test_ctrl_rep_hop_stand_set_rho);
-  RUN_TEST(test_ctrl_rep_hop_stand_set_k);
-  RUN_TEST(test_ctrl_rep_hop_stand_set_soft_landing);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_q1);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_r);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_sqr_vm);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_sqr_gamma);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_za);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_zh);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_zm);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_zm_when_za_lower_than_zh);
-  RUN_TEST(test_ctrl_rep_hop_stand_calc_zb);
-  RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zb);
-  RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_fix_zm);
-  RUN_TEST(test_ctrl_rep_hop_stand_update_params_squat_fix_zm);
-  RUN_TEST(test_ctrl_rep_hop_stand_update_params_hop_soft_landing_fix_za);
-  RUN_TEST(test_ctrl_rep_hop_stand_update_params_no_update);
+  RUN_TEST(test_ctrl_dynmorph_cmd_init);
+  RUN_TEST(test_ctrl_dynmorph_create);
+  RUN_TEST(test_ctrl_dynmorph_create_no_update);
+  RUN_TEST(test_ctrl_dynmorph_destroy);
+  RUN_TEST(test_ctrl_dynmorph_set_rho);
+  RUN_TEST(test_ctrl_dynmorph_set_k);
+  RUN_TEST(test_ctrl_dynmorph_set_soft_landing);
+  RUN_TEST(test_ctrl_dynmorph_calc_q1);
+  RUN_TEST(test_ctrl_dynmorph_calc_r);
+  RUN_TEST(test_ctrl_dynmorph_calc_sqr_vm);
+  RUN_TEST(test_ctrl_dynmorph_calc_sqr_gamma);
+  RUN_TEST(test_ctrl_dynmorph_calc_za);
+  RUN_TEST(test_ctrl_dynmorph_calc_zh);
+  RUN_TEST(test_ctrl_dynmorph_calc_zm);
+  RUN_TEST(test_ctrl_dynmorph_calc_zm_when_za_lower_than_zh);
+  RUN_TEST(test_ctrl_dynmorph_calc_zb);
+  RUN_TEST(test_ctrl_dynmorph_update_params_hop_fix_zb);
+  RUN_TEST(test_ctrl_dynmorph_update_params_hop_fix_zm);
+  RUN_TEST(test_ctrl_dynmorph_update_params_squat_fix_zm);
+  RUN_TEST(test_ctrl_dynmorph_update_params_hop_soft_landing_fix_za);
+  RUN_TEST(test_ctrl_dynmorph_update_params_no_update);
 }
 
 int main(int argc, char *argv[])
 {
-  RUN_SUITE(test_ctrl_rep_hop_stand);
+  RUN_SUITE(test_ctrl_dynmorph);
   TEST_REPORT();
   TEST_EXIT();
 }

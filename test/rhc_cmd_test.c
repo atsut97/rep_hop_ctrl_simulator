@@ -32,12 +32,12 @@ TEST(test_cmd_init_regulator)
   ASSERT_EQ( 0, cmd.regulator.q2 );
 }
 
-TEST(test_cmd_init_rep_hop_stand)
+TEST(test_cmd_init_dynmorph)
 {
   SHAM( &cmd, cmd_t );
   cmd_init( &cmd );
-  ASSERT_EQ( 0, cmd.rep_hop_stand.rho );
-  ASSERT_EQ( 0, cmd.rep_hop_stand.k );
+  ASSERT_EQ( 0, cmd.dynmorph.rho );
+  ASSERT_EQ( 0, cmd.dynmorph.k );
 }
 
 TEST(test_cmd_init_raibert)
@@ -136,7 +136,7 @@ TEST_SUITE(test_cmd)
   CONFIGURE_SUITE( setup, teardown );
   RUN_TEST(test_cmd_init);
   RUN_TEST(test_cmd_init_regulator);
-  RUN_TEST(test_cmd_init_rep_hop_stand);
+  RUN_TEST(test_cmd_init_dynmorph);
   RUN_TEST(test_cmd_init_raibert);
   RUN_TEST(test_cmd_init_arl);
   RUN_TEST(test_cmd_init_mtoka);

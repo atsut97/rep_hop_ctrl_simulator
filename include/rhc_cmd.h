@@ -12,10 +12,10 @@ typedef struct{
     struct _regulator {
       double q1, q2;
     } regulator;
-    struct _rep_hop_stand {
+    struct _dynmorph {
       double rho, k;
       bool soft_landing;
-    } rep_hop_stand;
+    } dynmorph;
     struct _raibert {
       double delta, tau, gamma, yeta1, zr, mu;
     } raibert;
@@ -38,13 +38,13 @@ cmd_t *cmd_copy(cmd_t *src, cmd_t *dst);
 
 void cmd_f_write(FILE *fp, cmd_t *self);
 void cmd_f_write_regulator(FILE *fp, cmd_t *self);
-void cmd_f_write_rep_hop_stand(FILE *fp, cmd_t *self);
+void cmd_f_write_dynmorph(FILE *fp, cmd_t *self);
 void cmd_f_write_raibert(FILE *fp, cmd_t *self);
 void cmd_f_write_arl(FILE *fp, cmd_t *self);
 void cmd_f_write_mtoka(FILE *fp, cmd_t *self);
 #define cmd_write(self)               cmd_f_write( stdout, self )
 #define cmd_write_regulator(self)     cmd_f_write_regulator( stdout, self )
-#define cmd_write_rep_hop_stand(self) cmd_f_write_rep_hop_stand( stdout, self )
+#define cmd_write_dynmorph(self) cmd_f_write_dynmorph( stdout, self )
 #define cmd_write_raibert(self)       cmd_f_write_raibert( stdout, self )
 #define cmd_write_arl(self)           cmd_f_write_arl( stdout, self )
 #define cmd_write_mtoka(self)         cmd_f_write_mtoka( stdout, self )

@@ -1,4 +1,4 @@
-#include "rhc_ctrl_rep_hop_stand.h"
+#include "rhc_ctrl_dynmorph.h"
 #include "rhc_phase_portrait_plotter.h"
 #include "rhc_string.h"
 
@@ -9,18 +9,18 @@
   Usage:
     Running a specific mode:
       $ cd example
-      $ make rep_hop_stand_test
-      $ mode=stand; ./rep_hop_stand_test $mode >graph_plot/$mode.csv
+      $ make dynmorph_test
+      $ mode=stand; ./dynmorph_test $mode >graph_plot/$mode.csv
       $ cd graph_plot
       $ uv run python plot_phase_portrait.py $mode.csv --xlim --ylim
 
     Run all modes:
       $ cd example/graph_plot
       $ modes=(stand stand_soft_land hop hop_soft_land squat squat_soft_land);
-      $ (cd .. && make rep_hop_stand_test) && \
+      $ (cd .. && make dynmorph_test) && \
         for mode in "${modes[@]}"; do \
           echo "Running '${mode}'...";
-          ../rep_hop_stand_test $mode >$mode.csv && \
+          ../dynmorph_test $mode >$mode.csv && \
           uv run python plot_phase_portrait.py $mode.csv --xlim --ylim || break; \
         done
  */
@@ -93,7 +93,7 @@ void init()
   logger_init( &logger );
   logger_open( &logger, NULL );
   ppp_init( &plotter, &cmd, &ctrl, &model, &logger );
-  ctrl_rep_hop_stand_create( &ctrl, &cmd, &model );
+  ctrl_dynmorph_create( &ctrl, &cmd, &model );
 }
 
 void make_edge_points(ppp_t *ppp)
@@ -104,8 +104,8 @@ void make_edge_points(ppp_t *ppp)
 
 void set_params_stand()
 {
-  ctrl_rep_hop_stand_set_rho( &ctrl, 0.0 );
-  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
+  ctrl_dynmorph_set_rho( &ctrl, 0.0 );
+  ctrl_dynmorph_disable_soft_landing( &ctrl );
   ppp_generate_edge_points( &plotter );
 }
 
@@ -114,9 +114,9 @@ void set_params_stand_soft_land()
   vec_t p0;
 
   p0 = vec_create( 2 );
-  ctrl_rep_hop_stand_set_rho( &ctrl, 0.0 );
-  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
-  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+  ctrl_dynmorph_set_rho( &ctrl, 0.0 );
+  ctrl_dynmorph_set_k( &ctrl, 4.0 );
+  ctrl_dynmorph_enable_soft_landing( &ctrl );
   ppp_generate_edge_points( &plotter );
 
   vec_set_elem_list( p0, cmd.zh, -1.5 );
@@ -130,12 +130,12 @@ void set_params_hop()
   vec_t p0;
 
   p0 = vec_create( 2 );
-  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
-  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
-  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
+  ctrl_dynmorph_set_rho( &ctrl, 1.0 );
+  ctrl_dynmorph_set_k( &ctrl, 4.0 );
+  ctrl_dynmorph_disable_soft_landing( &ctrl );
   ppp_generate_edge_points( &plotter );
 
-  zm = ctrl_rep_hop_stand_calc_zm( cmd.za, cmd.zh, cmd.zb );
+  zm = ctrl_dynmorph_calc_zm( cmd.za, cmd.zh, cmd.zb );
   if( !istiny( zm - cmd.zm ) ){
     vec_set_elem_list( p0, zm-1e-6, 0.0 );
     ppp_push_p0( &plotter, p0 );
@@ -156,16 +156,16 @@ void set_params_hop_soft_land()
   vec_t p0;
 
   p0 = vec_create( 2 );
-  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
-  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
-  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+  ctrl_dynmorph_set_rho( &ctrl, 1.0 );
+  ctrl_dynmorph_set_k( &ctrl, 4.0 );
+  ctrl_dynmorph_enable_soft_landing( &ctrl );
   cmd.za = 0.3;
   ppp_generate_edge_points( &plotter );
 
   vec_set_elem_list( p0, cmd.zh, -1.5 );
   ppp_remove_p0( &plotter, p0, 1e-6 );
 
-  zm = ctrl_rep_hop_stand_calc_zm( cmd.za, cmd.zh, cmd.zb );
+  zm = ctrl_dynmorph_calc_zm( cmd.za, cmd.zh, cmd.zb );
   if( istiny( zm - cmd.zm ) ){
     vec_set_elem_list( p0, zm-1e-6, 0.0 );
     ppp_push_p0( &plotter, p0 );
@@ -185,9 +185,9 @@ void set_params_squat()
   vec_t p0;
 
   p0 = vec_create( 2 );
-  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
-  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
-  ctrl_rep_hop_stand_disable_soft_landing( &ctrl );
+  ctrl_dynmorph_set_rho( &ctrl, 1.0 );
+  ctrl_dynmorph_set_k( &ctrl, 4.0 );
+  ctrl_dynmorph_disable_soft_landing( &ctrl );
   cmd.za = 0.255;
   ppp_generate_edge_points( &plotter );
 
@@ -210,9 +210,9 @@ void set_params_squat_soft_land()
   vec_t p0;
 
   p0 = vec_create( 2 );
-  ctrl_rep_hop_stand_set_rho( &ctrl, 1.0 );
-  ctrl_rep_hop_stand_set_k( &ctrl, 4.0 );
-  ctrl_rep_hop_stand_enable_soft_landing( &ctrl );
+  ctrl_dynmorph_set_rho( &ctrl, 1.0 );
+  ctrl_dynmorph_set_k( &ctrl, 4.0 );
+  ctrl_dynmorph_enable_soft_landing( &ctrl );
   cmd.za = 0.255;
   ppp_generate_edge_points( &plotter );
 
@@ -252,9 +252,9 @@ void setup_ctrl()
 
 void print_cmd()
 {
-  cmd_f_write_rep_hop_stand( stderr, &cmd );
+  cmd_f_write_dynmorph( stderr, &cmd );
   fprintf( stderr, "--\n" );
-  cmd_f_write_rep_hop_stand( stderr, ctrl_rep_hop_stand_params(&ctrl) );
+  cmd_f_write_dynmorph( stderr, ctrl_dynmorph_params(&ctrl) );
 }
 
 void run()
